@@ -1,27 +1,123 @@
 <template>
-	<div class="container">
-		<div class="aside">
-			<ul>
-				<li>导航一</li>
-				<li>导航二</li>
-				<li>导航三</li>
-				<li>导航四</li>
-			</ul>
+	<div class="app_wrapper">
+		<div class="header">
+			<div class="logo">
+				星火传媒
+			</div>
+			<div class="user">
+				店小二<i class="el-icon el-icon-caret-bottom"></i>
+			</div>
 		</div>
-		<div class="wrapper">
-    		<router-view></router-view>
+		<div class="container">
+			<div class="aside">
+				<ul class="root">
+					<nav-items v-for="items in nav" :key="items.uuid" :items="items"></nav-items>
+				</ul>
+			</div>
+			<div class="wrapper">
+				<div class="bread_crumb">
+					<bread-crumb></bread-crumb>
+				</div>
+				<div class="router_container">
+	    			<router-view></router-view>
+				</div>
+			</div>
 		</div>
 	</div>
+	
+
 </template>
 <script>
 	import {mapGetters,mapActions} from 'vuex';
+	import BreadCrumb from './BreadCrumb';
+	import NavItems from './NavItems'
+
 	export default{
+		components:{
+			BreadCrumb,
+			NavItems
+		},
+		data(){
+			return {
+				nav:[{
+						name:"我的信息",
+						path:"/information",
+						uuid:"nav_information"
+					},{
+						name:"账号与权限",
+						uuid:"nav_limit",
+						children:[{
+								name:"账号管理",
+								path:"/limit/account",
+								uuid:"nav_limit_account",
+								parent:{
+									name:"账号与权限",
+									uuid:"nav_limit",
+								}
+							},{
+								name:"账号组管理",
+								path:"/limit/account_group",
+								uuid:"nav_limit_account_group",
+								parent:{
+									name:"账号与权限",
+									uuid:"nav_limit",
+								}
+							}
+						]
+					},{
+						name:"平台管理",
+						path:"/platform",
+						uuid:"nav_platform"
+					},{
+						name:"工会管理",
+						path:"/group",
+						uuid:"nav_group"
+					},{
+						name:"艺人管理",
+						uuid:"nav_actor",
+						children:[{
+								name:"艺人分配",
+								path:"/actor/assign",
+								uuid:"nav_actor_assign",
+								parent:{
+									name:"艺人管理",
+									uuid:"nav_actor",
+								}
+							},{
+								name:"艺人信息管理",
+								path:"/actor/management",
+								uuid:"nav_actor_management",
+								parent:{
+									name:"艺人管理",
+									uuid:"nav_actor",
+								}
+							}
+						]
+					},{
+						name:"经纪人管理",
+						path:"/agent",
+						uuid:"nav_agent",
+
+					},{
+						name:"财务管理",
+						path:"/finance",
+						uuid:"nav_finance",
+					},{
+						name:"统计分析",
+						path:"/analyze",
+						uuid:"nav_analyze",
+					},{
+						name:"操作日志",
+						path:"/logs",
+						uuid:"nav_logs",
+					},
+				]
+			}
+		},
 		methods:{
 			...mapActions({
-		        switchScope: 'homeStore/home/switchScope',
 		    }),
-		    goSwitch(){
-		    	this.switchScope('task');
+		    switchNav(){
 		    }
 		}
 
@@ -31,36 +127,108 @@
 
 <style rel="stylesheet/less" lang="less" scoped>
   	@import "~@/config/config.less";
-	.container{
-		width: 100%;
-		height: 100%;
-		display: flex;
-		flex-direction: row;
-		*{
-			box-sizing: border-box;
-		}
-		.aside{
-			width: 300px;
-			background: #f4f4f4;
-			flex-shrink: 0;
-			border-right: 1px solid #e4e4e4;
-			ul{
-				li{
+  	.app_wrapper{
+  		width: 100%;
+  		height: 100%;
+  		display: flex;
+  		flex-direction: column;
+  		.header{
+  			height: 48px;
+  			line-height: 48px;
+  			width: 100%;
+  			padding: 0 20px;
+  			flex-shrink: 0;
+			min-height: 48px;
+		    background-color: hsla(0,0%,100%,.95);
+		    box-shadow: 0 1px 3px 0 rgba(0,0,0,.15);
+		    position: relative;
+		    z-index: 10;
+		    box-sizing: border-box;
+		    .logo{
+		    	float: left;
+		    	font-size: 20px;
+		    }
+		    .user{
+		    	cursor: pointer;
+		    	float: right;
+		    	.el-icon{
+		    		margin-left: 4px;
+		    	}
+		    }
+  		}
+  		.container{
+  			flex-grow: 1;
+			display: flex;
+			flex-direction: row;
+			*{
+				box-sizing: border-box;
+			}
+			.aside{
+				width: 240px;
+				background: #f4f4f4;
+				flex-shrink: 0;
+				border-right: 1px solid #e4e4e4;
+				position: relative;
+				ul{
+					&.root{
+						position: absolute;
+						left: 0;
+						top: 0;
+						bottom: 0;
+						right: 0;
+						overflow: auto;
+					}
+					/deep/ li{
+						.title{
+							height: 40px;
+						    line-height: 40px;
+						    padding: 0 16px 0 20px;
+						    cursor: pointer;
+						    font-size: 14px;
+						    position: relative;
+						    &.active,&:hover{
+						    	background: #fff;
+						    }
+						    .el-icon{
+								position: absolute;
+								right: 4px;
+								top: 12px;
+								font-size: 16px;
+							}
+						}
+						ul{
+							display: none;
+						}
+						&.expand{
+							ul{
+								display: block;
+							}
+						}
+					}
+					/deep/ ul{
+						li{
+							.title{
+								padding-left: 40px;
+							}
+						}
+					}
+				}
+			}
+			.wrapper{
+				flex-grow: 1;
+				display: flex;
+				flex-direction: column;
+				.bread_crumb{
 					height: 40px;
-				    line-height: 40px;
-				    padding: 0 16px 0 20px;
-				    cursor: pointer;
-				    font-size: 14px;
-				    &.active,&:hover{
-				    	background: #fff;
-				    }
+					flex-shrink: 0;
+				}
+				.router_container{
+					flex-grow: 1;
 				}
 			}
 		}
-		.wrapper{
-			flex-grow: 1;
-		}
-	}
+  	}
+	
 
 </style>
 

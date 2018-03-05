@@ -58,7 +58,7 @@
 					},5000)
 					this.login({identify:this.loginInfo.identify,password:this.loginInfo.password}).then(() => {
 						this.locked = false;
-						Link('/demo')
+						Link('/information')
 					})
 				}
 				
