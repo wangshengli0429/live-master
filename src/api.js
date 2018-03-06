@@ -1,5 +1,9 @@
 import axios from 'axios'
 import User from '@/modules/user/api'
+import Platform from '@/modules/platform/api'
+import Group from '@/modules/group/api'
+import Agent from '@/modules/agent/api'
+import Actor from '@/modules/actor/api'
 
 
 axios.interceptors.request.use(config => {
@@ -36,4 +40,8 @@ global.$axios = axios.create({
 // $req.use(unauthorizedRedirect)
 global.$API = {
   user: User,
+  platform: Platform,
+  group:Group,
+  agent:Agent,
+  actor:Actor
 };
