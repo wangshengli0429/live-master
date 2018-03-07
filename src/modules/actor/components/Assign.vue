@@ -205,6 +205,9 @@
 </template>
 <script>
 	import {mapGetters,mapActions} from 'vuex';
+	import AssignActor from '@/modules/widget/assign-actor'
+
+
 	export default{
 		data(){
 			return {
@@ -252,7 +255,9 @@
 	    		console.log(this.filter)
 	    	},
 	    	handleEdit(){
-
+	    		AssignActor({
+	    			
+	    		})
 	    	},
 	    	handleSelectionChange(val) {
 		        this.multipleSelection = val;

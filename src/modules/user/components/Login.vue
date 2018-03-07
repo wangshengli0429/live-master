@@ -117,6 +117,7 @@
 			    		width: 100%;
 			    		margin: 0 auto;
 			    		font-size: 16px;
+			    		height: 40px;
 			    	}
 			    }
 		    }
