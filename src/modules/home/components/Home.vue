@@ -5,7 +5,7 @@
 				星火传媒
 			</div>
 			<div class="user">
-				店小二<i class="el-icon el-icon-caret-bottom"></i>
+				{{user.nickname}}<i class="el-icon el-icon-caret-bottom"></i>
 			</div>
 		</div>
 		<div class="container">
@@ -37,6 +37,11 @@
 			BreadCrumb,
 			NavItems
 		},
+		computed: {
+			...mapGetters({
+				user: 'userStore/user/user',
+			})
+	    },
 		data(){
 			return {
 				nav:[{

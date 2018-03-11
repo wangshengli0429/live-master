@@ -20,12 +20,13 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
  * 公共上行信息
  * @type {{}}
  */
-global.getRequestParam = function() {
-  return {
-    plat:'web'
-  };
-  
 
+
+
+
+global.getRequestParam = function() {
+  let param = localStorage.getItem("requestParam") || JSON.stringify({plat:'web'});
+  return JSON.parse(param);
 }
 
 global.$axios = axios.create({

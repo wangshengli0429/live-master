@@ -11,11 +11,29 @@ export default {
    */
   login({identify,password}, successCb, erroCb){
     let url = `${config_server.server_api}/users/login.json`;
-    // let url = 'http://xinghuo.vnest.net/api/users/login.json';
     let params = {
       loginName:identify,
       password
     }
     httpAgent(url,'POST', params,successCb,erroCb)
   },
+  userMy( successCb, erroCb){
+    let url = `${config_server.server_api}/users/my.json`;
+    let params = {
+    }
+    httpAgent(url,'GET', params,successCb,erroCb)
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
