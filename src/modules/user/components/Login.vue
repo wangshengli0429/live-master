@@ -7,7 +7,7 @@
 				</div>
 				<div class="card_form">
 					<div class="card_title">输入您的帐号、密码登录</div>
-					<el-input v-model="loginInfo.identify" placeholder="用户名/手机号" clearable></el-input>
+					<el-input :autofocus="true" v-model="loginInfo.identify" placeholder="用户名/手机号" clearable></el-input>
 					<el-input v-model="loginInfo.password" placeholder="密码" type="password" clearable></el-input>
 					<el-button type="primary" @click="goLogin" :loading="locked">登录</el-button>
 				</div>
@@ -111,6 +111,9 @@
 			    	}
 			    	/deep/ .el-input{
 			    		margin-bottom: 15px;
+			    		.el-input__inner{
+			    			height: 40px;
+			    		}
 			    	}
 			    	/deep/ .el-button{
 			    		display: block;

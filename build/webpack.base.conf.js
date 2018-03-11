@@ -29,6 +29,15 @@ module.exports = {
       '@': resolve('src'),
     }
   },
+  devServer: {
+    proxy: {
+      '/api/**': { //设置webpack代理
+          target: 'http://xinghuo.vnest.net',
+          changeOrigin: true,
+          secure: false
+      }
+    }
+  },
   module: {
     rules: [
       {

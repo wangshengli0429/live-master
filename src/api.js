@@ -21,7 +21,9 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
  * @type {{}}
  */
 global.getRequestParam = function() {
-  return {};
+  return {
+    plat:'web'
+  };
   
 
 }

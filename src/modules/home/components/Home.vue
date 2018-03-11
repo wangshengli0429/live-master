@@ -69,7 +69,7 @@
 						path:"/platform",
 						uuid:"nav_platform"
 					},{
-						name:"工会管理",
+						name:"公会管理",
 						path:"/group",
 						uuid:"nav_group"
 					},{
@@ -225,6 +225,7 @@
 				.router_container{
 					flex-grow: 1;
 					position: relative;
+					height: 0;
 				}
 			}
 		}

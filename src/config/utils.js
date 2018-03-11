@@ -135,7 +135,7 @@ export const datePattern = (date, fmt) => {
 export const httpAgent = function(url, requestType, param, successCb,erroCb){
   let config = {
     method: requestType,
-    url: url
+    url: url,
   }
   if(requestType.toLowerCase() == 'get'){
     if(typeof(param) == 'string'){

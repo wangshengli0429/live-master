@@ -10,12 +10,12 @@ export default {
    * @param erroCb
    */
   login({identify,password}, successCb, erroCb){
-    let url = `${config_server.server_api}/login.json`;
+    let url = `${config_server.server_api}/users/login.json`;
+    // let url = 'http://xinghuo.vnest.net/api/users/login.json';
     let params = {
-      identify,
+      loginName:identify,
       password
     }
-    // httpAgent(url,'GET', params,successCb,erroCb)
-    successCb();
+    httpAgent(url,'POST', params,successCb,erroCb)
   },
 }

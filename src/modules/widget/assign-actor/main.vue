@@ -73,6 +73,8 @@
             margin-bottom: 20px;
             .name{
                 width: 80px;
+                height: 30px;
+                line-height: 30px;
                 float: left;
             }
             .content{
