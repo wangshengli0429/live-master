@@ -4,15 +4,15 @@
             <div class="items">
                 <div class="name">名称</div>
                 <div class="content">
-                    <el-input placeholder="名称" value="平台管理员"></el-input>
+                    <el-input v-model="authorityGroup.name" placeholder="名称" value="平台管理员"></el-input>
                 </div>
             </div>
             <div class="items">
                 <div class="name">数据级别</div>
                 <div class="content">
-                    <el-select v-model="level" placeholder="请选择">
+                    <el-select v-model="authorityGroup.orgType" placeholder="请选择">
                         <el-option
-                          v-for="item in levelList"
+                          v-for="item in orgTypeList"
                           :key="item.uuid"
                           :label="item.name"
                           :value="item.uuid">
@@ -23,7 +23,7 @@
             <div class="items">
                 <div class="name">状态</div>
                 <div class="content">
-                    <el-select v-model="status" placeholder="请选择">
+                    <el-select v-model="authorityGroup.status" placeholder="请选择">
                         <el-option
                           v-for="item in statusList"
                           :key="item.uuid"
@@ -36,7 +36,7 @@
             <div class="items">
                 <div class="name">创建日期</div>
                 <div class="content">
-                    <el-input placeholder="创建日期" value="平台管理员"></el-input>
+                    <el-input :readonly="true" placeholder="创建日期" :value="authorityGroup.createDate | timesToDate('yyyy-MM-dd')"></el-input>
                 </div>
             </div>
             <div class="items">
@@ -59,34 +59,66 @@
         },
         data(){
             return {
-                level:"",
-                levelList:[{
-                    uuid:"1",
-                    name:"平台级别"
+                orgTypeList:[{
+                    uuid:"SYSTEM",
+                    name:"系统"
                 },{
-                    uuid:"12",
-                    name:"系统级别"
+                    uuid:"PLAT",
+                    name:"平台"
+                },{
+                    uuid:"UNION",
+                    name:"公会"
                 }],
                 status:"",
                 statusList:[{
-                    uuid:"23",
+                    uuid:1,
                     name:"已停用"
                 },{
-                    uuid:"233",
+                    uuid:0,
                     name:"已启用"
-                }]
+                }],
+                authorityGroup:{
+                    name:"",
+                    orgType:"PLAT",
+                    status:0,
+                    createDate:new Date().getTime()
+                }
             }
         },
         methods:{
             destroy(){
-
+                this.$el &&
+                this.$el.parentNode &&
+                this.$el.parentNode.removeChild(this.$el);
+                this.$destroy();
             },
-            submit(){
+            submit(close){
+                if(!this.authorityGroup.name.trim()){
+                    this.$message({
+                      message: '请输入账号组名称',
+                      type: 'error'
+                    });
+                    return false;
+                }
+                console.log(this.authorityGroup)
+                if(this.authorityGroup.uuid){//修改
+                    api.modifyAuthorityGroup(this.authorityGroup,() => {
+                        this.callback && this.callback();
+                        close && close();
+                    })
+                }else{//新建
+                    api.createAuthorityGroup(this.authorityGroup,() => {
+                        this.callback && this.callback();
+                        close && close();
+                    })
+                }
 
+
+                
             },
             goSetLimit(){
                 SetLimit({
-                    
+                    authorities:this.authorityGroup.authorities || this.authorities
                 })
             }
    

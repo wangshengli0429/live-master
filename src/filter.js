@@ -12,4 +12,24 @@ export const filter = (Vue) => {
       return '';
     }
   })
+  Vue.filter('filterOrgType', (str) => {//数据级别
+    var result = "";
+    switch(str){
+      case 'SYSTEM': result = '系统'; break;
+      case 'PLAT': result = '平台'; break;
+      case 'UNION': result = '公会'; break;
+    }
+    return result;
+  })
+
+
+
+
+
+
+
+
+
+
+
 }

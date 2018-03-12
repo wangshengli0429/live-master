@@ -4,6 +4,7 @@ import Platform from '@/modules/platform/api'
 import Group from '@/modules/group/api'
 import Agent from '@/modules/agent/api'
 import Actor from '@/modules/actor/api'
+import Limit from '@/modules/limit/api'
 
 
 axios.interceptors.request.use(config => {
@@ -46,5 +47,6 @@ global.$API = {
   platform: Platform,
   group:Group,
   agent:Agent,
-  actor:Actor
+  actor:Actor,
+  limit:Limit
 };

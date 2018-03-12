@@ -178,8 +178,6 @@
         },
         data(){
             return {
-               groupList:[],
-               group:""
             }
         },
         methods:{
@@ -189,15 +187,13 @@
             submit(){
 
             },
-            getGroupList(){
-                $API.group.getGroupList(resp => {
-                    this.groupList = resp.list;
-                })
-            },
+            filterAuthorities(){
+                
+            }
 
         },
         mounted(){
-            this.getGroupList();
+            this.filterAuthorities();
         }
     }
 </script>

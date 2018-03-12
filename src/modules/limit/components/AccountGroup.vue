@@ -1,13 +1,13 @@
 <template>
 	<div ref="container" class="account_group">
 		<div ref="operate" class="operate">
-			<el-button @click="handleEdit">添加</el-button>
+			<el-button @click="goAddAccountGroup">添加</el-button>
 			<el-button type="danger">删除</el-button>
 		</div>
 		<div class="account_group_list">
 			<el-table
 			    ref="multipleTable"
-			    :data="groupList"
+			    :data="accountGroup"
 			    :height="tableHeight"
 			    tooltip-effect="dark"
 			    style="width: 100%"
@@ -19,27 +19,32 @@
 			    <el-table-column
 			      prop="name"
 			      label="组名称"
-			      width="120">
+			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
 			      label="创建时间"
-			      width="120">
-				    <template slot-scope="scope">{{ scope.row.create_date | timesToDate('yyyy-MM-dd') }}</template>
+			      width="120"
+			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.createDate && scope.row.createDate | timesToDate('yyyy-MM-dd') || '-'}}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="level"
 			      label="数据级别"
 			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.orgType | filterOrgType }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="limit"
 			      label="权限"
 			      show-overflow-tooltip>
+				  <template slot-scope="scope">
+				  	{{ scope.row.configStatus == 0?"未配置":"已配置" }}
+				  </template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="status"
 			      label="状态"
 			      show-overflow-tooltip>
+			      <template slot-scope="scope">
+				  	{{ scope.row.status == 0?"已启用":"已停用" }}
+				  </template>
 			    </el-table-column>
 			    <el-table-column label="操作" width="180" fixed="right">
 			      <template slot-scope="scope">
@@ -56,34 +61,92 @@
 
 			  </el-table>
 		</div>
+
+		<div ref="page" class="page">
+			<el-pagination
+		      @size-change="handleSizeChange"
+		      @current-change="handleCurrentChange"
+		      :current-page="currentPage"
+		      :page-sizes="[20, 30, 40, 50]"
+		      :page-size="limit"
+		      layout="total, sizes, prev, pager, next, jumper"
+		      :total="total">
+		    </el-pagination>
+		</div>
+
+
 	</div>
 </template>
 <script>
+	import {mapGetters,mapActions} from 'vuex';
 	import newAccountGroup from '@/modules/widget/new-account-group'
 	export default{
 		data(){
 			return {
 				groupList:[],
 				tableHeight:250,
-
 			}
 		},
+		computed: {
+			...mapGetters({
+				accountGroup: 'limitStore/limit/accountGroup',
+				total: 'limitStore/limit/total',
+				currentPage: 'limitStore/limit/currentPage',
+				limit: 'limitStore/limit/limit',
+				authorities: 'limitStore/limit/authorities',
+			})
+	    },
 		methods:{
-			handleEdit(){
+			goAddAccountGroup(){
 				newAccountGroup({
-					
+					authorities:this.authorities,
+					callback:() => {
+						this.getAccountGroup(1);
+					}
+				})
+			},
+			handleEdit(index,data){
+				const uuid = data.uuid;
+				/*获取详情以后再进行修改*/
+				this.$store.dispatch('limitStore/limit/getAccountGroupDetail',{uuid}).then((resp) => {
+					newAccountGroup({
+						authorityGroup:resp.authorityGroup,
+						authorities:this.authorities,
+						callback:() => {
+							this.getAccountGroup(1);
+						}
+					})
 				})
 			},
 			handleDelete(){
 
 			},
+			handleSizeChange(limit){
+				this.getAccountGroup(1,limit);
+			},
+			handleCurrentChange(page){
+				this.getAccountGroup(page);
+			},
 			setHeight(){
 		    	var container = this.$refs.container.offsetHeight;
 		    	var operate = this.$refs.operate.offsetHeight;
-		    	var tableHeight = container - operate -24;
+		    	var page = this.$refs.page.offsetHeight;
+		    	var tableHeight = container - operate - page -24;
 		    	console.log(tableHeight);
 		    	this.tableHeight = tableHeight;
 		    },
+		    getAccountGroup(currentPage,limit){//获取管理组列表
+		    	currentPage = currentPage || this.currentPage;
+		    	limit = limit || this.limit;
+				this.$store.dispatch('limitStore/limit/getAccountGroup',{currentPage,limit}).then(() => {
+
+				})
+		    },
+		    getAuthoritiesList(){//获取系统默认管理权限列表
+		    	this.$store.dispatch('limitStore/limit/getAuthoritiesList').then(() => {
+
+				})
+		    }
 		},
 		mounted(){
 	    	setTimeout(() => {
@@ -91,19 +154,8 @@
 	    	})
 	    },
 		created(){
-			const list = []
-			for(var i=0;i<30;i++){
-				var temp = {
-					uuid:i+1,
-					name:"平台管理员"+(i+1),
-					create_date:new Date().getTime(),
-					level:"平台",
-					limit:"已配置",
-					status:"已启用",
-				}
-				list.push(temp);
-			}
-			this.groupList = list;
+			this.getAccountGroup();
+			this.getAuthoritiesList();
 		}
 	}
 </script>

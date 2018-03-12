@@ -5,6 +5,7 @@ import createLogger from 'vuex/dist/logger'
 import homeStore from '@/modules/home/store'
 import userStore from '@/modules/user/store'
 import actorStore from '@/modules/actor/store'
+import limitStore from '@/modules/limit/store'
 
 
 
@@ -15,7 +16,8 @@ const store = new Vuex.Store({
 	modules:{
 		homeStore,
 		userStore,
-		actorStore
+		actorStore,
+		limitStore
 	},
 	plugins: process.env.NODE_ENV !== 'production'
     ? [createLogger()]
