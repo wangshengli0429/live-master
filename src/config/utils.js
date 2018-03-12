@@ -161,7 +161,7 @@ export const httpAgent = function(url, requestType, param, successCb,erroCb){
       successCb && successCb(data);
     }
   })
-  .catch(function (error) {
+  .catch(function (error,b,c) {
     console.log(error);
     if(erroCb){
       erroCb(error);

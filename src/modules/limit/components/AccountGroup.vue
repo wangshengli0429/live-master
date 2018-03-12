@@ -2,7 +2,6 @@
 	<div ref="container" class="account_group">
 		<div ref="operate" class="operate">
 			<el-button @click="goAddAccountGroup">添加</el-button>
-			<el-button type="danger">删除</el-button>
 		</div>
 		<div class="account_group_list">
 			<el-table
@@ -12,10 +11,10 @@
 			    tooltip-effect="dark"
 			    style="width: 100%"
 			    @selection-change="">
-			    <el-table-column
+	<!-- 		    <el-table-column
 			      type="selection"
 			      width="55">
-			    </el-table-column>
+			    </el-table-column> -->
 			    <el-table-column
 			      prop="name"
 			      label="组名称"
@@ -46,15 +45,11 @@
 				  	{{ scope.row.status == 0?"已启用":"已停用" }}
 				  </template>
 			    </el-table-column>
-			    <el-table-column label="操作" width="180" fixed="right">
+			    <el-table-column label="操作" width="90" fixed="right">
 			      <template slot-scope="scope">
 			        <el-button
 			          size="mini"
 			          @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-			        <el-button
-			          size="mini"
-			          type="danger"
-			          @click="handleDelete(scope.$index, scope.row)">删除</el-button>
 			      </template>
 			    </el-table-column>
 
@@ -118,8 +113,20 @@
 					})
 				})
 			},
-			handleDelete(){
-
+			handleDelete(index,data){
+				const uuid = data.uuid;
+				const msg = "确定要删除 “"+data.name+'” 吗？'
+				this.$confirm(msg, '提示', {
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消',
+		          	type: 'warning'
+		        }).then(() => {
+		          	this.$store.dispatch('limitStore/limit/deleteAccountGroup',{uuid}).then((resp) => {
+						
+					})
+		        }).catch(() => {
+		        	
+		        });
 			},
 			handleSizeChange(limit){
 				this.getAccountGroup(1,limit);

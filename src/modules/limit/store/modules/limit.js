@@ -45,6 +45,14 @@ const actions = {
 			})
 	    })
 	},
+	deleteAccountGroup ({commit, state,dispatch},{uuid}){
+		return new Promise((resolve,reject)=>{
+			$API.limit.deleteAccountGroup({uuid},resp => {
+				resolve(resp);
+			})
+	    })
+	},
+
 	
 
 

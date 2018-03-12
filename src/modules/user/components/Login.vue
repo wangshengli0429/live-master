@@ -56,9 +56,16 @@
 					setTimeout(() => {
 						this.locked = false;
 					},5000)
-					this.login({identify:this.loginInfo.identify,password:this.loginInfo.password}).then(() => {
+					this.login({identify:this.loginInfo.identify,password:this.loginInfo.password}).then((resp) => {
+						if(resp.result == 0){
+							Link('/information')
+						}else{
+							this.$message({
+					          message: resp.msg,
+					          type: 'error'
+					        });
+						}
 						this.locked = false;
-						Link('/information')
 					})
 				}
 				

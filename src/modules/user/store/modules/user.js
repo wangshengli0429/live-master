@@ -17,6 +17,8 @@ const actions = {
 			$API.user.login({identify,password}, resp => {
         		commit(types.INIT_USER_INFO, resp)
 				resolve(resp);
+			},resp => {
+				resolve(resp);
 			})
 	    })
 	},
