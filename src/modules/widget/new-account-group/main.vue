@@ -81,7 +81,8 @@
                     name:"",
                     orgType:"PLAT",
                     status:0,
-                    createDate:new Date().getTime()
+                    createDate:new Date().getTime(),
+                    authorities:[]
                 }
             }
         },
@@ -95,7 +96,6 @@
                         }
                     }
                 }
-                
                 return result.join('，');
             }
         },
@@ -132,9 +132,11 @@
             },
             goSetLimit(){
                 SetLimit({
-                    authoritiesList:this.authorities,
+                    authoritiesList:JSON.parse(JSON.stringify(this.authorities)),
                     authorities:this.authorityGroup.authorities,
                     callback:(list) => {
+                        console.log("######")
+                        console.log(list);
                         this.authorityGroup.authorities = list;
                     }
                 })

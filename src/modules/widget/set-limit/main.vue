@@ -2,7 +2,7 @@
     <modal :title="'权限设置'" @destroy="destroy" @submit="submit">
         <div class="set_limit">
             <ul class="limit_list">
-                <li v-for="items in authoritiesList">
+                <li v-for="items in filterList">
                     <div class="wrapper">
                         <div class="name">
                             <span class="el-icon" :class="{'el-icon-caret-bottom':(items.list.length >1)}"></span>
@@ -14,8 +14,12 @@
                             </template>
                         </div>
                         <div v-if="items.list.length == 1" class="limit">
-                            <el-checkbox @change="select(items.list[0],'readStatus')" :checked="items.list[0].readStatus == 0?false:true">查看</el-checkbox>
-                            <el-checkbox @change="select(items.list[0],'writeStatus')" :checked="items.list[0].writeStatus == 0?false:true">编辑</el-checkbox>
+                            <span class="check_box_con" @click="select(items.list[0],'readStatus')">
+                                <check-box  :is-check="filterChecked(items.list[0].readStatus)"></check-box>查看
+                            </span>
+                            <span class="check_box_con" @click="select(items.list[0],'writeStatus')">
+                                <check-box  :is-check="filterChecked(items.list[0].writeStatus)"></check-box>编辑
+                            </span>
                         </div>
                     </div>
                     <ul v-if="items.list.length >1">
@@ -23,8 +27,12 @@
                             <div class="wrapper">
                                 <div class="name"><span class="el-icon"></span>{{child.modelName}}</div>
                                 <div class="limit">
-                                    <el-checkbox @change="select(child),'readStatus'" :checked="child.readStatus == 0?false:true">查看</el-checkbox>
-                                    <el-checkbox @change="select(child),'writeStatus'" :checked="child.writeStatus == 0?false:true">编辑</el-checkbox>
+                                    <span class="check_box_con" @click="select(child,'readStatus')">
+                                        <check-box  :is-check="filterChecked(child.readStatus)"></check-box>查看
+                                    </span>
+                                    <span class="check_box_con" @click="select(child,'writeStatus')">
+                                        <check-box  :is-check="filterChecked(child.writeStatus)"></check-box>编辑
+                                    </span>
                                 </div>
                             </div>
                         </li>
@@ -39,17 +47,28 @@
 <script>
     import * as api from './api';
     import Modal from '@/modules/widget/common/Modal.vue';
+    import CheckBox from '@/modules/widget/common/CheckBox.vue'
+
     export default{
         components:{
-            Modal
+            Modal,
+            CheckBox
         },
         data(){
             return {
                 authoritiesList:[],
-                authoritiesMaps:{}
+                authoritiesMaps:{},
+                filterList:[]
             }
         },
         methods:{
+            filterChecked(status){
+                var result = false;
+                if(status == 1){
+                    result = true;
+                }
+                return result;
+            },
             destroy(){
                 this.$el &&
                 this.$el.parentNode &&
@@ -68,6 +87,13 @@
                 console.log(data.uuid);
                 let obj = this.authoritiesMaps[data.uuid];
                 obj[key] = obj[key] == 0?1:0;
+                if(key == 'writeStatus'){
+                    obj['readStatus'] = 1;
+                }
+                if(key == 'readStatus' && obj[key] == 0){
+                    obj['writeStatus'] = 0;
+                }
+
                 console.log(this.authoritiesMaps)
             },
             filterAuthorities(){
@@ -80,6 +106,17 @@
                     }
                 }
                 this.authoritiesMaps = maps;
+                if(this.authorities && this.authorities.length > 0){//数据覆盖
+                    for(var items of this.authorities){
+                        this.authoritiesMaps[items.uuid].readStatus = items.readStatus;
+                        this.authoritiesMaps[items.uuid].writeStatus = items.writeStatus;
+                    }
+                }
+
+                console.log(this.authoritiesList)
+
+                this.filterList = this.authoritiesList;
+
             }
 
         },
@@ -114,8 +151,12 @@
                     }
                     .limit{
                         margin-left: 150px;
-                        /deep/ .el-checkbox{
-                            margin: 0 30px;
+                        .check_box_con{
+                            cursor: pointer;
+                            margin-right: 30px;
+                            /deep/ .checkbox{
+                                margin-right: 4px;
+                            }
                         }
                     }
                 }
