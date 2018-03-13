@@ -95,6 +95,7 @@
 			</div>
 		</div>
 		<div ref="operate" class="operate">
+			<el-button @click="goAddAccount">添加</el-button>
 			<el-button type="danger">删除</el-button>
 		</div>
 		<div class="filter_list">
@@ -186,6 +187,7 @@
 	</div>
 </template>
 <script>
+	import newAccount from '@/modules/widget/new-account'
 	export default{
 		data(){
 			return {
@@ -222,6 +224,11 @@
 			}
 		},
 		methods:{
+			goAddAccount(){//新增账号
+				newAccount({
+
+				})
+			},
 			handleEdit(){
 				
 			},

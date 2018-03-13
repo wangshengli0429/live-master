@@ -42,7 +42,7 @@
             <div class="items">
                 <div class="name">设置权限</div>
                 <div class="content" @click="goSetLimit">
-                    <el-input placeholder="设置权限" value="" :readonly="true"></el-input>
+                    <el-input placeholder="设置权限" :value="filterLimit" :readonly="true"></el-input>
                 </div>
             </div>
         </div>
@@ -85,6 +85,20 @@
                 }
             }
         },
+        computed:{
+            filterLimit(){
+                var result = [];
+                if(this.authorityGroup && this.authorityGroup.authorities){
+                    for(var items of this.authorityGroup.authorities){
+                        if(items.readStatus || items.writeStatus){
+                            result.push(items.modelName);
+                        }
+                    }
+                }
+                
+                return result.join('，');
+            }
+        },
         methods:{
             destroy(){
                 this.$el &&
@@ -118,7 +132,11 @@
             },
             goSetLimit(){
                 SetLimit({
-                    authorities:this.authorityGroup.authorities || this.authorities
+                    authoritiesList:this.authorities,
+                    authorities:this.authorityGroup.authorities,
+                    callback:(list) => {
+                        this.authorityGroup.authorities = list;
+                    }
                 })
             }
    

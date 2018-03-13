@@ -2,169 +2,36 @@
     <modal :title="'权限设置'" @destroy="destroy" @submit="submit">
         <div class="set_limit">
             <ul class="limit_list">
-                <li>
+                <li v-for="items in authoritiesList">
                     <div class="wrapper">
-                        <div class="name"><span class="el-icon el-icon-caret-bottom"></span>账号与权限</div>
-                        <div class="limit">
-                            <el-checkbox>查看</el-checkbox>
-                            <el-checkbox>编辑</el-checkbox>
+                        <div class="name">
+                            <span class="el-icon" :class="{'el-icon-caret-bottom':(items.list.length >1)}"></span>
+                            <template v-if="items.list.length >1">
+                                {{items.modelName}}
+                            </template>
+                            <template v-else>
+                                {{items.list[0].modelName}}
+                            </template>
+                        </div>
+                        <div v-if="items.list.length == 1" class="limit">
+                            <el-checkbox @change="select(items.list[0],'readStatus')" :checked="items.list[0].readStatus == 0?false:true">查看</el-checkbox>
+                            <el-checkbox @change="select(items.list[0],'writeStatus')" :checked="items.list[0].writeStatus == 0?false:true">编辑</el-checkbox>
                         </div>
                     </div>
-                    <ul>
-                        <li>
+                    <ul v-if="items.list.length >1">
+                        <li v-for="child in items.list">
                             <div class="wrapper">
-                                <div class="name"><span class="el-icon"></span>账号管理</div>
+                                <div class="name"><span class="el-icon"></span>{{child.modelName}}</div>
                                 <div class="limit">
-                                    <el-checkbox>查看</el-checkbox>
-                                    <el-checkbox>编辑</el-checkbox>
+                                    <el-checkbox @change="select(child),'readStatus'" :checked="child.readStatus == 0?false:true">查看</el-checkbox>
+                                    <el-checkbox @change="select(child),'writeStatus'" :checked="child.writeStatus == 0?false:true">编辑</el-checkbox>
                                 </div>
                             </div>
                         </li>
                     </ul>
-                </li>
-                <li>
-                    <div class="wrapper">
-                        <div class="name"><span class="el-icon"></span>平台管理</div>
-                        <div class="limit">
-                            <el-checkbox>查看</el-checkbox>
-                            <el-checkbox>编辑</el-checkbox>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="wrapper">
-                        <div class="name"><span class="el-icon"></span>公会管理</div>
-                        <div class="limit">
-                            <el-checkbox>查看</el-checkbox>
-                            <el-checkbox>编辑</el-checkbox>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="wrapper">
-                        <div class="name"><span class="el-icon el-icon-caret-bottom"></span>艺人管理</div>
-                        <div class="limit">
-                            <el-checkbox>查看</el-checkbox>
-                            <el-checkbox>编辑</el-checkbox>
-                        </div>
-                    </div>
-                    <ul>
-                        <li>
-                            <div class="wrapper">
-                                <div class="name"><span class="el-icon"></span>艺人分配</div>
-                                <div class="limit">
-                                    <el-checkbox>查看</el-checkbox>
-                                    <el-checkbox>编辑</el-checkbox>
-                                </div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="wrapper">
-                                <div class="name"><span class="el-icon"></span>艺人信息管理</div>
-                                <div class="limit">
-                                    <el-checkbox>查看</el-checkbox>
-                                    <el-checkbox>编辑</el-checkbox>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <div class="wrapper">
-                        <div class="name"><span class="el-icon"></span>经纪人管理</div>
-                        <div class="limit">
-                            <el-checkbox>查看</el-checkbox>
-                            <el-checkbox>编辑</el-checkbox>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="wrapper">
-                        <div class="name"><span class="el-icon el-icon-caret-bottom"></span>财务管理</div>
-                        <div class="limit">
-                            <el-checkbox>查看</el-checkbox>
-                            <el-checkbox>编辑</el-checkbox>
-                        </div>
-                    </div>
-                    <ul>
-                        <li>
-                            <div class="wrapper">
-                                <div class="name"><span class="el-icon"></span>财务流水</div>
-                                <div class="limit">
-                                    <el-checkbox>查看</el-checkbox>
-                                    <el-checkbox>编辑</el-checkbox>
-                                </div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="wrapper">
-                                <div class="name"><span class="el-icon"></span>财务审核</div>
-                                <div class="limit">
-                                    <el-checkbox>查看</el-checkbox>
-                                    <el-checkbox>编辑</el-checkbox>
-                                </div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="wrapper">
-                                <div class="name"><span class="el-icon"></span>薪资结算</div>
-                                <div class="limit">
-                                    <el-checkbox>查看</el-checkbox>
-                                    <el-checkbox>编辑</el-checkbox>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <div class="wrapper">
-                        <div class="name"><span class="el-icon el-icon-caret-bottom"></span>统计分析</div>
-                        <div class="limit">
-                            <el-checkbox>查看</el-checkbox>
-                            <el-checkbox>编辑</el-checkbox>
-                        </div>
-                    </div>
-                    <ul>
-                        <li>
-                            <div class="wrapper">
-                                <div class="name"><span class="el-icon"></span>系统数据分析</div>
-                                <div class="limit">
-                                    <el-checkbox>查看</el-checkbox>
-                                    <el-checkbox>编辑</el-checkbox>
-                                </div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="wrapper">
-                                <div class="name"><span class="el-icon"></span>平台数据分析</div>
-                                <div class="limit">
-                                    <el-checkbox>查看</el-checkbox>
-                                    <el-checkbox>编辑</el-checkbox>
-                                </div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="wrapper">
-                                <div class="name"><span class="el-icon"></span>公会数据分析</div>
-                                <div class="limit">
-                                    <el-checkbox>查看</el-checkbox>
-                                    <el-checkbox>编辑</el-checkbox>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <div class="wrapper">
-                        <div class="name"><span class="el-icon"></span>操作日志</div>
-                        <div class="limit">
-                            <el-checkbox>查看</el-checkbox>
-                            <el-checkbox>编辑</el-checkbox>
-                        </div>
-                    </div>
+
                 </li>
             </ul>
-
         </div>
     </modal>
 </template>
@@ -178,17 +45,41 @@
         },
         data(){
             return {
+                authoritiesList:[],
+                authoritiesMaps:{}
             }
         },
         methods:{
             destroy(){
-
+                this.$el &&
+                this.$el.parentNode &&
+                this.$el.parentNode.removeChild(this.$el);
+                this.$destroy();
             },
-            submit(){
-
+            submit(close){
+                var list = [];
+                for(var key in this.authoritiesMaps){
+                    list.push(this.authoritiesMaps[key]);
+                }
+                this.callback && this.callback(list);
+                close && close();
+            },
+            select(data,key){
+                console.log(data.uuid);
+                let obj = this.authoritiesMaps[data.uuid];
+                obj[key] = obj[key] == 0?1:0;
+                console.log(this.authoritiesMaps)
             },
             filterAuthorities(){
-                
+                let maps = {}
+                for(var items of this.authoritiesList){
+                    if(items.list.length > 0){
+                        for(var _items of items.list){
+                            maps[_items.uuid] = _items;
+                        }
+                    }
+                }
+                this.authoritiesMaps = maps;
             }
 
         },
@@ -207,6 +98,7 @@
             li{
                 .wrapper{
                     margin-bottom: 10px;
+                    height: 20px;
                     .name{
                         width: 150px;
                         float: left;
