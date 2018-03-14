@@ -184,7 +184,10 @@
                     return false;
                 }
                 if(this.account.uuid){
-
+                    api.modifyAccount(this.account,() => {
+                        this.callback && this.callback();
+                        close && close();
+                    })
                 }else{
                     api.createAccount(this.account,() => {
                         this.callback && this.callback();

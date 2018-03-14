@@ -113,7 +113,7 @@
 		</div>
 		<div ref="operate" class="operate">
 			<el-button @click="goAddAccount">添加</el-button>
-			<el-button type="danger">删除</el-button>
+			<!-- <el-button type="danger">删除</el-button> -->
 		</div>
 		<div class="filter_list">
 			<el-table
@@ -123,10 +123,10 @@
 			    tooltip-effect="dark"
 			    style="width: 100%"
 			    @selection-change="">
-			    <el-table-column
+<!-- 			    <el-table-column
 			      type="selection"
 			      width="55">
-			    </el-table-column>
+			    </el-table-column> -->
 			    <el-table-column
 			      prop="loginName"
 			      label="账号名称"
@@ -265,11 +265,29 @@
 					}
 				})
 			},
-			handleEdit(){
-				
+			handleEdit(index,data){
+				newAccount({
+					user:this.user,
+					account:data,
+					callback:() => {
+						this.getAccountList(1);
+					}
+				})
 			},
-			handleDelete(){
-
+			handleDelete(index,data){
+				console.log(data)
+				let msg = "确定要删除账号”"+data.loginName+"“吗？"
+				this.$confirm(msg, '提示', {
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消',
+		          	type: 'warning'
+		        }).then(() => {
+		          	this.$store.dispatch('limitStore/account/deleteAccount',{uuid:data.uuid}).then(() => {
+		          		this.getAccountList();
+					})
+		        }).catch(() => {
+		                   
+		        });
 			},
 			handleSizeChange(limit){
 				this.getAccountList(1,limit);
