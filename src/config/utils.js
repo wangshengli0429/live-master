@@ -1,4 +1,4 @@
-// import Toast from '@/modules/widget/toast'
+import Toast from '@/modules/widget/toast'
 
 
 /*路由跳转*/
@@ -155,7 +155,14 @@ export const httpAgent = function(url, requestType, param, successCb,erroCb){
       }else if(data.result == -10100){//强制升级客户端
         //mandatoryUpgrade();
       }else{
-        erroCb && erroCb(data);
+        if(erroCb){
+          erroCb && erroCb(data);
+        }else{
+          Toast({
+            content:data.msg || "报错了",
+            type:"error"
+          })
+        }
       }
     }else{
       successCb && successCb(data);

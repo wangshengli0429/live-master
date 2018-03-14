@@ -42,7 +42,10 @@
             <div class="items">
                 <div class="name">设置权限</div>
                 <div class="content" @click="goSetLimit">
-                    <el-input placeholder="设置权限" :value="filterLimit" :readonly="true"></el-input>
+                    <el-input
+                    type="textarea"
+                    :autosize="{ minRows: 2, maxRows: 4}"
+                     placeholder="设置权限" :value="filterLimit" :readonly="true"></el-input>
                 </div>
             </div>
         </div>

@@ -6,6 +6,8 @@ import homeStore from '@/modules/home/store'
 import userStore from '@/modules/user/store'
 import actorStore from '@/modules/actor/store'
 import limitStore from '@/modules/limit/store'
+import platStore from '@/modules/platform/store'
+import groupStore from '@/modules/group/store'
 
 
 
@@ -17,7 +19,9 @@ const store = new Vuex.Store({
 		homeStore,
 		userStore,
 		actorStore,
-		limitStore
+		limitStore,
+		platStore,
+		groupStore
 	},
 	plugins: process.env.NODE_ENV !== 'production'
     ? [createLogger()]

@@ -119,7 +119,7 @@
 			    	/deep/ .el-input{
 			    		margin-bottom: 15px;
 			    		.el-input__inner{
-			    			height: 40px;
+			    			height: 40px !important;
 			    		}
 			    	}
 			    	/deep/ .el-button{

@@ -9,23 +9,23 @@ export default {
    * @param successCb
    * @param erroCb
    */
-  getGroupList( successCb, erroCb){
-    let url = `${config_server.server_api}/login.json`;
-    // let params = {
-    //   identify,
-    //   password
-    // }
-    // httpAgent(url,'GET', params,successCb,erroCb)
-    const temp = {
-      list:[{
-        name:"测试工会",
-        uuid:"11112"
-      },
-      {
-        name:"测试工会2",
-        uuid:"22211"
-      }]
+  getGroupList({orgId,parentId,status,searchKey,start,limit}, successCb, erroCb){
+    let url = `${config_server.server_api}/org.json`;
+    let params = {
+      orgId,
+      orgType:"UNION",
+      start,
+      limit,
     }
-    successCb(temp);
+    if(status){
+      params.status = status;
+    }
+    if(searchKey){
+      params.searchKey = searchKey;
+    }
+    if(parentId){
+      params.parentId = parentId;
+    }
+    httpAgent(url,'GET', params,successCb,erroCb)
   },
 }

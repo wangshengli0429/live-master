@@ -6,7 +6,7 @@
 					账号名称：
 				</div>
 				<div class="content">
-					<el-input v-model="filter.name" placeholder="请输入账号名称"></el-input>
+					<el-input :clearable="true" v-model="filter.loginName" placeholder="请输入账号名称"></el-input>
 				</div>
 			</div>
 			<div class="filter_items">
@@ -14,9 +14,9 @@
 					账号组：
 				</div>
 				<div class="content">
-					<el-select v-model="filter.account_group" @change="" placeholder="请选择账号组">
+					<el-select :clearable="true" @change="changeAuthorityGroup" v-model="filter.authorityGroupId" placeholder="请选择账号组">
 					    <el-option
-							v-for="item in accountGroupList"
+							v-for="item in authorityGroup"
 							:key="item.uuid"
 							:label="item.name"
 							:value="item.uuid"
@@ -30,9 +30,9 @@
 					数据级别：
 				</div>
 				<div class="content">
-					<el-select v-model="filter.level" @change="" placeholder="请选择数据级别">
+					<el-select :clearable="true" :disabled="disabledOrgType" v-model="filter.authorityGroupOrgType" @change="" placeholder="请选择数据级别">
 					    <el-option
-							v-for="item in levelList"
+							v-for="item in orgType"
 							:key="item.uuid"
 							:label="item.name"
 							:value="item.uuid"
@@ -46,7 +46,15 @@
 					平台名称：
 				</div>
 				<div class="content">
-					<el-input v-model="filter.platform" placeholder="请输入平台名称"></el-input>
+					<el-select :clearable="true" v-model="filter.platId" @change="changePlat" placeholder="请选择平台">
+					    <el-option
+							v-for="item in platList"
+							:key="item.uuid"
+							:label="item.name"
+							:value="item.uuid"
+							>
+					    </el-option>
+					</el-select>
 				</div>
 			</div>
 			<div class="filter_items">
@@ -54,7 +62,15 @@
 					公会名称：
 				</div>
 				<div class="content">
-					<el-input v-model="filter.group" placeholder="请输入公会名称"></el-input>
+					<el-select :clearable="true" v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会">
+					    <el-option
+							v-for="item in unionList"
+							:key="item.uuid"
+							:label="item.name"
+							:value="item.uuid"
+							>
+					    </el-option>
+					</el-select>
 				</div>
 			</div>
 			<div class="filter_items">
@@ -62,7 +78,7 @@
 					状态：
 				</div>
 				<div class="content">
-					<el-select v-model="filter.status" @change="" placeholder="请选择状态">
+					<el-select :clearable="true" v-model="filter.status" @change="" placeholder="请选择状态">
 					    <el-option
 							v-for="item in statusList"
 							:key="item.uuid"
@@ -78,7 +94,7 @@
 					管理员：
 				</div>
 				<div class="content">
-					<el-input v-model="filter.group" placeholder="请输入管理员名称"></el-input>
+					<el-input :clearable="true" v-model="filter.nickname" placeholder="请输入管理员名称"></el-input>
 				</div>
 			</div>
 			<div class="filter_items">
@@ -86,12 +102,13 @@
 					联系方式：
 				</div>
 				<div class="content">
-					<el-input v-model="filter.group" placeholder="请输入管理员联系方式"></el-input>
+					<el-input :clearable="true" v-model="filter.mobile" placeholder="请输入管理员联系方式"></el-input>
 				</div>
 			</div>
 
 			<div class="opt_btn">
-				<el-button @click="" type="primary">查询</el-button>
+				<el-button @click="getAccountList(1)" type="primary">查询</el-button>
+				<el-button @click="resetFilter">重置</el-button>
 			</div>
 		</div>
 		<div ref="operate" class="operate">
@@ -111,47 +128,50 @@
 			      width="55">
 			    </el-table-column>
 			    <el-table-column
-			      prop="name"
+			      prop="loginName"
 			      label="账号名称"
-			      width="120">
+			      width="120"
+			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
 			      label="创建时间"
-			      width="120">
-				    <template slot-scope="scope">{{ scope.row.create_date | timesToDate('yyyy-MM-dd') }}</template>
+			      width="120"
+			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.createDate | timesToDate('yyyy-MM-dd') }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="account_group"
 			      label="账号组"
 			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.authorityGroup && scope.row.authorityGroup.name}}</template>
+
 			    </el-table-column>
 			    <el-table-column
-			      prop="level"
 			      label="数据级别"
 			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.org && scope.row.org.orgType | filterOrgType }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="platform"
+			      prop="platName"
 			      label="平台名称"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="group"
+			      prop="unionName"
 			      label="公会名称"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="status"
 			      label="状态"
 			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.status == 0?"已启用":"已停用" }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="manager"
+			      prop="nickname"
 			      label="管理员"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="manager_mobile"
+			      prop="mobile"
 			      label="联系电话"
 			      show-overflow-tooltip>
 			    </el-table-column>
@@ -176,10 +196,10 @@
 			      @size-change="handleSizeChange"
 			      @current-change="handleCurrentChange"
 			      :current-page="currentPage"
-			      :page-sizes="[100, 200, 300, 400]"
-			      :page-size="100"
+			      :page-sizes="[20, 30, 40, 50]"
+			      :page-size="limit"
 			      layout="total, sizes, prev, pager, next, jumper"
-			      :total="400">
+			      :total="total">
 			    </el-pagination>
 			</div>
 
@@ -187,46 +207,62 @@
 	</div>
 </template>
 <script>
+	import {mapGetters,mapActions} from 'vuex';
 	import newAccount from '@/modules/widget/new-account'
 	export default{
 		data(){
 			return {
-				accountList:[],
-				accountGroupList:[],
-				currentPage:1,
+				authorityGroup:[],
+				platList:[],
+				unionList:[],
 				tableHeight:200,
-				levelList:[{
-					uuid:"system",
+				orgType:[{
+					uuid:"SYSTEM",
 					name:"系统",
 				},{
-					uuid:"platform",
+					uuid:"PLAT",
 					name:"平台",
 				},{
-					uuid:"group",
+					uuid:"UNION",
 					name:"公会",
 				}],
 				statusList:[{
-					uuid:"stop",
+					uuid:1,
 					name:"已停用",
 				},{
-					uuid:"start",
+					uuid:0,
 					name:"已启用",
 				}],
+				disabledOrgType:false,
 				filter:{
-					name:"",
-					account_group:"",
+					nickname:"",
+					authorityGroupId:"",
+					authorityGroupOrgType:"",
 					status:"",
-					platform:"",
-					group:"",
-					manager:"",
-					manager_mobile:""
+					orgId:"",
+					platId:"",
+					unionId:"",
+					loginName:"",
+					mobile:"",
 				}
 			}
 		},
+		computed: {
+			...mapGetters({
+				accountList: 'limitStore/account/accountList',
+				total: 'limitStore/account/total',
+				currentPage: 'limitStore/account/currentPage',
+				limit: 'limitStore/account/limit',
+				user: 'userStore/user/user',
+			})
+	    },
 		methods:{
 			goAddAccount(){//新增账号
 				newAccount({
-
+					user:this.user,
+					callback:() => {
+						this.getAccountList(1);
+					}
 				})
 			},
 			handleEdit(){
@@ -235,11 +271,11 @@
 			handleDelete(){
 
 			},
-			handleSizeChange(){
-
+			handleSizeChange(limit){
+				this.getAccountList(1,limit);
 			},
-			handleCurrentChange(){
-
+			handleCurrentChange(page){
+				this.getAccountList(page);
 			},
 			setHeight(){
 		    	var container = this.$refs.container.offsetHeight;
@@ -250,6 +286,78 @@
 		    	console.log(tableHeight);
 		    	this.tableHeight = tableHeight;
 		    },
+		    resetFilter(){
+		    	this.filter = {
+					nickname:"",
+					authorityGroupId:"",
+					authorityGroupOrgType:"",
+					status:"",
+					orgId:"",
+					platId:"",
+					unionId:"",
+					loginName:"",
+					mobile:"",
+				};
+				this.getAccountList(1);
+		    },
+		    changePlat(uuid){
+		    	if(uuid){
+		    		this.filter.orgId = uuid;
+		    	}else{
+		    		this.filter.orgId = "";
+		    	}
+		    	this.filter.unionId = "";
+		    	this.getUnionList(uuid);
+		    },
+		    changeUnion(uuid){
+		    	if(uuid){
+		    		this.filter.orgId = uuid;
+		    	}else{
+		    		if(this.filter.platId){
+		    			this.filter.orgId = this.filter.platId;
+		    		}
+		    	}
+		    },
+		    getAccountList(currentPage,limit){//获取账号列表
+		    	currentPage = currentPage || this.currentPage;
+		    	limit = limit || this.limit;
+		    	let filter = this.filter;
+				this.$store.dispatch('limitStore/account/getAccountList',{currentPage,limit,filter}).then(() => {
+
+				})
+		    },
+		    getAccountGroup(){
+		    	this.$store.dispatch('limitStore/limit/getAccountGroup',{currentPage:1,limit:50}).then((resp) => {
+		    		this.authorityGroup = resp.authorityGroup;
+				})
+		    },
+		    getPlatList(){
+		    	const orgId = this.user.orgId;
+		    	this.$store.dispatch('platStore/platform/getPlatFormList',{orgId,currentPage:1,limit:50}).then((resp) => {
+		    		this.platList = resp.list;
+				})
+		    },
+		    getUnionList(parentId){
+		    	let orgId = this.user.orgId;
+		    	this.$store.dispatch('groupStore/group/getGroupList',{orgId,parentId,currentPage:1,limit:50}).then((resp) => {
+		    		this.unionList = resp.list;
+				})
+		    },
+		    changeAuthorityGroup(data){
+		    	console.log(data)
+		    	var obj = this.authorityGroup.filter(function(item) { 
+				    return item.uuid == data; 
+				});
+				console.log(obj);
+				if(obj.length > 0){
+					this.filter.authorityGroupOrgType = obj[0].orgType;
+					this.disabledOrgType = true;
+				}else{
+					this.disabledOrgType = false;
+					this.filter.authorityGroupOrgType = "";
+				}
+				
+		    }
 		},
 		mounted(){
 	    	setTimeout(() => {
@@ -257,25 +365,12 @@
 	    	})
 	    },
 		created(){
-			const list = []
-			for(var i=0;i<30;i++){
-				var temp = {
-					uuid:i+1,
-					name:"账号名称"+(i+1),
-					create_date:new Date().getTime(),
-					password:"123456",
-					account_group:"平台组1",
-					level:"平台",
-					platform:"平台"+(i+1),
-					group:"公会"+(i+1),
-					status:"已启用",
-					manager:"管理员1",
-					manager_mobile:"18311344273",
+			this.getAccountList();
+			this.getAccountGroup();
 
-				}
-				list.push(temp);
-			}
-			this.accountList = list;
+			this.getPlatList();
+			this.getUnionList();
+
 		}
 	}
 </script>
@@ -307,6 +402,9 @@
 			  		}
 			  		/deep/ .el-input{
 			  			width: 150px;
+			  		}
+			  		/deep/ .el-input.is-disabled .el-input__inner{
+			  			height: 30px !important;
 			  		}
   				}
   			}
