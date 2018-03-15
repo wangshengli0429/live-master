@@ -35,7 +35,7 @@ module.exports = {
           target: 'http://xinghuo.vnest.net',
           changeOrigin: true,
           secure: false
-      }
+      },
     }
   },
   module: {

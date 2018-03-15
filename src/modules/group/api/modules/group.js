@@ -9,7 +9,7 @@ export default {
    * @param successCb
    * @param erroCb
    */
-  getGroupList({orgId,parentId,status,searchKey,start,limit}, successCb, erroCb){
+  getGroupList({orgId,parentId,filter,status,searchKey,start,limit}, successCb, erroCb){
     let url = `${config_server.server_api}/org.json`;
     let params = {
       orgId,
@@ -26,6 +26,29 @@ export default {
     if(parentId){
       params.parentId = parentId;
     }
+
+    if(filter){
+      if(filter.name){
+        params.searchKey = filter.name
+      }
+      if(filter.status){
+        params.status = filter.status
+      }
+      if(filter.id){
+        params.id = filter.id
+      }
+      if(filter.orgId){
+        params.orgId = filter.orgId
+      }
+    }
+
+
+
+
+
+
+
+
     httpAgent(url,'GET', params,successCb,erroCb)
   },
 }

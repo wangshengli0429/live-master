@@ -1,68 +1,53 @@
 <template>
 	<div ref="container" class="platform">
 		<div ref="operate" class="operate">
-			<el-button type="danger">删除</el-button>
+			<el-button @click="goAddPlat">添加</el-button>
 		</div>
 		<div class="platform_list">
 			<el-table
 			    ref="multipleTable"
-			    :data="platformList"
+			    :data="platList"
 			    :height="tableHeight"
 			    tooltip-effect="dark"
 			    style="width: 100%"
 			    @selection-change="">
-			    <el-table-column
+			<!--     <el-table-column
 			      type="selection"
 			      width="55">
-			    </el-table-column>
+			    </el-table-column> -->
 			    <el-table-column
-			      prop="uuid"
+			      prop="id"
 			      label="平台ID"
 			      width="100">
 			    </el-table-column>
 			    <el-table-column
 			      prop="name"
 			      label="平台名称"
-			      width="120">
+			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
 			      label="创建时间"
-			      width="120">
-				    <template slot-scope="scope">{{ scope.row.create_date | timesToDate('yyyy-MM-dd') }}</template>
+			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.createDate | timesToDate('yyyy-MM-dd') }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="divided"
+			      prop="shareRatio"
 			      label="平台分成"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="threshold"
+			      prop="entryMax"
 			      label="入账阀值"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="status"
 			      label="状态"
 			      show-overflow-tooltip>
-			    </el-table-column>
-			    <el-table-column
-			      prop="account_group"
-			      label="账号组"
-			      show-overflow-tooltip>
-			    </el-table-column>
-			    <el-table-column
-			      prop="manager.account"
-			      label="管理员账号"
-			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.status == 0?"已启用":"已停用" }}</template>
 			    </el-table-column>
 			    <el-table-column
 			      prop="manager.name"
 			      label="管理员"
-			      show-overflow-tooltip>
-			    </el-table-column>
-			    <el-table-column
-			      prop="manager.mobile"
-			      label="联系电话"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column label="操作" width="180" fixed="right">
@@ -83,7 +68,8 @@
 	</div>
 </template>
 <script>
-	import newAccountGroup from '@/modules/widget/new-account-group'
+	import {mapGetters,mapActions} from 'vuex';
+	import newPlat from '@/modules/widget/new-plat'
 	export default{
 		data(){
 			return {
@@ -92,15 +78,55 @@
 
 			}
 		},
+		computed:{
+			...mapGetters({
+				user: 'userStore/user/user',
+				total: 'platStore/platform/total',
+				currentPage: 'platStore/platform/currentPage',
+				limit: 'platStore/platform/limit',
+				platList: 'platStore/platform/platList',
+			})
+		},
 		methods:{
-			handleEdit(){
-				newAccountGroup({
-					
+			goAddPlat(){
+				newPlat({
+					user:this.user,
+					callback:() => {
+						this.getPlatList(1);
+					}
 				})
 			},
-			handleDelete(){
+			handleEdit(index,data){
+				newPlat({
+					user:this.user,
+					plat:data,
+					callback:() => {
+						this.getPlatList();
+					}
+				})
+			},
+			handleDelete(index,data){
+				let msg = "确定要删除账号”"+data.name+"“吗？"
+				this.$confirm(msg, '提示', {
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消',
+		          	type: 'warning'
+		        }).then(() => {
+		          	this.$store.dispatch('platStore/platform/deletePlat',{uuid:data.uuid}).then(() => {
+		          		this.getPlatList();
+					})
+		        }).catch(() => {
+		                   
+		        });
 
 			},
+			getPlatList(currentPage,limit){//获取账号列表
+		    	currentPage = currentPage || this.currentPage;
+		    	limit = limit || this.limit;
+		    	const orgId = this.user.orgId;
+				this.$store.dispatch('platStore/platform/getPlatFormList',{orgId,currentPage,limit}).then(() => {
+				})
+		    },
 			setHeight(){
 		    	var container = this.$refs.container.offsetHeight;
 		    	var operate = this.$refs.operate.offsetHeight;
@@ -115,25 +141,7 @@
 	    	})
 	    },
 		created(){
-			const list = []
-			for(var i=0;i<30;i++){
-				var temp = {
-					uuid:i+1,
-					name:"平台"+(i+1),
-					create_date:new Date().getTime(),
-					divided:"40%",
-					threshold:"10000",
-					status:"已启用",
-					account_group:"系统",
-					manager:{
-						account:"wedddd",
-						name:"张飒",
-						mobile:"18311322222"
-					}
-				}
-				list.push(temp);
-			}
-			this.platformList = list;
+			this.getPlatList();
 		}
 	}
 </script>

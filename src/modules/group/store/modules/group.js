@@ -6,7 +6,6 @@ const state = {
 	total:0,
 	currentPage:1,
 	limit:20,
-	authorities:[]
 }
 
 // getters
@@ -15,16 +14,15 @@ const getters = {
 	total: state => state.total,
 	currentPage: state => state.currentPage,
 	limit: state => state.limit,
-	authorities: state => state.authorities,
 
 }
 
 // actions
 const actions = {
-	getGroupList ({commit, state,dispatch},{orgId,parentId,status,searchKey,currentPage,limit}){
+	getGroupList ({commit, state,dispatch},{orgId,parentId,filter,status,searchKey,currentPage,limit}){
 		const start = (currentPage-1)*limit;
 		return new Promise((resolve,reject)=>{
-			$API.group.getGroupList({start,limit,orgId,parentId,status,searchKey},resp => {
+			$API.group.getGroupList({start,limit,orgId,filter,parentId,status,searchKey},resp => {
     			commit(types.INIT_GROUP_LIST,{resp,currentPage,limit})
 				resolve(resp);
 			})

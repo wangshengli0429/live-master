@@ -8,27 +8,30 @@ export default {
       start,
       limit
     }
-    if(filter.nickname){
-      params.nickname = filter.nickname;
+    if(filter){
+      if(filter.nickname){
+        params.nickname = filter.nickname;
+      }
+      if(filter.authorityGroupId){
+        params.authorityGroupId = filter.authorityGroupId;
+      }
+      if(filter.authorityGroupOrgType){
+        params.authorityGroupOrgType = filter.authorityGroupOrgType;
+      }
+      if(filter.status){
+        params.status = filter.status;
+      }
+      if(filter.loginName){
+        params.loginName = filter.loginName;
+      }
+      if(filter.mobile){
+        params.mobile = filter.mobile;
+      }
+      if(filter.orgId){
+        params.orgId = filter.orgId;
+      }
     }
-    if(filter.authorityGroupId){
-      params.authorityGroupId = filter.authorityGroupId;
-    }
-    if(filter.authorityGroupOrgType){
-      params.authorityGroupOrgType = filter.authorityGroupOrgType;
-    }
-    if(filter.status){
-      params.status = filter.status;
-    }
-    if(filter.loginName){
-      params.loginName = filter.loginName;
-    }
-    if(filter.mobile){
-      params.mobile = filter.mobile;
-    }
-    if(filter.orgId){
-      params.orgId = filter.orgId;
-    }
+    
 
 
     httpAgent(url,'GET', params,successCb,erroCb)

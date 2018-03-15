@@ -6,7 +6,6 @@ const state = {
 	total:0,
 	currentPage:1,
 	limit:20,
-	authorities:[]
 }
 
 // getters
@@ -15,7 +14,6 @@ const getters = {
 	total: state => state.total,
 	currentPage: state => state.currentPage,
 	limit: state => state.limit,
-	authorities: state => state.authorities,
 
 }
 
@@ -30,28 +28,13 @@ const actions = {
 			})
 	    })
 	},
-	// getAuthoritiesList ({commit, state,dispatch}){
-	// 	return new Promise((resolve,reject)=>{
-	// 		$API.limit.getAuthoritiesList(resp => {
- //    			commit(types.INIT_AUTHORITIES_LIST,resp)
-	// 			resolve(resp);
-	// 		})
-	//     })
-	// },
-	// getAccountGroupDetail ({commit, state,dispatch},{uuid}){
-	// 	return new Promise((resolve,reject)=>{
-	// 		$API.limit.getAccountGroupDetail({uuid},resp => {
-	// 			resolve(resp);
-	// 		})
-	//     })
-	// },
-	// deleteAccountGroup ({commit, state,dispatch},{uuid}){
-	// 	return new Promise((resolve,reject)=>{
-	// 		$API.limit.deleteAccountGroup({uuid},resp => {
-	// 			resolve(resp);
-	// 		})
-	//     })
-	// },
+	deletePlat ({commit, state,dispatch},{uuid}){
+		return new Promise((resolve,reject)=>{
+			$API.platform.deletePlat({uuid},resp => {
+				resolve(resp);
+			})
+	    })
+	},
 
 	
 
@@ -68,11 +51,6 @@ const mutations = {
 	    state.platList = resp.list;
 	    state.total = resp.count;
 	},
-	// [types.INIT_AUTHORITIES_LIST] (state,resp) {
-	//     state.authorities = resp.authorities;
-	// },
-	
-
 
 }
 

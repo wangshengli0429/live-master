@@ -10,7 +10,7 @@
             <div class="items">
                 <div class="name">数据级别</div>
                 <div class="content">
-                    <el-select v-model="authorityGroup.orgType" placeholder="请选择">
+                    <el-select :disabled="authorityGroup.uuid?true:false" v-model="authorityGroup.orgType" placeholder="请选择">
                         <el-option
                           v-for="item in orgTypeList"
                           :key="item.uuid"

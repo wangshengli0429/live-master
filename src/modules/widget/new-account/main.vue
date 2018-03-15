@@ -32,7 +32,7 @@
                     <div class="items">
                         <div class="name">数据级别</div>
                         <div class="content">
-                            <el-select :disabled="true" v-model="account.authorityGroupOrgType" placeholder="请选择账号组">
+                            <el-select :disabled="true" v-model="account.authorityGroupOrgType" placeholder="请选择数据级别">
                                 <el-option
                                     v-for="item in orgType"
                                     :key="item.uuid"
@@ -48,7 +48,7 @@
                             平台名称
                         </div>
                         <div class="content">
-                            <el-select :clearable="true" v-model="account.platId" @change="" placeholder="请选择平台">
+                            <el-select :disabled="disabledPlat" :clearable="true" v-model="account.platId" @change="" placeholder="请选择平台">
                                 <el-option
                                     v-for="item in platList"
                                     :key="item.uuid"
@@ -64,7 +64,7 @@
                             公会名称
                         </div>
                         <div class="content">
-                            <el-select :clearable="true" v-model="account.unionId" @change="" placeholder="请选择公会">
+                            <el-select :disabled="disabledUnion" :clearable="true" v-model="account.unionId" @change="" placeholder="请选择公会">
                                 <el-option
                                     v-for="item in unionList"
                                     :key="item.uuid"
@@ -90,7 +90,7 @@
                     <div class="items">
                         <div class="name">状态</div>
                         <div class="content">
-                            <el-select :clearable="true" v-model="account.status" placeholder="请选择账号组">
+                            <el-select v-model="account.status" placeholder="请选择状态">
                                 <el-option
                                     v-for="item in statusList"
                                     :key="item.uuid"
@@ -144,6 +144,8 @@
                 }],
                 platList:[],
                 unionList:[],
+                disabledPlat:false,
+                disabledUnion:false,
                 account:{
                     authorityGroupId:"",
                     authorityGroupOrgType:"",
@@ -170,6 +172,19 @@
                 });
                 if(obj.length > 0){
                     this.account.authorityGroupOrgType = obj[0].orgType;
+                    if(obj[0].orgType == 'SYSTEM'){
+                        this.disabledPlat = false;
+                        this.disabledUnion = false;
+                    }else if(obj[0].orgType == 'PLAT'){
+                        this.disabledPlat = true;
+                        this.disabledUnion = false;
+                    }else if(obj[0].orgType == 'UNION'){
+                        this.disabledPlat = true;
+                        this.disabledUnion = true;
+                    }
+
+
+
                 }else{
                     this.account.authorityGroupOrgType = "";
                 }
@@ -183,6 +198,15 @@
                     });
                     return false;
                 }
+
+                if(!this.account.authorityGroupId){
+                    this.$message({
+                      message: '请选择账号组',
+                      type: 'error'
+                    });
+                    return false;
+                }
+
                 if(this.account.uuid){
                     api.modifyAccount(this.account,() => {
                         this.callback && this.callback();
