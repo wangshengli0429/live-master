@@ -42,13 +42,14 @@ export default {
       }
     }
 
-
-
-
-
-
-
-
     httpAgent(url,'GET', params,successCb,erroCb)
   },
+  deleteGroup({uuid},successCb, erroCb){
+    let url = `${config_server.server_api}/org/${uuid}.json`;
+    let params = {
+    }
+    httpAgent(url,'DELETE', params,successCb,erroCb)
+  },
+
+  
 }

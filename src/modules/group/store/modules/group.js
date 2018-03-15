@@ -43,13 +43,13 @@ const actions = {
 	// 		})
 	//     })
 	// },
-	// deleteAccountGroup ({commit, state,dispatch},{uuid}){
-	// 	return new Promise((resolve,reject)=>{
-	// 		$API.limit.deleteAccountGroup({uuid},resp => {
-	// 			resolve(resp);
-	// 		})
-	//     })
-	// },
+	deleteGroup ({commit, state,dispatch},{uuid}){
+		return new Promise((resolve,reject)=>{
+			$API.limit.deleteGroup({uuid},resp => {
+				resolve(resp);
+			})
+	    })
+	},
 
 	
 

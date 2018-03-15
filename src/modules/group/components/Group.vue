@@ -72,7 +72,7 @@
 			</div>
 		</div>
 		<div ref="operate" class="operate">
-			<el-button>添加</el-button>
+			<el-button @click="goAddUnion">添加</el-button>
 		</div>
 		<div class="filter_list">
 			<el-table
@@ -126,7 +126,7 @@
 			    <el-table-column
 			      label="代发工资"
 			      show-overflow-tooltip>
-				   <template slot-scope="scope">{{ scope.row.status == 0?"代发工资":"自动" }}</template>
+				   <template slot-scope="scope">{{ scope.row.autoPay == 0?"代发工资":"自动" }}</template>
 			    </el-table-column>
 			    <el-table-column
 			      label="管理员账号"
@@ -166,6 +166,10 @@
 </template>
 <script>
 	import {mapGetters,mapActions} from 'vuex';
+	import newUnion from '@/modules/widget/new-union'
+
+
+
 	export default{
 		data(){
 			return {
@@ -198,11 +202,36 @@
 			})
 		},
 		methods:{
-			handleEdit(){
-				
+			handleEdit(index,data){
+				newUnion({
+					user:this.user,
+					union:data,
+					callback:() => {
+						this.getUnionList();
+					}
+				})
 			},
-			handleDelete(){
-
+			handleDelete(index,data){
+				let msg = "确定要删除”"+data.name+"“吗？"
+				this.$confirm(msg, '提示', {
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消',
+		          	type: 'warning'
+		        }).then(() => {
+		          	this.$store.dispatch('groupStore/group/deleteGroup',{uuid:data.uuid}).then(() => {
+		          		this.getPlatList();
+					})
+		        }).catch(() => {
+		                   
+		        });
+			},
+			goAddUnion(){
+				newUnion({
+					user:this.user,
+					callback:() => {
+						this.getUnionList(1);
+					}
+				})
 			},
 			resetFilter(){
 				this.filter = {

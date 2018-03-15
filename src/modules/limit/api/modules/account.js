@@ -2,7 +2,7 @@ import { httpAgent } from '@/config/utils'
 import qs from 'qs'
 
 export default {
-  getAccountList( {start,limit,filter} ,successCb, erroCb){
+  getAccountList( {start,limit,filter,scope} ,successCb, erroCb){
     let url = `${config_server.server_api}/users/admins.json`;
     let params = {
       start,
@@ -30,6 +30,10 @@ export default {
       if(filter.orgId){
         params.orgId = filter.orgId;
       }
+    }
+
+    if(scope){
+      params.scope = scope;
     }
     
 

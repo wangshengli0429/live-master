@@ -146,7 +146,7 @@
                 
             },
             getAccountList(){
-                $API.limit.getAccountList({start:0,limit:50},resp => {
+                $API.limit.getAccountList({start:0,limit:50,scope:"OrgIdNull"},resp => {
                     this.accountList = resp.list;
                 })
             },

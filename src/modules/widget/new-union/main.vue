@@ -1,26 +1,20 @@
 <template>
-    <modal :title="'新增账号'" @destroy="destroy" @submit="submit">
+    <modal :title="filterTitle" @destroy="destroy" @submit="submit">
         <div class="modify_actor" :style="{height:height+'px'}">
             <div class="group">
                 <div class="warpper clearfix">
                     <div class="items">
-                        <div class="name">账号名称</div>
+                        <div class="name">公会名称</div>
                         <div class="content">
-                            <el-input  :clearable="true" v-model="account.loginName" placeholder="请输入账号名称"></el-input>
+                            <el-input  :clearable="true" v-model="union.name" placeholder="请输入公会名称"></el-input>
                         </div>
                     </div>
                     <div class="items">
-                        <div class="name">密码</div>
+                        <div class="name">状态</div>
                         <div class="content">
-                            <el-input  :clearable="true" v-model="account.password" placeholder="请输入密码"></el-input>
-                        </div>
-                    </div>
-                    <div class="items">
-                        <div class="name">账号组</div>
-                        <div class="content">
-                            <el-select :clearable="true" @change="changeAuthorityGroup" v-model="account.authorityGroupId" placeholder="请选择账号组">
+                            <el-select v-model="union.status" placeholder="请选择状态">
                                 <el-option
-                                    v-for="item in authorityGroup"
+                                    v-for="item in statusList"
                                     :key="item.uuid"
                                     :label="item.name"
                                     :value="item.uuid"
@@ -30,25 +24,9 @@
                         </div>
                     </div>
                     <div class="items">
-                        <div class="name">数据级别</div>
+                        <div class="name">平台</div>
                         <div class="content">
-                            <el-select :disabled="true" v-model="account.authorityGroupOrgType" placeholder="请选择数据级别">
-                                <el-option
-                                    v-for="item in orgType"
-                                    :key="item.uuid"
-                                    :label="item.name"
-                                    :value="item.uuid"
-                                    >
-                                </el-option>
-                            </el-select>
-                        </div>
-                    </div>
-                    <div class="items">
-                        <div class="name">
-                            平台名称
-                        </div>
-                        <div class="content">
-                            <el-select :disabled="disabledPlat" :clearable="true" v-model="account.platId" @change="" placeholder="请选择平台">
+                            <el-select v-model="union.parentId" placeholder="请选择平台">
                                 <el-option
                                     v-for="item in platList"
                                     :key="item.uuid"
@@ -60,13 +38,23 @@
                         </div>
                     </div>
                     <div class="items">
-                        <div class="name">
-                            公会名称
-                        </div>
+                        <div class="name">分成比例</div>
                         <div class="content">
-                            <el-select :disabled="disabledUnion" :clearable="true" v-model="account.unionId" @change="" placeholder="请选择公会">
+                            <el-input  :clearable="true" v-model="union.shareRatio" placeholder="请输入分成比例"></el-input>
+                        </div>
+                    </div>
+                    <div class="items">
+                        <div class="name">承担税点</div>
+                        <div class="content">
+                            <el-input  :clearable="true" v-model="union.taxRatio" placeholder="请输入承担税点"></el-input>
+                        </div>
+                    </div>
+                    <div class="items">
+                        <div class="name">代发工资</div>
+                        <div class="content">
+                            <el-select v-model="union.autoPay" placeholder="请选择状态">
                                 <el-option
-                                    v-for="item in unionList"
+                                    v-for="item in autoPayList"
                                     :key="item.uuid"
                                     :label="item.name"
                                     :value="item.uuid"
@@ -76,39 +64,22 @@
                         </div>
                     </div>
                     <div class="items">
-                        <div class="name">管理员昵称</div>
+                        <div class="name">管理员</div>
                         <div class="content">
-                            <el-input  :clearable="true"  v-model="account.nickname" placeholder="请输入管理员昵称"></el-input>
-                        </div>
-                    </div>
-                    <div class="items">
-                        <div class="name">电话</div>
-                        <div class="content">
-                            <el-input  :clearable="true"  v-model="account.mobile" placeholder="请输入电话"></el-input>
-                        </div>
-                    </div>
-                    <div class="items">
-                        <div class="name">状态</div>
-                        <div class="content">
-                            <el-select v-model="account.status" placeholder="请选择状态">
+                            <el-select v-model="union.admin" placeholder="请选择状态">
                                 <el-option
-                                    v-for="item in statusList"
+                                    v-for="item in accountList"
                                     :key="item.uuid"
-                                    :label="item.name"
+                                    :label="item.nickname"
                                     :value="item.uuid"
                                     >
                                 </el-option>
                             </el-select>
                         </div>
                     </div>
+
                 </div>
             </div>
-            
-
-
-
-
-
 
         </div>
     </modal>
@@ -125,15 +96,12 @@
             return {
                 height:200,
                 authorityGroup:[],
-                orgType:[{
-                    uuid:"SYSTEM",
-                    name:"系统",
+                autoPayList:[{
+                    uuid:1,
+                    name:"自动",
                 },{
-                    uuid:"PLAT",
-                    name:"平台",
-                },{
-                    uuid:"UNION",
-                    name:"公会",
+                    uuid:0,
+                    name:"代发工资",
                 }],
                 statusList:[{
                     uuid:1,
@@ -143,20 +111,27 @@
                     name:"已启用",
                 }],
                 platList:[],
-                unionList:[],
+                accountList:[],
                 disabledPlat:false,
-                disabledUnion:false,
-                account:{
-                    authorityGroupId:"",
-                    authorityGroupOrgType:"",
-                    nickname:"",
-                    mobile:"",
-                    loginName:"",
-                    password:"",
+                union:{
+                    name:"",
                     status:0,
-                    platId:"",
-                    unionId:""
+                    parentId:"",
+                    shareRatio:"",
+                    taxRatio:"",
+                    autoPay:0,
+                    orgType:"UNION"
+
                 }
+            }
+        },
+        computed:{
+            filterTitle(){
+                var title = "新增公会";
+                if(this.union.uuid){
+                    title = "修改公会";
+                }
+                return title;
             }
         },
         methods:{
@@ -166,65 +141,36 @@
                 this.$el.parentNode.removeChild(this.$el);
                 this.$destroy();
             },
-            changeAuthorityGroup(data){
-                var obj = this.authorityGroup.filter(function(item) { 
-                    return item.uuid == data; 
-                });
-                if(obj.length > 0){
-                    this.account.authorityGroupOrgType = obj[0].orgType;
-                    if(obj[0].orgType == 'SYSTEM'){
-                        this.disabledPlat = true;
-                        this.disabledUnion = true;
-                    }else if(obj[0].orgType == 'PLAT'){
-                        this.disabledPlat = false;
-                        this.disabledUnion = false;
-                    }else if(obj[0].orgType == 'UNION'){
-                        this.disabledPlat = true;
-                        this.disabledUnion = false;
-                    }
-
-
-
-                }else{
-                    this.account.authorityGroupOrgType = "";
-                }
-                
-            },
             submit(close){
-                if(!this.account.loginName){
+                if(!this.union.name){
                     this.$message({
-                      message: '请输入登录账号',
+                      message: '请输入公会名称',
                       type: 'error'
                     });
                     return false;
                 }
 
-                if(!this.account.authorityGroupId){
+                if(!this.union.parentId){
                     this.$message({
-                      message: '请选择账号组',
+                      message: '请选择平台',
                       type: 'error'
                     });
                     return false;
                 }
 
-                if(this.account.uuid){
-                    api.modifyAccount(this.account,() => {
+                if(this.union.uuid){
+                    api.modifyUnion(this.union,() => {
                         this.callback && this.callback();
                         close && close();
                     })
                 }else{
-                    api.createAccount(this.account,() => {
+                    api.createUnion(this.union,() => {
                         this.callback && this.callback();
                         close && close();
                     })
                 }
 
 
-            },
-            getAccountGroup(){
-                $API.limit.getAccountGroup({start:0,limit:50},resp => {
-                    this.authorityGroup = resp.authorityGroup;
-                })
             },
             getPlatList(){
                 const orgId = this.user.orgId;
@@ -232,10 +178,9 @@
                     this.platList = resp.list;
                 })
             },
-            getUnionList(){
-                const orgId = this.user.orgId;
-                $API.group.getGroupList({orgId,start:0,limit:50},resp => {
-                    this.unionList = resp.list;
+            getAccountList(){
+                $API.limit.getAccountList({start:0,limit:50,scope:"OrgIdNull"},resp => {
+                    this.accountList = resp.list;
                 })
             },
             setHeight(){
@@ -247,10 +192,10 @@
         },
         mounted(){
             this.setHeight();
-            this.getAccountGroup();
+            this.getAccountList();
+
 
             this.getPlatList();
-            this.getUnionList();
 
 
         }

@@ -28,6 +28,8 @@ export const createAccount = (account,successCb,erroCb) => {
     }else{
         if(account.platId){
             param.orgId = account.platId;
+        }else{
+            param.orgId = 'XsXBL85vaJK4zie1yLaxRy';
         }
     }
 

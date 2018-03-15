@@ -204,7 +204,7 @@
 </template>
 <script>
 	import {mapGetters,mapActions} from 'vuex';
-	import ModifyActor from '@/modules/widget/modify-actor'
+	import NewActor from '@/modules/widget/new-actor'
 
 
 	export default{
@@ -254,7 +254,7 @@
 	    		console.log(this.filter)
 	    	},
 	    	handleEdit(){
-	    		ModifyActor({
+	    		NewActor({
 	    			
 	    		})
 	    	},
