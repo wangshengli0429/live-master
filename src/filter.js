@@ -22,7 +22,17 @@ export const filter = (Vue) => {
     return result;
   })
 
-
+  Vue.filter('reflectStatus', (str) => {//数据级别
+    var result = "";
+    switch(str){
+      case 0: result = '待审核'; break;
+      case 1: result = '待打款'; break;
+      case 2: result = '提现成功'; break;
+      case 3: result = '自动提现'; break;
+      case 4: result = '被拒绝'; break;
+    }
+    return result;
+  })
 
 
 

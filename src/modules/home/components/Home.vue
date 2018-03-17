@@ -105,8 +105,52 @@
 
 					},{
 						name:"财务管理",
-						path:"/finance",
 						uuid:"nav_finance",
+						children:[{
+								name:"入账管理",
+								path:"/finance/account",
+								uuid:"nav_finance_account",
+								parent:{
+									name:"财务管理",
+									uuid:"nav_finance",
+								}
+							},{
+								name:"财务流水",
+								path:"/finance/flow",
+								uuid:"nav_finance_flow",
+								parent:{
+									name:"财务管理",
+									uuid:"nav_finance",
+								}
+							},{
+								
+								name:"提现管理",
+								path:"/finance/reflect",
+								uuid:"nav_finance_reflect",
+								parent:{
+									name:"财务管理",
+									uuid:"nav_finance",
+								}
+							},{
+								
+								name:"艺人薪资结算",
+								path:"/finance/actor",
+								uuid:"nav_finance_actor",
+								parent:{
+									name:"财务管理",
+									uuid:"nav_finance",
+								}
+							},{
+								
+								name:"经纪人薪资结算",
+								path:"/finance/agent",
+								uuid:"nav_finance_agent",
+								parent:{
+									name:"财务管理",
+									uuid:"nav_finance",
+								}
+							}
+						]
 					},{
 						name:"统计分析",
 						path:"/analyze",
