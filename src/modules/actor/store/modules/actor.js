@@ -51,8 +51,21 @@ const actions = {
 			})
 	    })
 	},
-
-
+	deleteActor ({commit, state,dispatch},{list}){
+		return new Promise((resolve,reject)=>{
+			$API.actor.deleteActor({list},resp => {
+				resolve(resp);
+			})
+	    })
+	},
+	assignActor ({commit, state,dispatch},{orgId,list}){
+		return new Promise((resolve,reject)=>{
+			$API.actor.assignActor({orgId,list},resp => {
+				resolve(resp);
+			})
+	    })
+	},
+	
 
 
 

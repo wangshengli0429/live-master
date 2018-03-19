@@ -50,6 +50,20 @@
                         </div>
                     </div>
                     <div class="items">
+                        <div class="name">管理员</div>
+                        <div class="content">
+                            <el-select v-model="union.loginName" placeholder="请选择状态">
+                                <el-option
+                                    v-for="item in accountList"
+                                    :key="item.uuid"
+                                    :label="item.nickname"
+                                    :value="item.uuid"
+                                    >
+                                </el-option>
+                            </el-select>
+                        </div>
+                    </div>
+                    <div class="items">
                         <div class="name">代发工资</div>
                         <div class="content">
                             <el-select v-model="union.autoPay" placeholder="请选择状态">
@@ -63,20 +77,17 @@
                             </el-select>
                         </div>
                     </div>
-                    <div class="items">
-                        <div class="name">管理员</div>
+                    <div v-if="union.autoPay == 1" class="items">
+                        <div class="name">自动日期</div>
                         <div class="content">
-                            <el-select v-model="union.admin" placeholder="请选择状态">
-                                <el-option
-                                    v-for="item in accountList"
-                                    :key="item.uuid"
-                                    :label="item.nickname"
-                                    :value="item.uuid"
-                                    >
-                                </el-option>
-                            </el-select>
+                            <el-date-picker
+                              v-model="union.autoPayDate"
+                              type="datetime"
+                              placeholder="自动代发日期">
+                            </el-date-picker>
                         </div>
                     </div>
+                    
 
                 </div>
             </div>
@@ -97,11 +108,11 @@
                 height:200,
                 authorityGroup:[],
                 autoPayList:[{
-                    uuid:1,
-                    name:"自动",
-                },{
                     uuid:0,
                     name:"代发工资",
+                },{
+                    uuid:1,
+                    name:"自动",
                 }],
                 statusList:[{
                     uuid:1,
@@ -120,7 +131,8 @@
                     shareRatio:"",
                     taxRatio:"",
                     autoPay:0,
-                    orgType:"UNION"
+                    orgType:"UNION",
+                    autoPayDate:""
 
                 }
             }
@@ -142,6 +154,7 @@
                 this.$destroy();
             },
             submit(close){
+                console.log(this.union)
                 if(!this.union.name){
                     this.$message({
                       message: '请输入公会名称',
@@ -191,6 +204,12 @@
 
         },
         mounted(){
+            if(!this.union.autoPayDate){
+                this.union.autoPayDate = ''
+            }else{
+                this.union.autoPayDate = new Date(this.union.autoPayDate);
+            }
+
             this.setHeight();
             this.getAccountList();
 

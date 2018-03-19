@@ -6,9 +6,9 @@
 					平台：
 				</div>
 				<div class="content">
-					<el-select v-model="filter.platform" @change="" placeholder="请选择平台">
+					<el-select v-model="filter.platId" @change="changePlat" placeholder="请选择平台">
 					    <el-option
-							v-for="item in platFromList"
+							v-for="item in platList"
 							:key="item.uuid"
 							:label="item.name"
 							:value="item.uuid"
@@ -22,9 +22,9 @@
 					工会：
 				</div>
 				<div class="content">
-					<el-select v-model="filter.group" @change="" placeholder="请选择工会">
+					<el-select v-model="filter.unionId" @change="" placeholder="请选择工会">
 					    <el-option
-							v-for="item in groupList"
+							v-for="item in unionList"
 							:key="item.uuid"
 							:label="item.name"
 							:value="item.uuid"
@@ -38,7 +38,7 @@
 					经纪人：
 				</div>
 				<div class="content">
-					<el-select v-model="filter.agent" @change="" placeholder="请选择经纪人">
+					<el-select v-model="filter.brokerId" @change="" placeholder="请选择经纪人">
 					    <el-option
 							v-for="item in agentList"
 							:key="item.uuid"
@@ -78,7 +78,7 @@
 					昵称：
 				</div>
 				<div class="content">
-					<el-input v-model="filter.nick_name" placeholder="请输入昵称"></el-input>
+					<el-input v-model="filter.nickname" placeholder="请输入昵称"></el-input>
 				</div>
 			</div>
 			<div class="filter_items">
@@ -86,16 +86,16 @@
 					直播平台ID：
 				</div>
 				<div class="content">
-					<el-input v-model="filter.live_id" placeholder="请输入直播平台ID"></el-input>
+					<el-input v-model="filter.thirdId" placeholder="请输入直播平台ID"></el-input>
 				</div>
 			</div>
 			<div class="opt_btn">
 				<el-button @click="goFilter" type="primary">查询</el-button>
+				<el-button @click="resetFilter">重置</el-button>
 			</div>
 		</div>
 		<div ref="operate" class="operate">
-			<el-button @click="">分配</el-button>
-			<el-button @click="" type="danger">删除</el-button>
+			<el-button @click="batchDistribute">分配</el-button>
 		</div>
 
 		<div class="filter_list">
@@ -119,35 +119,35 @@
 			    <el-table-column
 			      label="入驻时间"
 			      width="122">
-			      <template slot-scope="scope">{{ scope.row.create_date | timesToDate('yyyy-MM-dd') }}</template>
+			      <template slot-scope="scope">{{ scope.row.createDate | timesToDate('yyyy-MM-dd') }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="platform"
+			      prop="platName"
 			      label="平台"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="nick_name"
-			      label="平台昵称"
+			      prop="nickname"
+			      label="昵称"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="plat_id"
+			      prop="platId"
 			      label="平台ID"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="group"
+			      prop="unionName"
 			      label="工会"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="agent"
 			      label="经纪人"
 			      show-overflow-tooltip>
+			      <template slot-scope="scope">{{ scope.row.broker && scope.row.broker.nickname }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="name"
+			      prop="identityName"
 			      label="真实姓名"
 			      show-overflow-tooltip>
 			    </el-table-column>
@@ -157,19 +157,24 @@
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="settlement_method"
 			      label="结算方式"
 			      show-overflow-tooltip>
+			      <template slot-scope="scope">{{ scope.row.autoPay == 0?'人工代发工资':'系统自动代发工资' }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="treatment"
 			      label="待遇"
 			      show-overflow-tooltip>
+			      <template slot-scope="scope">
+			      	<template v-if="scope.row.shareType == 0">{{scope.row.shareRatio}}</template>
+			      	<template v-else>阶梯</template>
+			      	/{{scope.row.payFloor}}/{{scope.row.taxRatio}}
+			  	  </template>
 			    </el-table-column>
 			    <el-table-column
 			      prop="status"
 			      label="状态"
 			      show-overflow-tooltip>
+			      <template slot-scope="scope">{{ scope.row.status == 0?'已启用':'已停用' }}</template>
 			    </el-table-column>
 
 			    <el-table-column label="操作" width="180" fixed="right">
@@ -193,11 +198,11 @@
 			<el-pagination
 		      @size-change="handleSizeChange"
 		      @current-change="handleCurrentChange"
-		      :current-page="currentPage4"
-		      :page-sizes="[100, 200, 300, 400]"
-		      :page-size="100"
+		      :current-page="currentPage"
+		      :page-sizes="[20, 30, 40, 50]"
+		      :page-size="limit"
 		      layout="total, sizes, prev, pager, next, jumper"
-		      :total="400">
+		      :total="total">
 		    </el-pagination>
 		</div>
 	
@@ -211,53 +216,113 @@
 	export default{
 		data(){
 			return {
-				filter:{
-					platform:"",
-					group:"",
-					agent:"",
-					status:"",
-					id:"",
-					nick_name:"",
-					live_id:"",
-				},
 				statusList:[{
-					name:"已分配",
-					uuid:"assigned"
+					name:"已启用",
+					uuid:0
 				},{
-					name:"未分配",
-					uuid:"unallocated"
+					name:"已停用",
+					uuid:1
 				}],
 				multipleSelection:[],
 				tableHeight:250,
-				currentPage4:2
+
+				agentList:[],
+				platList:[],
+				unionList:[],
+				actorList:[],
+				total:0,
+				currentPage:1,
+				limit:20,
+				filter:{
+					platId:"",
+					unionId:"",
+					status:0,
+					brokerId:"",//经纪人id
+					thirdId:"",//第三方id
+					orgId:"",//平台／工会id
+				}
 			}
 		},
 		computed: {
 			...mapGetters({
-				platFromList: 'actorStore/actor/platFromList',
-				groupList: 'actorStore/actor/groupList',
-				agentList: 'actorStore/actor/agentList',
-				actorList: 'actorStore/actor/actorList',
+				user: 'userStore/user/user',
 			})
 	    },
 
 	    methods:{
-	    	...mapActions({
-				getPlatFormList: 'actorStore/actor/getPlatFormList',
-				getGroupList: 'actorStore/actor/getGroupList',
-				getAgentList: 'actorStore/actor/getAgentList',
-				getActorList: 'actorStore/actor/getActorList',
-
-
-
-		    }),
+		    resetFilter(){
+		    	this.filter = {
+					platId:"",
+					unionId:"",
+					distributeStatus:0,//0 未分配 1分配
+					brokerId:"",//经纪人id
+					thirdId:"",//第三方id
+					orgId:"",//平台／工会id
+				}
+				this.getActorList(1);
+		    },
 	    	goFilter(){
-	    		console.log(this.filter)
+	    		// console.log(this.filter)
+	    		this.getActorList();
 	    	},
-	    	handleEdit(){
-	    		AssignActor({
-	    			
+	    	batchDistribute(){
+	    		let actors = this.multipleSelection;
+	    		if(actors.length > 0){
+	    			let list = [];
+		        	for(var items of actors){
+		        		list.push(items.uuid);
+		        	}
+		        	AssignActor({
+	    				actor:{
+	    					platId:"",
+	    					platName:"",
+	    					unionId:"",
+	    					unionName:""
+	    				},
+	    				user:this.user,
+	    				callback:(uuid) => {
+	    					const orgId = uuid;
+	    					this.$store.dispatch('actorStore/actor/assignActor',{orgId,list}).then((resp) => {
+		          				this.getActorList(1);
+	    					})
+	    				}
+	    			})
+
+	    		}
+	    	},
+	    	handleDelete(index,data){
+	    		let msg = "确定要删除账号”"+data.nickname+"“吗？"
+				this.$confirm(msg, '提示', {
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消',
+		          	type: 'warning'
+		        }).then(() => {
+		        	let list = [];
+		        	list.push(data.uuid);
+		          	this.$store.dispatch('actorStore/actor/deleteActor',{list:list}).then(() => {
+		          		this.getActorList(1);
+					})
+		        }).catch(() => {
+		                   
+		        });
+	    	},
+	    	handleEdit(index,data){
+	    		const user_id = data.uuid;
+	    		this.$store.dispatch('userStore/user/getUserDetail',{user_id}).then((resp) => {
+	    			AssignActor({
+	    				actor:resp.user,
+	    				user:this.user,
+	    				callback:(uuid) => {
+	    					const orgId = uuid;
+	    					let list = [];
+	    					list.push(user_id);
+	    					this.$store.dispatch('actorStore/actor/assignActor',{orgId,list}).then((resp) => {
+		          				this.getActorList(1);
+	    					})
+	    				}
+	    			})
 	    		})
+
 	    	},
 	    	handleSelectionChange(val) {
 		        this.multipleSelection = val;
@@ -271,10 +336,45 @@
 		    	console.log(tableHeight);
 		    	this.tableHeight = tableHeight;
 		    },
-		    handleSizeChange(){
-
+		    handleSizeChange(limit){
+				this.getActorList(1,limit);
+			},
+			handleCurrentChange(page){
+				this.getActorList(page);
+			},
+		    getActorList(currentPage,limit){
+		    	currentPage = currentPage || this.currentPage;
+		    	limit = limit || this.limit;
+		    	let filter = this.filter;
+		    	this.$store.dispatch('actorStore/actor/getActorList',{currentPage,limit,filter}).then((resp) => {
+		    		this.currentPage = currentPage;
+					this.limit = limit;
+				    this.actorList = resp.list;
+				    this.total = resp.count;
+		    	})
 		    },
-		    handleCurrentChange(){
+		    changePlat(uuid){
+		    	if(uuid){
+		    		this.filter.orgId = uuid;
+		    	}else{
+		    		this.filter.orgId = "";
+		    	}
+		    	this.filter.unionId = "";
+		    	this.getUnionList(uuid);
+		    },
+		    getPlatList(){
+		    	const orgId = this.user.orgId;
+		    	this.$store.dispatch('platStore/platform/getPlatFormList',{orgId,currentPage:1,limit:50}).then((resp) => {
+		    		this.platList = resp.list;
+				})
+		    },
+		    getUnionList(parentId){
+		    	let orgId = this.user.orgId;
+		    	this.$store.dispatch('groupStore/group/getGroupList',{orgId,parentId,currentPage:1,limit:50}).then((resp) => {
+		    		this.unionList = resp.list;
+				})
+		    },
+		    getAgentList(){
 
 		    }
 	    },
@@ -284,10 +384,10 @@
 	    	})
 	    },
 	    created(){
-	    	this.getPlatFormList();
-	    	this.getGroupList();
+	    	this.getPlatList();
+	    	this.getUnionList();
 	    	this.getAgentList();
-	    	// this.getActorList();
+	    	this.getActorList();
 	    },
 	}
 </script>

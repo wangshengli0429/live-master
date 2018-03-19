@@ -31,4 +31,34 @@ export default {
     }
     httpAgent(url,'GET', params,successCb,erroCb)
   },
+  deleteActor({list},successCb, erroCb){
+    let url = `${config_server.server_api}/users/actors.json`;
+    let params = '';
+    for(var items of list){
+      params = params + '&uuid='+items;
+    }
+    // console.log(params);
+    httpAgent(url,'DELETE', params,successCb,erroCb)
+  },
+  assignActor({orgId,list},successCb, erroCb){
+    let url = `${config_server.server_api}/users/actors/distribute.json`;
+    let params = 'orgId='+orgId;
+    for(var items of list){
+      params = params + '&actorId='+items;
+    }
+    // console.log(params);
+    httpAgent(url,'POST', params,successCb,erroCb)
+  },
+
+
+
+
+
+
+
+
+
+
+
+
 }

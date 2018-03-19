@@ -12,7 +12,11 @@ export const createUnion = (union,successCb,erroCb) => {
         taxRatio:union.taxRatio,
         status:union.status,
         orgType:union.orgType,
-        parentId:union.parentId
+        parentId:union.parentId,
+        autoPay:union.autoPay,
+    }
+    if(union.autoPayDate){
+        param.autoPayDate = new Date(union.autoPayDate).getTime();
     }
     httpAgent(url, 'POST', param, successCb,erroCb);
 
@@ -26,9 +30,12 @@ export const modifyUnion = (union,successCb,erroCb) => {
         taxRatio:union.taxRatio,
         status:union.status,
         orgType:union.orgType,
-        parentId:union.parentId
+        parentId:union.parentId,
+        autoPay:union.autoPay
     }
-
+    if(union.autoPayDate){
+        param.autoPayDate = new Date(union.autoPayDate).getTime();
+    }
     httpAgent(url, 'PUT', param, successCb,erroCb);
 }
 

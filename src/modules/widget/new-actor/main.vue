@@ -21,7 +21,7 @@
                     <div class="items">
                         <div class="name">平台</div>
                         <div class="content">
-                            <el-select v-model="actor.platName" placeholder="请选择平台">
+                            <el-select v-model="actor.platName" @change="changePlat" placeholder="请选择平台">
                                 <el-option
                                   v-for="item in platList"
                                   :key="item.uuid"
@@ -40,7 +40,7 @@
                     <div class="items">
                         <div class="name">公会</div>
                         <div class="content">
-                            <el-select v-model="actor.unionName" placeholder="请选择公会">
+                            <el-select v-model="actor.unionName" @change="changeUnion" placeholder="请选择公会">
                                 <el-option
                                   v-for="item in unionList"
                                   :key="item.uuid"
@@ -166,7 +166,7 @@
                     </template>
                     <template v-else>
                         <template v-for="(items,index) in actor.shareProperties">
-                            <share-items v-if="items.delete == 0" :items="items" :index="index" @optItems="optItems"></share-items>
+                            <share-items :items="items" :length="filterListLength" :index="index" @optItems="optItems"></share-items>
                         </template>
                     </template>
 
@@ -242,6 +242,7 @@
                     uuid:1,
                     name:"阶梯比例"
                 }],
+                deleteShareList:[],
                 actor:{
                     "id": 1010,
                     "nickname": "艺人aa",
@@ -284,6 +285,18 @@
 
             }
         },
+        computed:{
+            filterListLength(){
+                var list = this.actor.shareProperties;
+                var len = 0;
+                for(var items of list){
+                    if(items.delete == 0){
+                        len++;
+                    }
+                }
+                return len
+            }
+        },
         methods:{
             destroy(){
                 this.$el &&
@@ -299,6 +312,44 @@
                     this.agentList = resp.list;
                 })
             },
+            changePlat(uuid){
+                if(uuid){
+                    this.actor.platId = uuid;
+                }else{
+                    this.actor.platId = "";
+                }
+                this.actor.unionId = "";
+                this.actor.unionName = "";
+                this.getUnionList(uuid);
+            },
+            changeUnion(uuid){
+                if(uuid){
+                    this.actor.unionId = uuid;
+                }
+                var union = null;
+                for(var items of this.unionList){
+                    if(items.uuid == uuid){
+                        union = items;
+                    }
+                }
+                if(union){
+                    this.actor.unionName = union.name;
+                    this.actor.autoPay = union.autoPay;
+                }
+
+            },
+            getPlatList(){
+                const orgId = this.user.orgId;
+                $API.platform.getPlatFormList({orgId,currentPage:1,limit:50},(resp) => {
+                    this.platList = resp.list;
+                })
+            },
+            getUnionList(parentId){
+                let orgId = this.user.orgId;
+                $API.group.getGroupList({orgId,parentId,currentPage:1,limit:50},(resp) => {
+                    this.unionList = resp.list;
+                })
+            },
             setHeight(){
                 var pageHeight = document.body.clientHeight;
                 var height = pageHeight - 150;
@@ -311,21 +362,23 @@
                     delete:0
                 }
                 if(opt == 'add'){
-                    this.actor.shareProperties.splice(index,0,temp);
+                    this.actor.shareProperties.splice(index+1,0,temp);
                 }else{
                     if(!items.uuid){
                         this.actor.shareProperties.splice(index,1)
                     }else{
-                        items.delete = 1;
+                        this.actor.shareProperties.splice(index,1)
+                        this.deleteShareList.push(items);
                     }
                 }
+
             },
             goModify(part){
                 console.log(this.actor)
                 switch(part){
                     case 1:
                         var actor = {
-                            orgId:this.actor.platId || this.actor.unionId || '',
+                            orgId:this.actor.unionId || '',
                             brokerId:this.actor.brokerId,
                             nickname:this.actor.nickname
                         }
@@ -356,21 +409,33 @@
                                 taxRatio:this.actor.taxRatio,
                             }
                             var shareProperties = [];
-                            for(var items of this.actor.shareProperties){
+                            for(var i=0;i<this.actor.shareProperties.length;i++){
+                                var items = this.actor.shareProperties[i];
                                 var temp = {
                                     shareRatio:items.shareRatio,
                                     maxLimit:items.maxLimit,
+                                    orderNum:i,
                                 }
                                 if(items.uuid){
-                                    if(items.delete == 1){
-                                        temp.optType = 'del';
-                                    }else{
-                                        temp.optType = 'update';
-                                    }
+                                    temp.optType = 'update';
+                                    temp.uuid = items.uuid;
                                 }else{
                                     temp.optType = 'add';
                                 }
                                 shareProperties.push(temp);
+                            }
+
+                            if(this.deleteShareList.length > 0){
+                                for(var items of this.deleteShareList){
+                                    var temp = {
+                                        shareRatio:items.shareRatio,
+                                        maxLimit:items.maxLimit,
+                                        orderNum:i,
+                                        uuid:items.uuid,
+                                        optType:'del'
+                                    }
+                                    shareProperties.push(temp);
+                                }
                             }
                             actor.shareProperties = shareProperties
                         }
@@ -394,22 +459,11 @@
 
         },
         mounted(){
-            if(!this.actor.shareProperties){
-                var temp = [{
-                    shareRatio:"",
-                    maxLimit:"",
-                    delete:0
-                }]
-                this.actor.shareProperties = temp;
-            }else{
-                for(var items of this.actor.shareProperties){
-                    items.delete = 0;
-                }
-            }
-
-
-
+            this.deleteShareList = [];
             this.getAgentList();
+            this.getPlatList();
+            const parentId = this.actor.platId || "";
+            this.getUnionList(parentId);
             this.setHeight();
         }
     }

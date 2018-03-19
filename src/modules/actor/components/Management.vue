@@ -95,7 +95,7 @@
 			</div>
 		</div>
 		<div ref="operate" class="operate">
-			<el-button @click="" type="danger">删除</el-button>
+			<el-button @click="batchDelete" type="danger">删除</el-button>
 		</div>
 
 		<div class="filter_list">
@@ -262,15 +262,56 @@
 				this.getActorList(1);
 		    },
 	    	goFilter(){
-	    		console.log(this.filter)
+	    		// console.log(this.filter)
 	    		this.getActorList();
 	    	},
+	    	batchDelete(){
+	    		let actors = this.multipleSelection;
+	    		if(actors.length > 0){
+	    			let msg = "确定要删除这"+actors.length+"条数据吗？"
+					this.$confirm(msg, '提示', {
+			          	confirmButtonText: '确定',
+			          	cancelButtonText: '取消',
+			          	type: 'warning'
+			        }).then(() => {
+			        	let list = [];
+			        	for(var items of actors){
+			        		list.push(items.uuid);
+			        	}
+			          	this.$store.dispatch('actorStore/actor/deleteActor',{list:list}).then(() => {
+			          		this.getActorList(1);
+						})
+			        }).catch(() => {
+			                   
+			        });
+	    		}
+	    	},
+	    	handleDelete(index,data){
+	    		let msg = "确定要删除账号”"+data.nickname+"“吗？"
+				this.$confirm(msg, '提示', {
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消',
+		          	type: 'warning'
+		        }).then(() => {
+		        	let list = [];
+		        	list.push(data.uuid);
+		          	this.$store.dispatch('actorStore/actor/deleteActor',{list:list}).then(() => {
+		          		this.getActorList(1);
+					})
+		        }).catch(() => {
+		                   
+		        });
+	    	},
 	    	handleEdit(index,data){
-	    		NewActor({
-	    			actor:data,
-	    			callback:() => {
-	    				this.getActorList(this.currentPage);
-	    			}
+	    		const user_id = data.uuid;
+	    		this.$store.dispatch('userStore/user/getUserDetail',{user_id}).then((resp) => {
+	    			NewActor({
+		    			actor:JSON.parse(JSON.stringify(resp.user)),
+		    			user:this.user,
+		    			callback:() => {
+		    				this.getActorList(this.currentPage);
+		    			}
+		    		})
 	    		})
 	    	},
 	    	handleSelectionChange(val) {

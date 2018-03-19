@@ -32,6 +32,15 @@ const actions = {
 			})
 	    })
 	},
+	getUserDetail({ commit, state, dispatch },{user_id}){
+		return new Promise((resolve, reject) => {
+			$API.user.getUserDetail({user_id},resp => {
+				resolve(resp);
+			},resp => {
+				resolve(resp);
+			})
+	    })
+	}
 }
 
 

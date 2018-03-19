@@ -23,7 +23,12 @@ export default {
     }
     httpAgent(url,'GET', params,successCb,erroCb)
   },
-
+  getUserDetail({user_id}, successCb, erroCb){
+    let url = `${config_server.server_api}/users/${user_id}.json`;
+    let params = {
+    }
+    httpAgent(url,'GET', params,successCb,erroCb)
+  },
 
 
 
