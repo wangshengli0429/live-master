@@ -1,5 +1,5 @@
 <template>
-    <modal :title="'编辑艺人信息'" @destroy="destroy" @submit="submit">
+    <modal :title="'编辑艺人信息'" @destroy="destroy" :is-footer="false">
         <div class="modify_actor" :style="{height:height+'px'}">
             <div class="group">
                 <div class="title">
@@ -9,43 +9,57 @@
                     <div class="items">
                         <div class="name">ID</div>
                         <div class="content">
-                            <el-input placeholder="请输入ID"></el-input>
+                            <el-input v-model="actor.id" :disabled="true" placeholder="请输入ID"></el-input>
                         </div>
                     </div>
                     <div class="items">
                         <div class="name">入驻时间</div>
                         <div class="content">
-                            <el-input placeholder="请输入入驻时间"></el-input>
+                            <el-input :value="actor.createDate | timesToDate('yyyy-MM-dd')" :disabled="true" placeholder="请输入入驻时间"></el-input>
                         </div>
                     </div>
                     <div class="items">
                         <div class="name">平台</div>
                         <div class="content">
-                            <el-input placeholder="请输入平台"></el-input>
-                        </div>
-                    </div>
-                    <div class="items">
-                        <div class="name">昵称</div>
-                        <div class="content">
-                            <el-input placeholder="请输入昵称"></el-input>
+                            <el-select v-model="actor.platName" placeholder="请选择平台">
+                                <el-option
+                                  v-for="item in platList"
+                                  :key="item.uuid"
+                                  :label="item.name"
+                                  :value="item.uuid">
+                                </el-option>
+                            </el-select>
                         </div>
                     </div>
                     <div class="items">
                         <div class="name">平台ID</div>
                         <div class="content">
-                            <el-input placeholder="请输入平台ID"></el-input>
+                            <el-input :disabled="true" :value="actor.platId" placeholder=""></el-input>
                         </div>
                     </div>
                     <div class="items">
                         <div class="name">公会</div>
                         <div class="content">
-                            <el-input placeholder="请输入公会"></el-input>
+                            <el-select v-model="actor.unionName" placeholder="请选择公会">
+                                <el-option
+                                  v-for="item in unionList"
+                                  :key="item.uuid"
+                                  :label="item.name"
+                                  :value="item.uuid">
+                                </el-option>
+                            </el-select>
+                        </div>
+                    </div>
+                    <div class="items">
+                        <div class="name">昵称</div>
+                        <div class="content">
+                            <el-input v-model="actor.nickname" placeholder="请输入昵称"></el-input>
                         </div>
                     </div>
                     <div class="items">
                         <div class="name">经纪人</div>
                         <div class="content">
-                            <el-select v-model="agent" placeholder="请选择">
+                            <el-select v-model="actor.brokerId" placeholder="请选择经纪人">
                                 <el-option
                                   v-for="item in agentList"
                                   :key="item.uuid"
@@ -58,9 +72,13 @@
                     <div class="items">
                         <div class="name">代发工资</div>
                         <div class="content">
-                            <el-input placeholder="代发工资"></el-input>
+                            <el-input :disabled="true" :value="actor.autoPay == 0?'人工代发工资':'系统自动代发工资'" placeholder="代发工资"></el-input>
                         </div>
                     </div>
+                </div>
+
+                <div class="btns">
+                    <el-button @click="goModify(1)" size="mini" type="primary">保存</el-button>
                 </div>
             </div>
             <div class="group">
@@ -71,15 +89,18 @@
                     <div class="items">
                         <div class="name">姓名</div>
                         <div class="content">
-                            <el-input placeholder="请输入姓名"></el-input>
+                            <el-input v-model="actor.identityName" placeholder="请输入姓名"></el-input>
                         </div>
                     </div>
                     <div class="items">
                         <div class="name">身份证</div>
                         <div class="content">
-                            <el-input placeholder="请输入身份证"></el-input>
+                            <el-input v-model="actor.identityCardId" placeholder="请输入身份证"></el-input>
                         </div>
                     </div>
+                </div>
+                <div class="btns">
+                    <el-button @click="goModify(2)" size="mini" type="primary">保存</el-button>
                 </div>
             </div>
             <div class="group">
@@ -90,21 +111,24 @@
                     <div class="items">
                         <div class="name">电话</div>
                         <div class="content">
-                            <el-input placeholder="请输入电话"></el-input>
+                            <el-input v-model="actor.mobile" placeholder="请输入电话"></el-input>
                         </div>
                     </div>
                     <div class="items">
                         <div class="name">QQ号</div>
                         <div class="content">
-                            <el-input placeholder="请输入QQ号"></el-input>
+                            <el-input v-model="actor.qqId" placeholder="请输入QQ号"></el-input>
                         </div>
                     </div>
                     <div class="items">
                         <div class="name">微信号</div>
                         <div class="content">
-                            <el-input placeholder="请输入微信号"></el-input>
+                            <el-input v-model="actor.wechatId" placeholder="请输入微信号"></el-input>
                         </div>
                     </div>
+                </div>
+                <div class="btns">
+                    <el-button @click="goModify(3)" size="mini" type="primary">保存</el-button>
                 </div>
             </div>
             <div class="group">
@@ -115,9 +139,9 @@
                     <div class="items">
                         <div class="name">计算方法</div>
                         <div class="content">
-                            <el-select v-model="calculation" placeholder="请选择">
+                            <el-select v-model="actor.shareType" placeholder="请选择">
                                 <el-option
-                                  v-for="item in calculationList"
+                                  v-for="item in shareTypeList"
                                   :key="item.uuid"
                                   :label="item.name"
                                   :value="item.uuid">
@@ -128,37 +152,27 @@
                     <div class="items">
                         <div class="name">个税</div>
                         <div class="content">
-                            <el-input placeholder="请输入个税"></el-input>%
+                            <el-input v-model="actor.taxRatio" placeholder="请输入个税"></el-input>%
                             <div class="info">个税范围为3~8</div>
                         </div>
                     </div>
-                    <div class="items stage">
-                        <div class="name">第一阶梯</div>
-                        <div class="content">
-                            <span class="part"><el-input placeholder=""></el-input>%分成比例</span>
-                            低于<el-input placeholder=""></el-input>元
-                            <span class="el-icon el-icon-circle-plus"></span>
-                            <span class="el-icon el-icon-remove"></span>
+                    <template v-if="actor.shareType == 0">
+                        <div class="items">
+                            <div class="name">分成比例</div>
+                            <div class="content">
+                                <el-input v-model="actor.shareRatio" placeholder="请输入分成比例"></el-input>%
+                            </div>
                         </div>
-                    </div>
-                    <div class="items stage">
-                        <div class="name">第二阶梯</div>
-                        <div class="content">
-                            <span class="part"><el-input placeholder=""></el-input>%分成比例</span>
-                            低于<el-input placeholder=""></el-input>元
-                            <span class="el-icon el-icon-circle-plus"></span>
-                            <span class="el-icon el-icon-remove"></span>
-                        </div>
-                    </div>
-                    <div class="items stage">
-                        <div class="name">第三阶梯</div>
-                        <div class="content">
-                            <span class="part"><el-input placeholder=""></el-input>%分成比例</span>
-                            低于<el-input placeholder=""></el-input>元
-                            <span class="el-icon el-icon-circle-plus"></span>
-                            <span class="el-icon el-icon-remove"></span>
-                        </div>
-                    </div>
+                    </template>
+                    <template v-else>
+                        <template v-for="(items,index) in actor.shareProperties">
+                            <share-items v-if="items.delete == 0" :items="items" :index="index" @optItems="optItems"></share-items>
+                        </template>
+                    </template>
+
+                </div>
+                <div class="btns">
+                    <el-button @click="goModify(4)" size="mini" type="primary">保存</el-button>
                 </div>
             </div>
             <div class="group">
@@ -169,39 +183,33 @@
                     <div class="items">
                         <div class="name">保底薪资</div>
                         <div class="content">
-                            <el-input placeholder="请输入保底薪资"></el-input>
+                            <el-input v-model="actor.payFloor" placeholder="请输入保底薪资"></el-input>
                         </div>
                     </div>
                     <div class="items">
                         <div class="name">有效天</div>
                         <div class="content">
-                            <el-input placeholder="请输入有效天"></el-input>小时
+                            <el-input v-model="actor.validDay" placeholder="请输入有效天"></el-input>小时
                         </div>
                     </div>
                     <div class="items">
                         <div class="name">有效天数</div>
                         <div class="content">
-                            <el-input placeholder="请输入有效天数"></el-input>
+                            <el-input v-model="actor.validDayHour" placeholder="请输入有效天数"></el-input>
                             <div class="info">当日直播时长超过2小时记为有效天</div>
                         </div>
                     </div>
                     <div class="items">
                         <div class="name">有效时长</div>
                         <div class="content">
-                            <el-input placeholder="请输入有效时长"></el-input>小时
+                            <el-input v-model="actor.validHour" placeholder="请输入有效时长"></el-input>小时
                         </div>
                     </div>
                 </div>
+                <div class="btns">
+                    <el-button @click="goModify(5)" size="mini" type="primary">保存</el-button>
+                </div>
             </div>
-
-
-
-
-
-
-
-
-
 
 
 
@@ -212,28 +220,76 @@
 <script>
     import * as api from './api';
     import Modal from '@/modules/widget/common/Modal.vue';
+    import ShareItems from './ShareItems'
+
     export default{
         components:{
-            Modal
+            Modal,
+            ShareItems
         },
         data(){
             return {
                 agent:"",
                 agentList:[],
+                platList:[],
+                unionList:[],
                 height:300,
                 calculation:"",
-                calculationList:[{
-                    uuid:"1",
-                    name:"阶梯比例1"
+                shareTypeList:[{
+                    uuid:0,
+                    name:"固定比例"
                 },{
-                    uuid:"2",
-                    name:"阶梯比例2"
-                }]
+                    uuid:1,
+                    name:"阶梯比例"
+                }],
+                actor:{
+                    "id": 1010,
+                    "nickname": "艺人aa",
+                    "avatarUrl": "",
+                    "sex": "WOMAN",
+                    "userType": "ACTOR",
+                    "loginName": "actor1",
+                    "mobile": "15011519169",
+                    "email": "",
+                    "wechatId": "0",
+                    "qqId": "0",
+                    "status": 0,
+                    "py": "yraa",
+                    "pinyin": "yirenaa",
+                    "password": "d306f206b97f896142fa0957f388a817",
+                    "orgId": "XEwbjsBfcPU8MM4DALctwu",
+                    "createDate": 1521283411000,
+                    "lastUpDate": 1521283411000,
+                    "platId": null,
+                    "platName": null,
+                    "unionId": "XEwbjsBfcPU8MM4DALctwu",
+                    "unionName": "22111",
+                    "thirdId": null,
+                    "thirdNickname": null,
+                    "identified": 0,
+                    "identityName": "aaa",
+                    "identityCardId": "12229929292",
+                    "brokerId": "",
+                    "broker": null,
+                    "autoPay": 0,
+                    "shareType": 1,
+                    "shareProperties": null,
+                    "shareRatio": 20.0,
+                    "taxRatio": 10.0,
+                    "payFloor": 100.0,
+                    "validDay": 1.0,
+                    "validDayHour": 2.0,
+                    "validHour": 3.0
+                }
+
             }
         },
         methods:{
             destroy(){
-
+                this.$el &&
+                this.$el.parentNode &&
+                this.$el.parentNode.removeChild(this.$el);
+                this.$destroy();
             },
             submit(){
 
@@ -245,12 +301,114 @@
             },
             setHeight(){
                 var pageHeight = document.body.clientHeight;
-                var height = pageHeight - 150 - 40;
+                var height = pageHeight - 150;
                 this.height = height;
+            },
+            optItems(items,index,opt){
+                var temp = {
+                    shareRatio:"",
+                    maxLimit:"",
+                    delete:0
+                }
+                if(opt == 'add'){
+                    this.actor.shareProperties.splice(index,0,temp);
+                }else{
+                    if(!items.uuid){
+                        this.actor.shareProperties.splice(index,1)
+                    }else{
+                        items.delete = 1;
+                    }
+                }
+            },
+            goModify(part){
+                console.log(this.actor)
+                switch(part){
+                    case 1:
+                        var actor = {
+                            orgId:this.actor.platId || this.actor.unionId || '',
+                            brokerId:this.actor.brokerId,
+                            nickname:this.actor.nickname
+                        }
+                        break;
+                    case 2:
+                        var actor = {
+                            identityName:this.actor.identityName,
+                            identityCardId:this.actor.identityCardId
+                        }
+                        break;
+                    case 3:
+                        var actor = {
+                            mobile:this.actor.mobile,
+                            qqId:this.actor.qqId,
+                            wechatId:this.actor.wechatId
+                        }
+                        break;
+                    case 4:
+                        if(this.actor.shareType == 0){
+                            var actor = {
+                                shareRatio:this.actor.shareRatio,
+                                shareType:this.actor.shareType,
+                                taxRatio:this.actor.taxRatio
+                            }
+                        }else{
+                            var actor = {
+                                shareType:this.actor.shareType,
+                                taxRatio:this.actor.taxRatio,
+                            }
+                            var shareProperties = [];
+                            for(var items of this.actor.shareProperties){
+                                var temp = {
+                                    shareRatio:items.shareRatio,
+                                    maxLimit:items.maxLimit,
+                                }
+                                if(items.uuid){
+                                    if(items.delete == 1){
+                                        temp.optType = 'del';
+                                    }else{
+                                        temp.optType = 'update';
+                                    }
+                                }else{
+                                    temp.optType = 'add';
+                                }
+                                shareProperties.push(temp);
+                            }
+                            actor.shareProperties = shareProperties
+                        }
+                        break;
+                    case 5:
+                        var actor = {
+                            payFloor:this.actor.payFloor,
+                            validDay:this.actor.validDay,
+                            validDayHour:this.actor.validDayHour,
+                            validHour:this.actor.validHour
+                        }
+                        break;
+
+                }
+                actor.uuid = this.actor.uuid;
+                api.modifyActor(actor,(resp) => {
+                    this.callback && this.callback();
+                    this.destroy();
+                })
             }
 
         },
         mounted(){
+            if(!this.actor.shareProperties){
+                var temp = [{
+                    shareRatio:"",
+                    maxLimit:"",
+                    delete:0
+                }]
+                this.actor.shareProperties = temp;
+            }else{
+                for(var items of this.actor.shareProperties){
+                    items.delete = 0;
+                }
+            }
+
+
+
             this.getAgentList();
             this.setHeight();
         }
@@ -259,8 +417,13 @@
 <style rel="stylesheet/less" lang="less" scoped>
     @import "~@/config/config.less";
     .modify_actor{
-        width: 650px;
+        width: 650px;   
         overflow: auto;
+        padding-bottom: 20px;
+        box-sizing: border-box;
+        .btns{
+            margin-left: 20px;
+        }
         .group{
             margin-bottom: 10px;
             .title{

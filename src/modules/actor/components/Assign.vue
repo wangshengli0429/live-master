@@ -287,7 +287,7 @@
 	    	this.getPlatFormList();
 	    	this.getGroupList();
 	    	this.getAgentList();
-	    	this.getActorList();
+	    	// this.getActorList();
 	    },
 	}
 </script>

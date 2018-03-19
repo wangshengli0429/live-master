@@ -9,7 +9,7 @@
 							<span class="title">{{ title }}</span>
 							<span class="close" title="关闭" @click="close"></span>
 						</div>
-						<div class="body">
+						<div class="body" :style="{'padding-bottom':isFooter?'0':'20px'}">
 							<slot :close="hide"></slot>
 						</div>
 						<div class="footer" v-if="isFooter">

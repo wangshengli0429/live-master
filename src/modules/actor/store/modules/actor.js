@@ -43,10 +43,10 @@ const actions = {
 			})
 	    })
 	},
-	getActorList ({commit, state,dispatch}){
+	getActorList ({commit, state,dispatch},{currentPage,limit,filter}){
+		const start = (currentPage-1)*limit;
 		return new Promise((resolve,reject)=>{
-			$API.actor.getActorList(resp => {
-    			commit(types.INIT_ACTOR_LIST,resp.list)
+			$API.actor.getActorList({start,limit,filter},resp => {
 				resolve(resp);
 			})
 	    })

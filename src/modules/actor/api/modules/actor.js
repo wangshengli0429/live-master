@@ -2,43 +2,33 @@ import { httpAgent } from '@/config/utils'
 import qs from 'qs'
 
 export default {
-  /**
-   * 登录接口
-   * @param identify
-   * @param password
-   * @param successCb
-   * @param erroCb
-   */
-  getActorList( successCb, erroCb){
-    let url = `${config_server.server_api}/login.json`;
-    // let params = {
-    //   identify,
-    //   password
-    // }
-    // httpAgent(url,'GET', params,successCb,erroCb)
-    
-    var temp = {
-      list:[]
+  getActorList({start,limit,filter}, successCb, erroCb){
+    let url = `${config_server.server_api}/users/actors.json`;
+    let params = {
+      start,
+      limit
     }
-    for(var i=0;i<50;i++){
-      let t_actor = {
-        nick_name:"艺人张三",
-        id:i+1,
-        create_date:new Date().getTime(),
-        platform:"斗鱼直播",
-        plat_id:"Douyu123",
-        group:"工会1",
-        agent:"经纪人1",
-        name:"张艺兴",
-        mobile:"18311344273",
-        settlement_method:"系统结算",
-        status:"待分配",
-        treatment:"45/5000/6"
+    if(filter){
+      if(filter.distributeStatus || filter.distributeStatus == 0){
+        params.distributeStatus = filter.distributeStatus
       }
-      temp.list.push(t_actor);
+      if(filter.status || filter.status == 0){
+        params.status = filter.status
+      }
+      if(filter.brokerId){
+        params.brokerId = filter.brokerId
+      }
+      if(filter.thirdId){
+        params.thirdId = filter.thirdId
+      }
+      if(filter.unionId){
+        params.orgId = filter.unionId
+      }else{
+        if(filter.platId){
+          params.orgId = filter.platId;
+        }
+      }
     }
-    temp.count=100;
-
-    successCb(temp);
+    httpAgent(url,'GET', params,successCb,erroCb)
   },
 }
