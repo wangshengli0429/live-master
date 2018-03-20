@@ -31,7 +31,7 @@ export default {
       if(filter.name){
         params.searchKey = filter.name
       }
-      if(filter.status){
+      if(filter.status || filter.status == 0){
         params.status = filter.status
       }
       if(filter.id){

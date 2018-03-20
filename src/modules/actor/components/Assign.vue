@@ -42,7 +42,7 @@
 					    <el-option
 							v-for="item in agentList"
 							:key="item.uuid"
-							:label="item.name"
+							:label="item.nickname"
 							:value="item.uuid"
 							>
 					    </el-option>
@@ -375,7 +375,9 @@
 				})
 		    },
 		    getAgentList(){
-
+		    	this.$store.dispatch('agentStore/agent/getAgentList',{currentPage:1,limit:50}).then((resp) => {
+		    		this.agentList = resp.list;
+				})
 		    }
 	    },
 	    mounted(){

@@ -3,18 +3,34 @@
 		<div ref="filter" class="filter clearfix">
 			<div class="filter_items">
 				<div class="name">
-					归属平台：
+					平台：
 				</div>
 				<div class="content">
-					<el-input v-model="filter.platform" placeholder="请输入归属平台"></el-input>
+					<el-select v-model="filter.platId" @change="changePlat" placeholder="请选择平台">
+					    <el-option
+							v-for="item in platList"
+							:key="item.uuid"
+							:label="item.name"
+							:value="item.uuid"
+							>
+					    </el-option>
+					</el-select>
 				</div>
 			</div>
 			<div class="filter_items">
 				<div class="name">
-					公会名称：
+					工会：
 				</div>
 				<div class="content">
-					<el-input v-model="filter.group" placeholder="请输入公会名称"></el-input>
+					<el-select v-model="filter.unionId" @change="changeUnion" placeholder="请选择工会">
+					    <el-option
+							v-for="item in unionList"
+							:key="item.uuid"
+							:label="item.name"
+							:value="item.uuid"
+							>
+					    </el-option>
+					</el-select>
 				</div>
 			</div>
 			<div class="filter_items">
@@ -22,7 +38,7 @@
 					经纪人名称：
 				</div>
 				<div class="content">
-					<el-input v-model="filter.name" placeholder="请输入经纪人名称"></el-input>
+					<el-input v-model="filter.nickname" placeholder="请输入经纪人名称"></el-input>
 				</div>
 			</div>
 			<div class="filter_items">
@@ -30,7 +46,7 @@
 					经纪人ID：
 				</div>
 				<div class="content">
-					<el-input v-model="filter.uuid" placeholder="请输入经纪人ID"></el-input>
+					<el-input v-model="filter.id" placeholder="请输入经纪人ID"></el-input>
 				</div>
 			</div>
 			<div class="filter_items">
@@ -51,11 +67,12 @@
 			</div>
 
 			<div class="opt_btn">
-				<el-button @click="" type="primary">查询</el-button>
+				<el-button @click="goFilter" type="primary">查询</el-button>
+				<el-button @click="resetFilter" type="primary">重置</el-button>
 			</div>
 		</div>
 		<div ref="operate" class="operate">
-			<el-button type="danger">删除</el-button>
+			<el-button @click="goAddAgent">添加</el-button>
 		</div>
 		<div class="filter_list">
 			<el-table
@@ -65,31 +82,31 @@
 			    tooltip-effect="dark"
 			    style="width: 100%"
 			    @selection-change="">
-			    <el-table-column
+<!-- 			    <el-table-column
 			      type="selection"
 			      width="55">
-			    </el-table-column>
+			    </el-table-column> -->
 			    <el-table-column
-			      prop="uuid"
+			      prop="id"
 			      label="经纪人ID">
 			    </el-table-column>
 			    <el-table-column
-			      prop="name"
+			      prop="nickname"
 			      label="经纪人名称"
 			      width="120">
 			    </el-table-column>
 			    <el-table-column
 			      label="创建时间"
 			      width="120">
-				    <template slot-scope="scope">{{ scope.row.create_date | timesToDate('yyyy-MM-dd') }}</template>
+				    <template slot-scope="scope">{{ scope.row.createDate | timesToDate('yyyy-MM-dd') }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="platform"
+			      prop="platName"
 			      label="平台名称"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="group"
+			      prop="unionName"
 			      label="公会名称"
 			      show-overflow-tooltip>
 			    </el-table-column>
@@ -97,30 +114,27 @@
 			      prop="status"
 			      label="状态"
 			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.status == 0?"已启用":"已停用" }}</template>
 			    </el-table-column>
 			    <el-table-column
 			      prop="agent_account"
 			      label="经纪人账号"
+			      width="140"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="divided"
+			      prop="shareRatio"
 			      label="分成比例"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="tax"
+			      prop="taxRatio"
 			      label="个税"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="live_nick_name"
-			      label="主播昵称"
-			      show-overflow-tooltip>
-			    </el-table-column>
-			    <el-table-column
-			      prop="live_uuid"
-			      label="主播直播ID"
+			      prop="actorsCount"
+			      label="主播数量"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column label="操作" width="180" fixed="right">
@@ -143,10 +157,10 @@
 			      @size-change="handleSizeChange"
 			      @current-change="handleCurrentChange"
 			      :current-page="currentPage"
-			      :page-sizes="[100, 200, 300, 400]"
-			      :page-size="100"
+			      :page-sizes="[20, 30, 40, 50]"
+			      :page-size="limit"
 			      layout="total, sizes, prev, pager, next, jumper"
-			      :total="400">
+			      :total="total">
 			    </el-pagination>
 			</div>
 
@@ -154,51 +168,90 @@
 	</div>
 </template>
 <script>
+	import {mapGetters,mapActions} from 'vuex';
+	import newAgent from '@/modules/widget/new-agent'
+
+
 	export default{
 		data(){
 			return {
-				agentList:[],
 				accountGroupList:[],
-				currentPage:1,
 				tableHeight:200,
-				platformList:[{
-					uuid:"system",
-					name:"平台1",
-				},{
-					uuid:"platform",
-					name:"平台12",
-				},{
-					uuid:"group",
-					name:"平台13",
-				}],
+				platList:[],
+				unionList:[],
 				statusList:[{
-					uuid:"stop",
+					uuid:1,
 					name:"已停用",
 				},{
-					uuid:"start",
+					uuid:0,
 					name:"已启用",
 				}],
 				filter:{
-					name:"",
-					uuid:"",
-					group:"",
-					status:"",
-					platform:"",
+					nickname:"",
+					id:"",
+					platId:"",
+					unionId:"",
+					status:0,
 				}
 			}
 		},
+		computed: {
+			...mapGetters({
+				agentList: 'agentStore/agent/agentList',
+				total: 'agentStore/agent/total',
+				currentPage: 'agentStore/agent/currentPage',
+				limit: 'agentStore/agent/limit',
+				user: 'userStore/user/user',
+			})
+	    },
 		methods:{
-			handleEdit(){
-				
+			resetFilter(){
+				this.filter = {
+					nickname:"",
+					id:"",
+					platId:"",
+					unionId:"",
+					status:0,
+				};
+				this.getAgentList(1);
 			},
-			handleDelete(){
-
+			handleEdit(index,data){
+				newAgent({
+					user:this.user,
+					agent:data,
+					callback:() => {
+						this.getAgentList(1);
+					}
+				})
 			},
-			handleSizeChange(){
-
+			handleDelete(index,data){
+				console.log(data)
+				let msg = "确定要删除”"+data.nickname+"“吗？"
+				this.$confirm(msg, '提示', {
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消',
+		          	type: 'warning'
+		        }).then(() => {
+		          	this.$store.dispatch('agentStore/agent/deleteAgent',{uuid:data.uuid}).then(() => {
+		          		this.getAgentList();
+					})
+		        }).catch(() => {
+		                   
+		        });
 			},
-			handleCurrentChange(){
-
+			handleSizeChange(limit){
+				this.getAgentList(1,limit);
+			},
+			handleCurrentChange(page){
+				this.getAgentList(page);
+			},
+			goAddAgent(){
+				newAgent({
+					user:this.user,
+					callback:() => {
+						this.getAgentList(1);
+					}
+				})
 			},
 			setHeight(){
 		    	var container = this.$refs.container.offsetHeight;
@@ -209,6 +262,54 @@
 		    	console.log(tableHeight);
 		    	this.tableHeight = tableHeight;
 		    },
+		    goFilter(){
+		    	this.getAgentList(1);
+		    },
+		    getAgentList(currentPage,limit){//获取账号列表
+		    	currentPage = currentPage || this.currentPage;
+		    	limit = limit || this.limit;
+		    	let filter = this.filter;
+				this.$store.dispatch('agentStore/agent/getAgentList',{currentPage,limit,filter}).then(() => {
+
+				})
+		    },
+		    changePlat(uuid){
+                if(uuid){
+                    this.filter.platId = uuid;
+                }else{
+                    this.filter.platId = "";
+                }
+                this.filter.unionId = "";
+                this.filter.unionName = "";
+                this.getUnionList(uuid);
+            },
+            changeUnion(uuid){
+                if(uuid){
+                    this.filter.unionId = uuid;
+                }
+                var union = null;
+                for(var items of this.unionList){
+                    if(items.uuid == uuid){
+                        union = items;
+                    }
+                }
+                if(union){
+                    this.filter.unionName = union.name;
+                    // this.filter.autoPay = union.autoPay;
+                }
+            },
+		    getPlatList(){
+		    	const orgId = this.user.orgId;
+		    	this.$store.dispatch('platStore/platform/getPlatFormList',{orgId,currentPage:1,limit:50}).then((resp) => {
+		    		this.platList = resp.list;
+				})
+		    },
+		    getUnionList(parentId){
+		    	let orgId = this.user.orgId;
+		    	this.$store.dispatch('groupStore/group/getGroupList',{orgId,parentId,currentPage:1,limit:50}).then((resp) => {
+		    		this.unionList = resp.list;
+				})
+		    },
 		},
 		mounted(){
 	    	setTimeout(() => {
@@ -216,24 +317,9 @@
 	    	})
 	    },
 		created(){
-			const list = []
-			for(var i=0;i<30;i++){
-				var temp = {
-					uuid:i+1,
-					name:"公会名称"+(i+1),
-					create_date:new Date().getTime(),
-					platform:"平台"+(i+1),
-					group:"公会"+(i+1),
-					status:"已启用",
-					agent_account:"wddds2",
-					divided:"40%",
-					tax:"5%",
-					live_nick_name:"张三丰",
-					live_uuid:"DouYu123"
-				}
-				list.push(temp);
-			}
-			this.agentList = list;
+			this.getPlatList();
+	    	this.getUnionList();
+			this.getAgentList();
 		}
 	}
 </script>

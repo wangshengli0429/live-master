@@ -19,30 +19,6 @@ const getters = {
 
 // actions
 const actions = {
-	getPlatFormList ({commit, state,dispatch}){
-		return new Promise((resolve,reject)=>{
-			$API.platform.getPlatFormList(resp => {
-    			commit(types.INIT_PLATFROM_LIST,resp.list)
-				resolve(resp);
-			})
-	    })
-	},
-	getGroupList ({commit, state,dispatch}){
-		return new Promise((resolve,reject)=>{
-			$API.group.getGroupList(resp => {
-    			commit(types.INIT_GROUP_LIST,resp.list)
-				resolve(resp);
-			})
-	    })
-	},
-	getAgentList ({commit, state,dispatch}){
-		return new Promise((resolve,reject)=>{
-			$API.agent.getAgentList(resp => {
-    			commit(types.INIT_AGENT_LIST,resp.list)
-				resolve(resp);
-			})
-	    })
-	},
 	getActorList ({commit, state,dispatch},{currentPage,limit,filter}){
 		const start = (currentPage-1)*limit;
 		return new Promise((resolve,reject)=>{

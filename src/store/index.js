@@ -9,6 +9,7 @@ import limitStore from '@/modules/limit/store'
 import platStore from '@/modules/platform/store'
 import groupStore from '@/modules/group/store'
 import financeStore from '@/modules/finance/store'
+import agentStore from '@/modules/agent/store'
 
 
 
@@ -23,7 +24,8 @@ const store = new Vuex.Store({
 		limitStore,
 		platStore,
 		groupStore,
-		financeStore
+		financeStore,
+		agentStore
 	},
 	plugins: process.env.NODE_ENV !== 'production'
     ? [createLogger()]

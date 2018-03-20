@@ -18,7 +18,7 @@ export default {
       if(filter.authorityGroupOrgType){
         params.authorityGroupOrgType = filter.authorityGroupOrgType;
       }
-      if(filter.status){
+      if(filter.status || filter.status == 0){
         params.status = filter.status;
       }
       if(filter.loginName){

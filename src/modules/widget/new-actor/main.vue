@@ -63,7 +63,7 @@
                                 <el-option
                                   v-for="item in agentList"
                                   :key="item.uuid"
-                                  :label="item.name"
+                                  :label="item.nickname"
                                   :value="item.uuid">
                                 </el-option>
                             </el-select>
@@ -308,7 +308,7 @@
 
             },
             getAgentList(){
-                $API.agent.getAgentList(resp => {
+                $API.agent.getAgentList({start:0,limit:50},resp => {
                     this.agentList = resp.list;
                 })
             },
