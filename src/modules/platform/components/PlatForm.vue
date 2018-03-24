@@ -46,9 +46,9 @@
 				    <template slot-scope="scope">{{ scope.row.status == 0?"已启用":"已停用" }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="manager.name"
 			      label="管理员"
 			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.majorAdmin && scope.row.majorAdmin.loginName}}</template>
 			    </el-table-column>
 			    <el-table-column label="操作" width="180" fixed="right">
 			      <template slot-scope="scope">

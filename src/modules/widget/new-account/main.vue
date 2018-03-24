@@ -6,13 +6,13 @@
                     <div class="items">
                         <div class="name">账号名称</div>
                         <div class="content">
-                            <el-input  :clearable="true" v-model="account.loginName" placeholder="请输入账号名称"></el-input>
+                            <el-input  :clearable="true" :minlength="1" :maxlength="20" v-model="account.loginName" placeholder="请输入账号名称"></el-input>
                         </div>
                     </div>
                     <div class="items">
                         <div class="name">密码</div>
                         <div class="content">
-                            <el-input  :clearable="true" v-model="account.password" placeholder="请输入密码"></el-input>
+                            <el-input  :clearable="true" :minlength="1" :maxlength="16" v-model="account.password" placeholder="请输入密码"></el-input>
                         </div>
                     </div>
                     <div class="items">
@@ -78,13 +78,13 @@
                     <div class="items">
                         <div class="name">管理员昵称</div>
                         <div class="content">
-                            <el-input  :clearable="true"  v-model="account.nickname" placeholder="请输入管理员昵称"></el-input>
+                            <el-input  :clearable="true" :minlength="1" :maxlength="20" v-model="account.nickname" placeholder="请输入管理员昵称"></el-input>
                         </div>
                     </div>
                     <div class="items">
-                        <div class="name">电话</div>
+                        <div class="name">联系电话</div>
                         <div class="content">
-                            <el-input  :clearable="true"  v-model="account.mobile" placeholder="请输入电话"></el-input>
+                            <el-input  :clearable="true"  v-model="account.mobile" placeholder="请输入联系电话"></el-input>
                         </div>
                     </div>
                     <div class="items">
@@ -205,6 +205,16 @@
                       type: 'error'
                     });
                     return false;
+                }
+
+                if(this.account.mobile){
+                    if(!/^1[0-9]{10}$/.test(this.account.mobile)){
+                        this.$message({
+                          message: '联系电话格式不正确',
+                          type: 'error'
+                        });
+                        return false;
+                    }
                 }
 
                 if(this.account.uuid){

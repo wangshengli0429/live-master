@@ -14,6 +14,12 @@ export const createPlat = (plat,successCb,erroCb) => {
         orgType:plat.orgType,
         parentId:plat.parentId
     }
+    if(plat.admin){
+        var list = [];
+        list.push({uuid:plat.admin})
+        param.admins = list;
+    }
+
     httpAgent(url, 'POST', param, successCb,erroCb);
 
 }

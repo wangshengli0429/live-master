@@ -40,127 +40,11 @@
 		computed: {
 			...mapGetters({
 				user: 'userStore/user/user',
+				nav: 'homeStore/home/nav',
 			})
 	    },
 		data(){
 			return {
-				nav:[{
-						name:"我的信息",
-						path:"/information",
-						uuid:"nav_information"
-					},{
-						name:"账号与权限",
-						uuid:"nav_limit",
-						children:[{
-								name:"账号管理",
-								path:"/limit/account",
-								uuid:"nav_limit_account",
-								parent:{
-									name:"账号与权限",
-									uuid:"nav_limit",
-								}
-							},{
-								name:"账号组管理",
-								path:"/limit/account_group",
-								uuid:"nav_limit_account_group",
-								parent:{
-									name:"账号与权限",
-									uuid:"nav_limit",
-								}
-							}
-						]
-					},{
-						name:"平台管理",
-						path:"/platform",
-						uuid:"nav_platform"
-					},{
-						name:"公会管理",
-						path:"/group",
-						uuid:"nav_group"
-					},{
-						name:"艺人管理",
-						uuid:"nav_actor",
-						children:[{
-								name:"艺人分配",
-								path:"/actor/assign",
-								uuid:"nav_actor_assign",
-								parent:{
-									name:"艺人管理",
-									uuid:"nav_actor",
-								}
-							},{
-								name:"艺人信息管理",
-								path:"/actor/management",
-								uuid:"nav_actor_management",
-								parent:{
-									name:"艺人管理",
-									uuid:"nav_actor",
-								}
-							}
-						]
-					},{
-						name:"经纪人管理",
-						path:"/agent",
-						uuid:"nav_agent",
-
-					},{
-						name:"财务管理",
-						uuid:"nav_finance",
-						children:[{
-								name:"入账管理",
-								path:"/finance/account",
-								uuid:"nav_finance_account",
-								parent:{
-									name:"财务管理",
-									uuid:"nav_finance",
-								}
-							},{
-								name:"财务流水",
-								path:"/finance/flow",
-								uuid:"nav_finance_flow",
-								parent:{
-									name:"财务管理",
-									uuid:"nav_finance",
-								}
-							},{
-								
-								name:"提现管理",
-								path:"/finance/reflect",
-								uuid:"nav_finance_reflect",
-								parent:{
-									name:"财务管理",
-									uuid:"nav_finance",
-								}
-							},{
-								
-								name:"艺人薪资结算",
-								path:"/finance/actor",
-								uuid:"nav_finance_actor",
-								parent:{
-									name:"财务管理",
-									uuid:"nav_finance",
-								}
-							},{
-								
-								name:"经纪人薪资结算",
-								path:"/finance/agent",
-								uuid:"nav_finance_agent",
-								parent:{
-									name:"财务管理",
-									uuid:"nav_finance",
-								}
-							}
-						]
-					},{
-						name:"统计分析",
-						path:"/analyze",
-						uuid:"nav_analyze",
-					},{
-						name:"操作日志",
-						path:"/logs",
-						uuid:"nav_logs",
-					},
-				]
 			}
 		},
 		methods:{
@@ -168,6 +52,9 @@
 		    }),
 		    switchNav(){
 		    }
+		},
+		created(){
+			this.$store.dispatch('homeStore/home/initNav')
 		}
 
 	}

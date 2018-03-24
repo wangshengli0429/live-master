@@ -4,7 +4,7 @@
             <div class="items">
                 <div class="name">名称</div>
                 <div class="content">
-                    <el-input v-model="authorityGroup.name" placeholder="名称" value="平台管理员"></el-input>
+                    <el-input v-model="authorityGroup.name" :clearable="true" :minlength="1" :maxlength="20" placeholder="名称" value="平台管理员"></el-input>
                 </div>
             </div>
             <div class="items">

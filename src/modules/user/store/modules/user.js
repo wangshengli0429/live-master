@@ -3,11 +3,13 @@ import * as types from '../mutation-types'
 // initial state
 const state = {
 	user: null,
+	authorities:[]
 }
 
 // getters
 const getters = {
 	user: state => state.user,
+	authorities: state => state.authorities,
 }
 
 // actions
@@ -26,6 +28,19 @@ const actions = {
 	    return new Promise((resolve, reject) => {
 			$API.user.userMy(resp => {
 				commit(types.GET_USER_MY_INFO, resp)
+				if(resp.user && resp.user.authorityGroupId){
+					dispatch('getUserAuthorities',{uuid:resp.user.authorityGroupId})
+				}
+				resolve(resp);
+			},resp => {
+				resolve(resp);
+			})
+	    })
+	},
+	getUserAuthorities ({commit, state,dispatch}, {uuid}){
+		return new Promise((resolve,reject)=>{
+			$API.limit.getAccountGroupDetail({uuid}, resp => {
+        		commit(types.INIT_USER_AUTHORITIES, resp)
 				resolve(resp);
 			},resp => {
 				resolve(resp);
@@ -59,6 +74,13 @@ const mutations = {
 	[types.GET_USER_MY_INFO](state,data) {
 	    state.user = data.user;
 	},
+	[types.INIT_USER_AUTHORITIES](state,data) {
+	    state.authorities = data.authorityGroup.authorities;
+	},
+
+
+
+
 
 }
 

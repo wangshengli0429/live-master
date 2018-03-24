@@ -6,19 +6,19 @@
                     <div class="items">
                         <div class="name">平台名称</div>
                         <div class="content">
-                            <el-input  :clearable="true" v-model="plat.name" placeholder="请输入平台名称"></el-input>
+                            <el-input  :clearable="true" :minlength="1" :maxlength="20" v-model="plat.name" placeholder="请输入平台名称"></el-input>
                         </div>
                     </div>
                     <div class="items">
                         <div class="name">平台分成</div>
                         <div class="content">
-                            <el-input  :clearable="true" v-model="plat.shareRatio" placeholder="请输入平台分成"></el-input>
+                            <el-input  :clearable="true" type="number" v-model="plat.shareRatio" placeholder="请输入平台分成"></el-input>
                         </div>
                     </div>
                     <div class="items">
                         <div class="name">入账阀值</div>
                         <div class="content">
-                            <el-input  :clearable="true" v-model="plat.entryMax" placeholder="请输入入账阀值"></el-input>
+                            <el-input  :clearable="true" type="number" v-model="plat.entryMax" placeholder="请输入入账阀值"></el-input>
                         </div>
                     </div>
                     <div class="items">
@@ -38,20 +38,17 @@
                     <div class="items">
                         <div class="name">管理员</div>
                         <div class="content">
-                            <el-select :disabled="plat.uuid?true:false" v-model="plat.admin" placeholder="请选择管理员">
+                            <el-select :disabled="plat.uuid?true:false" v-model="plat.adminName" @change="selectAdmin" placeholder="请选择管理员">
                                 <el-option
                                     v-for="item in accountList"
                                     :key="item.uuid"
-                                    :label="item.nickname"
+                                    :label="item.loginName"
                                     :value="item.uuid"
                                     >
                                 </el-option>
                             </el-select>
                         </div>
                     </div>
-
-
-
                 </div>
             </div>
             
@@ -90,7 +87,8 @@
                     status:0,
                     orgType:"PLAT",
                     parentId:"",
-                    admin:""
+                    admin:"",
+                    adminName:""
                 }
             }
         },
@@ -109,6 +107,9 @@
                 this.$el.parentNode &&
                 this.$el.parentNode.removeChild(this.$el);
                 this.$destroy();
+            },
+            selectAdmin(uuid){
+                this.plat.admin = uuid;
             },
             submit(close){
                 if(!this.plat.name){
@@ -132,6 +133,7 @@
                     });
                     return false;
                 }
+
                 if(this.plat.uuid){
                     api.modifyPlat(this.plat,() => {
                         this.callback && this.callback()
@@ -163,7 +165,10 @@
             if(this.user){
                 this.plat.parentId = this.user.orgId;
             }
-
+            if(this.plat.majorAdmin){
+                this.plat.adminName = this.plat.majorAdmin.loginName;
+                this.plat.admin = this.plat.majorAdmin.uuid;
+            }
         }
     }
 </script>

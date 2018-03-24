@@ -58,6 +58,9 @@ const router = new Router({
 
 
 router.beforeEach((to, from, next) => {
+    console.log(to);
+    store.dispatch('homeStore/home/chagneRouter',{router:to})
+
   if(to.path != '/login'){
     let comm = getRequestParam()
     if( !comm || !comm.token){
