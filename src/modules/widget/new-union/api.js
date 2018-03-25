@@ -18,6 +18,13 @@ export const createUnion = (union,successCb,erroCb) => {
     if(union.autoPayDate){
         param.autoPayDate = new Date(union.autoPayDate).getTime();
     }
+
+    if(union.admin){
+        var list = [];
+        list.push({uuid:union.admin})
+        param.admins = list;
+    }
+    
     httpAgent(url, 'POST', param, successCb,erroCb);
 
 }

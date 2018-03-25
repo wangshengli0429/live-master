@@ -6,7 +6,7 @@
                     <div class="items">
                         <div class="name">公会名称</div>
                         <div class="content">
-                            <el-input  :clearable="true" v-model="union.name" placeholder="请输入公会名称"></el-input>
+                            <el-input  :clearable="true" :minlength="1" :maxlength="20" v-model="union.name" placeholder="请输入公会名称"></el-input>
                         </div>
                     </div>
                     <div class="items">
@@ -40,23 +40,23 @@
                     <div class="items">
                         <div class="name">分成比例</div>
                         <div class="content">
-                            <el-input  :clearable="true" v-model="union.shareRatio" placeholder="请输入分成比例"></el-input>
+                            <el-input  :clearable="true" type="number" v-model="union.shareRatio" placeholder="请输入分成比例"></el-input>
                         </div>
                     </div>
                     <div class="items">
                         <div class="name">承担税点</div>
                         <div class="content">
-                            <el-input  :clearable="true" v-model="union.taxRatio" placeholder="请输入承担税点"></el-input>
+                            <el-input  :clearable="true" type="number" v-model="union.taxRatio" placeholder="请输入承担税点"></el-input>
                         </div>
                     </div>
                     <div class="items">
                         <div class="name">管理员</div>
                         <div class="content">
-                            <el-select v-model="union.loginName" placeholder="请选择状态">
+                            <el-select :disabled="union.uuid?true:false" v-model="union.adminName" @change="changeAdmin" placeholder="请选择管理员">
                                 <el-option
                                     v-for="item in accountList"
                                     :key="item.uuid"
-                                    :label="item.nickname"
+                                    :label="item.loginName"
                                     :value="item.uuid"
                                     >
                                 </el-option>
@@ -132,7 +132,9 @@
                     taxRatio:"",
                     autoPay:0,
                     orgType:"UNION",
-                    autoPayDate:""
+                    autoPayDate:"",
+                    admin:"",
+                    adminName:""
 
                 }
             }
@@ -153,6 +155,9 @@
                 this.$el.parentNode.removeChild(this.$el);
                 this.$destroy();
             },
+            changeAdmin(uuid){
+                this.union.admin = uuid;
+            },
             submit(close){
                 console.log(this.union)
                 if(!this.union.name){
@@ -170,6 +175,28 @@
                     });
                     return false;
                 }
+                if(!this.union.shareRatio){
+                    this.$message({
+                      message: '请输入分成比例',
+                      type: 'error'
+                    });
+                    return false;
+                }
+                if(!this.union.taxRatio){
+                    this.$message({
+                      message: '请输入承担税点',
+                      type: 'error'
+                    });
+                    return false;
+                }
+                if(!this.union.admin){
+                    this.$message({
+                      message: '请选择管理员',
+                      type: 'error'
+                    });
+                    return false;
+                }
+
 
                 if(this.union.uuid){
                     api.modifyUnion(this.union,() => {
@@ -209,6 +236,13 @@
             }else{
                 this.union.autoPayDate = new Date(this.union.autoPayDate);
             }
+
+            if(this.union.majorAdmin){
+                this.union.adminName = this.union.majorAdmin.loginName;
+                this.union.admin = this.union.majorAdmin.uuid;
+            }
+
+
 
             this.setHeight();
             this.getAccountList();

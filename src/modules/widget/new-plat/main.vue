@@ -133,6 +133,13 @@
                     });
                     return false;
                 }
+                if(!this.plat.admin){
+                    this.$message({
+                      message: '请选择管理员',
+                      type: 'error'
+                    });
+                    return false;
+                }
 
                 if(this.plat.uuid){
                     api.modifyPlat(this.plat,() => {

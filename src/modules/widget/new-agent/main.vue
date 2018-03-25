@@ -6,7 +6,7 @@
                     <div class="items">
                         <div class="name">经纪人名称</div>
                         <div class="content">
-                            <el-input  :clearable="true" v-model="agent.nickname" placeholder="请输入经纪人"></el-input>
+                            <el-input  :clearable="true" :minlength="1" :maxlength="20" v-model="agent.nickname" placeholder="请输入经纪人"></el-input>
                         </div>
                     </div>
                     <div class="items">

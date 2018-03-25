@@ -132,6 +132,7 @@
 			      label="管理员账号"
 			      width="120"
 			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.majorAdmin && scope.row.majorAdmin.loginName}}</template>
 			    </el-table-column>
 
 			    <el-table-column label="操作" width="180" fixed="right">

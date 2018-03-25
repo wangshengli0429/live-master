@@ -10,7 +10,7 @@
                                 {{items.modelName}}
                             </template>
                             <template v-else>
-                                {{items.list[0].modelName}}
+                                {{items.list[0].summary || items.list[0].modelName}}
                             </template>
                         </div>
                         <div v-if="items.list.length == 1" class="limit">
@@ -25,7 +25,7 @@
                     <ul v-if="items.list.length >1">
                         <li v-for="child in items.list">
                             <div class="wrapper">
-                                <div class="name"><span class="el-icon"></span>{{child.modelName}}</div>
+                                <div class="name"><span class="el-icon"></span>{{child.summary || child.modelName}}</div>
                                 <div class="limit">
                                     <span class="check_box_con" @click="select(child,'readStatus')">
                                         <check-box  :is-check="filterChecked(child.readStatus)"></check-box>查看

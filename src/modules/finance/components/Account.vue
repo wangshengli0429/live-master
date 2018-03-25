@@ -60,7 +60,7 @@
 					直播ID：
 				</div>
 				<div class="content">
-					<el-input :clearable="true" v-model="filter.uuid" placeholder="请输入直播ID"></el-input>
+					<el-input :clearable="true" v-model="filter.thirdId" placeholder="请输入直播ID"></el-input>
 				</div>
 			</div>
 			<div class="filter_items">
@@ -112,39 +112,40 @@
 				    <template slot-scope="scope">{{ scope.row.createDate | timesToDate('yyyy-MM-dd') }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="orderId"
+			      prop="trackNum"
 			      label="账单号"
 			      width="120"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="platName"
 			      label="平台"
 			      show-overflow-tooltip>
+				   <template slot-scope="scope">{{ scope.row.creator.platName }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="id"
 			      label="直播ID"
 			      show-overflow-tooltip>
+				   <template slot-scope="scope">{{ scope.row.creator.thirdId }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="unionName"
 			      label="公会"
 			      show-overflow-tooltip>
+				   <template slot-scope="scope">{{ scope.row.creator.unionName }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="nickname"
 			      label="昵称"
 			      show-overflow-tooltip>
+				   <template slot-scope="scope">{{ scope.row.creator.nickname }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="name"
 			      label="真实姓名"
 			      show-overflow-tooltip>
+				   <template slot-scope="scope">{{ scope.row.creator.identityName }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="money"
+			      prop="shareNum"
 			      label="入账金额/元"
+			      width="120"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
@@ -155,11 +156,13 @@
 			    <el-table-column
 			      prop="month_money"
 			      label="本月已入账/元"
+			      width="120"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
 			      prop="average_money"
 			      label="平均入账/元"
+			      width="120"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column label="操作" width="180" fixed="right">
@@ -280,15 +283,14 @@
 					unionId:"",
 					date:"",
 					nickname:"",
-					uuid:"",
-					status:"",
+					thirdId:"",
+					status:0
 				},
-				accountList:[]
 			}
 		},
 		computed: {
 			...mapGetters({
-				// accountList: 'limitStore/account/accountList',
+				accountList: 'financeStore/account/accountList',
 				total: 'financeStore/account/total',
 				currentPage: 'financeStore/account/currentPage',
 				limit: 'financeStore/account/limit',
@@ -297,7 +299,36 @@
 	    },
 		methods:{
 			handleDelete(index,data){
-				
+				let msg = "确定要删除吗？"
+				this.$confirm(msg, '提示', {
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消',
+		          	type: 'warning'
+		        }).then(() => {
+		        	let list = [];
+		        	list.push(data.uuid);
+		          	this.$store.dispatch('financeStore/account/deleteAccount',{list}).then(() => {
+		          		this.getAccountList();
+					})
+		        }).catch(() => {
+		                   
+		        });
+			},
+			handleEdit(index,data){
+				let msg = "确定要入账吗？"
+				this.$confirm(msg, '提示', {
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消',
+		          	type: 'warning'
+		        }).then(() => {
+		        	let list = [];
+		        	list.push(data.uuid);
+		          	this.$store.dispatch('financeStore/account/calculateAccount',{list}).then(() => {
+		          		this.getAccountList();
+					})
+		        }).catch(() => {
+		                   
+		        });
 			},
 			handleSizeChange(limit){
 				this.getAccountList(1,limit);
@@ -322,8 +353,8 @@
 					unionId:"",
 					date:"",
 					nickname:"",
-					uuid:"",
-					status:"",
+					thirdId:"",
+					status:""
 				}
 				this.getAccountList(1);
 		    },
@@ -346,35 +377,16 @@
 		    	}
 		    },
 		    getAccountList(currentPage,limit){//获取账号列表
-		  //   	currentPage = currentPage || this.currentPage;
-		  //   	limit = limit || this.limit;
-		  //   	let filter = this.filter;
-				// this.$store.dispatch('limitStore/account/getAccountList',{currentPage,limit,filter}).then(() => {
+		    	currentPage = currentPage || this.currentPage;
+		    	limit = limit || this.limit;
+		    	let filter = this.filter;
 
-				// })
+		    	console.log(this.filter)
 
-				var list = [];
-				for(var i=0;i<50;i++){
-					var temp = {
-						createDate:new Date().getTime(),
-						orderId:'num'+i,
-						platName:"斗鱼Tv",
-						platId:"2",
-						id:"DouY00"+i,
-						unionName:"开心公会",
-						unionId:"23",
-						nickname:"sniper"+i,
-						name:"黄磊",
-						money:"10000",
-						status:0,
-						month_money:"5000",
-						average_money:"2000"
-						
-					}
-					list.push(temp);
-				}
+				this.$store.dispatch('financeStore/account/getAccountList',{currentPage,limit,filter}).then(() => {
 
-				this.accountList = list;
+				})
+
 
 
 		    },

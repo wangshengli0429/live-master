@@ -53,7 +53,7 @@
                     <div class="items">
                         <div class="name">昵称</div>
                         <div class="content">
-                            <el-input v-model="actor.nickname" placeholder="请输入昵称"></el-input>
+                            <el-input :minlength="1" :maxlength="20" v-model="actor.nickname" placeholder="请输入昵称"></el-input>
                         </div>
                     </div>
                     <div class="items">
@@ -89,13 +89,13 @@
                     <div class="items">
                         <div class="name">姓名</div>
                         <div class="content">
-                            <el-input v-model="actor.identityName" placeholder="请输入姓名"></el-input>
+                            <el-input :minlength="1" :maxlength="20" v-model="actor.identityName" placeholder="请输入姓名"></el-input>
                         </div>
                     </div>
                     <div class="items">
                         <div class="name">身份证</div>
                         <div class="content">
-                            <el-input v-model="actor.identityCardId" placeholder="请输入身份证"></el-input>
+                            <el-input :minlength="15" :maxlength="18" v-model="actor.identityCardId" placeholder="请输入身份证"></el-input>
                         </div>
                     </div>
                 </div>
@@ -111,13 +111,13 @@
                     <div class="items">
                         <div class="name">电话</div>
                         <div class="content">
-                            <el-input v-model="actor.mobile" placeholder="请输入电话"></el-input>
+                            <el-input :minlength="1" :maxlength="11"  type="number" v-model="actor.mobile" placeholder="请输入电话"></el-input>
                         </div>
                     </div>
                     <div class="items">
                         <div class="name">QQ号</div>
                         <div class="content">
-                            <el-input v-model="actor.qqId" placeholder="请输入QQ号"></el-input>
+                            <el-input :minlength="5" :maxlength="11"  type="number" v-model="actor.qqId" placeholder="请输入QQ号"></el-input>
                         </div>
                     </div>
                     <div class="items">
@@ -152,7 +152,7 @@
                     <div class="items">
                         <div class="name">个税</div>
                         <div class="content">
-                            <el-input v-model="actor.taxRatio" placeholder="请输入个税"></el-input>%
+                            <el-input v-model="actor.taxRatio" type="number" placeholder="请输入个税"></el-input>%
                             <div class="info">个税范围为3~8</div>
                         </div>
                     </div>
@@ -160,7 +160,7 @@
                         <div class="items">
                             <div class="name">分成比例</div>
                             <div class="content">
-                                <el-input v-model="actor.shareRatio" placeholder="请输入分成比例"></el-input>%
+                                <el-input v-model="actor.shareRatio"  type="number" placeholder="请输入分成比例"></el-input>%
                             </div>
                         </div>
                     </template>
@@ -183,26 +183,26 @@
                     <div class="items">
                         <div class="name">保底薪资</div>
                         <div class="content">
-                            <el-input v-model="actor.payFloor" placeholder="请输入保底薪资"></el-input>
+                            <el-input v-model="actor.payFloor"  type="number" placeholder="请输入保底薪资"></el-input>
                         </div>
                     </div>
                     <div class="items">
                         <div class="name">有效天</div>
                         <div class="content">
-                            <el-input v-model="actor.validDay" placeholder="请输入有效天"></el-input>小时
+                            <el-input v-model="actor.validDay"  type="number" placeholder="请输入有效天"></el-input>小时
                         </div>
                     </div>
                     <div class="items">
                         <div class="name">有效天数</div>
                         <div class="content">
-                            <el-input v-model="actor.validDayHour" placeholder="请输入有效天数"></el-input>
+                            <el-input v-model="actor.validDayHour"  type="number" placeholder="请输入有效天数"></el-input>
                             <div class="info">当日直播时长超过2小时记为有效天</div>
                         </div>
                     </div>
                     <div class="items">
                         <div class="name">有效时长</div>
                         <div class="content">
-                            <el-input v-model="actor.validHour" placeholder="请输入有效时长"></el-input>小时
+                            <el-input v-model="actor.validHour"  type="number" placeholder="请输入有效时长"></el-input>小时
                         </div>
                     </div>
                 </div>
