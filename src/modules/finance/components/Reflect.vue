@@ -80,26 +80,26 @@
 				</div>
 			</div>
 			<div class="opt_btn">
-				<el-button @click="getAccountList(1)" type="primary">查询</el-button>
+				<el-button @click="getReflectList(1)" type="primary">查询</el-button>
 				<el-button @click="resetFilter">重置</el-button>
 			</div>
 		</div>
 		<div ref="operate" class="operate">
-			<el-button @click="">批量通过	</el-button>
-			<el-button @click="">批量打款</el-button>
-			<el-button @click="" type="danger">批量拒绝</el-button>
+			<el-button @click="batchAgree">批量通过	</el-button>
+			<!-- <el-button @click="">批量打款</el-button> -->
+			<el-button @click="batchReject" type="danger">批量拒绝</el-button>
 			<div class="opt_right" style="float:right;">
 				<el-button @click="">订单导出</el-button>
 			</div>
 		</div>
 		<div class="filter_list">
-			<el-table v
+			<el-table
 			    ref="multipleTable"
-			    :data="accountList"
+			    :data="reflectList"
 			    :height="tableHeight"
 			    tooltip-effect="dark"
 			    style="width: 100%"
-			    @selection-change="">
+			    @selection-change="handleSelectionChange">
 			    <el-table-column
 			      type="selection"
 			      width="55">
@@ -111,54 +111,56 @@
 				    <template slot-scope="scope">{{ scope.row.createDate | timesToDate('yyyy-MM-dd') }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="orderId"
+			      prop="trackNum"
 			      label="提现单号"
 			      width="120"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="platName"
 			      label="平台"
 			      show-overflow-tooltip>
+				   <template slot-scope="scope">{{ scope.row.creator.platName }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="platId"
 			      label="平台ID"
 			      show-overflow-tooltip>
+				   <template slot-scope="scope">{{ scope.row.creator.platId }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="unionName"
 			      label="公会"
 			      show-overflow-tooltip>
+				   <template slot-scope="scope">{{ scope.row.creator.unionName }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="nickname"
 			      label="昵称"
 			      show-overflow-tooltip>
+				   <template slot-scope="scope">{{ scope.row.creator.nickname }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="name"
 			      label="真实姓名"
 			      show-overflow-tooltip>
+				   <template slot-scope="scope">{{ scope.row.creator.identityName }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="reflect_account"
+			      prop="cashAccount"
 			      label="提现账号"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="cash_amount"
+			      prop="validMoney"
 			      label="可提现金额"
+			      width="120"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="amount"
+			      prop="money"
 			      label="提现金额"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="balance"
+			      prop="remainMoney"
 			      label="提现后金额"
+			      width="120"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
@@ -171,11 +173,11 @@
 			      <template slot-scope="scope">
 			        <el-button
 			          size="mini"
-			          @click="handleEdit(scope.$index, scope.row)">通过</el-button>
+			          @click="agreeApply(scope.$index, scope.row)">通过</el-button>
 			        <el-button
 			          size="mini"
 			          type="danger"
-			          @click="handleDelete(scope.$index, scope.row)">拒绝</el-button>
+			          @click="rejectApply(scope.$index, scope.row)">拒绝</el-button>
 			      </template>
 			    </el-table-column>
 
@@ -207,6 +209,7 @@
 			return {
 				platList:[],
 				unionList:[],
+				multipleSelection:[],
 				tableHeight:200,
 				orgType:[{
 					uuid:"SYSTEM",
@@ -219,20 +222,20 @@
 					name:"公会",
 				}],
 				statusList:[{
-					uuid:0,
+					uuid:'WAITING_APPROVAL',
 					name:"待审核",
 				},{
-					uuid:1,
+					uuid:'WAITING_PAY',
 					name:"待打款",
 				},{
-					uuid:2,
+					uuid:'CASH_DONE',
 					name:"提现成功",
 				},{
-					uuid:3,
-					name:"自动提现",
+					uuid:'APPROVAL_REJECT',
+					name:"申请拒绝",
 				},{
-					uuid:4,
-					name:"被拒绝",
+					uuid:'PAY_REJECT',
+					name:"打款拒绝",
 				}],
 				filter:{
 					orgId:"",
@@ -243,12 +246,11 @@
 					uuid:"",
 					status:"",
 				},
-				accountList:[]
 			}
 		},
 		computed: {
 			...mapGetters({
-				// accountList: 'limitStore/account/accountList',
+				reflectList: 'financeStore/reflect/reflectList',
 				total: 'financeStore/reflect/total',
 				currentPage: 'financeStore/reflect/currentPage',
 				limit: 'financeStore/reflect/limit',
@@ -256,14 +258,88 @@
 			})
 	    },
 		methods:{
-			handleDelete(index,data){
-				
+			handleSelectionChange(val) {
+		        this.multipleSelection = val;
+		    },
+			batchAgree(){
+				let apply = this.multipleSelection;
+	    		if(apply.length > 0){
+	    			let list = [];
+		        	for(var items of apply){
+		        		list.push(items.uuid);
+		        	}
+		        	let msg = "确定要通过这"+list.length+"条申请吗？"
+					this.$confirm(msg, '提示', {
+			          	confirmButtonText: '确定',
+			          	cancelButtonText: '取消',
+			          	type: 'warning'
+			        }).then(() => {
+			          	this.$store.dispatch('financeStore/reflect/agreeApply',{list}).then(() => {
+			          		this.getReflectList();
+						})
+			        }).catch(() => {
+			                   
+			        });
+	    		}
+			},
+			batchReject(){
+				let apply = this.multipleSelection;
+	    		if(apply.length > 0){
+	    			let list = [];
+		        	for(var items of apply){
+		        		list.push(items.uuid);
+		        	}
+		        	let msg = "确定要拒绝这"+list.length+"条申请吗？"
+					this.$confirm(msg, '提示', {
+			          	confirmButtonText: '确定',
+			          	cancelButtonText: '取消',
+			          	type: 'warning'
+			        }).then(() => {
+			          	this.$store.dispatch('financeStore/reflect/rejectApply',{list}).then(() => {
+			          		this.getReflectList();
+						})
+			        }).catch(() => {
+			                   
+			        });
+	    		}
+			},
+			agreeApply(index,data){
+				let msg = "确定要通过该申请吗？"
+				this.$confirm(msg, '提示', {
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消',
+		          	type: 'warning'
+		        }).then(() => {
+		        	let list = [];
+		        	list.push(data.uuid);
+		          	this.$store.dispatch('financeStore/reflect/agreeApply',{list}).then(() => {
+		          		this.getReflectList();
+					})
+		        }).catch(() => {
+		                   
+		        });
+			},
+			rejectApply(index,data){
+				let msg = "确定要拒绝该申请吗？"
+				this.$confirm(msg, '提示', {
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消',
+		          	type: 'warning'
+		        }).then(() => {
+		        	let list = [];
+		        	list.push(data.uuid);
+		          	this.$store.dispatch('financeStore/reflect/rejectApply',{list}).then(() => {
+		          		this.getReflectList();
+					})
+		        }).catch(() => {
+		                   
+		        });
 			},
 			handleSizeChange(limit){
-				this.getAccountList(1,limit);
+				this.getReflectList(1,limit);
 			},
 			handleCurrentChange(page){
-				this.getAccountList(page);
+				this.getReflectList(page);
 			},
 			setHeight(){
 		    	var container = this.$refs.container.offsetHeight;
@@ -284,7 +360,7 @@
 					uuid:"",
 					status:"",
 				}
-				this.getAccountList(1);
+				this.getReflectList(1);
 		    },
 		    changePlat(uuid){
 		    	if(uuid){
@@ -304,38 +380,13 @@
 		    		}
 		    	}
 		    },
-		    getAccountList(currentPage,limit){//获取账号列表
-		  //   	currentPage = currentPage || this.currentPage;
-		  //   	limit = limit || this.limit;
-		  //   	let filter = this.filter;
-				// this.$store.dispatch('limitStore/account/getAccountList',{currentPage,limit,filter}).then(() => {
+		    getReflectList(currentPage,limit){//获取账号列表
+		    	currentPage = currentPage || this.currentPage;
+		    	limit = limit || this.limit;
+		    	let filter = this.filter;
+				this.$store.dispatch('financeStore/reflect/getReflectList',{currentPage,limit,filter}).then(() => {
 
-				// })
-
-				var list = [];
-				for(var i=0;i<50;i++){
-					var temp = {
-						createDate:new Date().getTime(),
-						orderId:'num'+i,
-						platName:"斗鱼Tv",
-						platId:"2",
-						id:"DouY00"+i,
-						unionName:"开心公会",
-						unionId:"23",
-						nickname:"sniper"+i,
-						name:"黄磊",
-						reflect_account:"AD326521325",
-						cash_amount:"10000",
-						amount:"5000",
-						balance:"5000",
-						status:0,
-					}
-					list.push(temp);
-				}
-
-				this.accountList = list;
-
-
+				})
 		    },
 		    getPlatList(){
 		    	const orgId = this.user.orgId;
@@ -356,7 +407,7 @@
 	    	})
 	    },
 		created(){
-			this.getAccountList();
+			this.getReflectList();
 
 			this.getPlatList();
 			this.getUnionList();
