@@ -2,7 +2,7 @@ import * as types from '../mutation-types'
 
 // initial state
 const state = {
-	accountList:[],//账号组
+	salaryList:[],//账号组
 	total:0,
 	currentPage:1,
 	limit:20,
@@ -10,7 +10,7 @@ const state = {
 
 // getters
 const getters = {
-	accountList: state => state.accountList,
+	salaryList: state => state.salaryList,
 	total: state => state.total,
 	currentPage: state => state.currentPage,
 	limit: state => state.limit,
@@ -19,16 +19,29 @@ const getters = {
 
 // actions
 const actions = {
-	getAccountList ({commit, state,dispatch},{currentPage,limit}){
-		// const start = (currentPage-1)*limit;
-		// return new Promise((resolve,reject)=>{
-		// 	$API.limit.getAccountGroup({start,limit},resp => {
-  //   			commit(types.INIT_ACCOUNT_GROUP,{resp,currentPage,limit})
-		// 		resolve(resp);
-		// 	})
-	 //    })
+	getActorSalaryList ({commit, state,dispatch},{currentPage,limit}){
+		const start = (currentPage-1)*limit;
+		return new Promise((resolve,reject)=>{
+			$API.finance.getActorSalaryList({start,limit},resp => {
+    			commit(types.INIT_ACTOR_SALARY_LIST,{resp,currentPage,limit})
+				resolve(resp);
+			})
+	    })
 	},
-
+	agreeApply ({commit, state,dispatch},{list}){
+		return new Promise((resolve,reject)=>{
+			$API.finance.agreeActorApply({list},resp => {
+				resolve(resp);
+			})
+	    })
+	},
+	rejectApply ({commit, state,dispatch},{list}){
+		return new Promise((resolve,reject)=>{
+			$API.finance.rejectActorApply({list},resp => {
+				resolve(resp);
+			})
+	    })
+	},
 	
 
 
@@ -38,12 +51,12 @@ const actions = {
 
 // mutations
 const mutations = {
-	// [types.INIT_ACCOUNT_GROUP] (state,{resp,currentPage,limit}) {
-	// 	state.currentPage = currentPage;
-	// 	state.limit = limit;
-	//     state.accountGroup = resp.authorityGroup;
-	//     state.total = resp.count;
-	// },
+	[types.INIT_ACTOR_SALARY_LIST] (state,{resp,currentPage,limit}) {
+		state.currentPage = currentPage;
+		state.limit = limit;
+	    state.salaryList = resp.list;
+	    state.total = resp.count;
+	},
 
 
 }

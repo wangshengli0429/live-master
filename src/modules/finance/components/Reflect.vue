@@ -60,7 +60,7 @@
 					直播ID：
 				</div>
 				<div class="content">
-					<el-input :clearable="true" v-model="filter.uuid" placeholder="请输入直播ID"></el-input>
+					<el-input :clearable="true" v-model="filter.thirdId" placeholder="请输入直播ID"></el-input>
 				</div>
 			</div>
 			<div class="filter_items">
@@ -243,7 +243,7 @@
 					unionId:"",
 					date:"",
 					nickname:"",
-					uuid:"",
+					thirdId:"",
 					status:"",
 				},
 			}
@@ -357,7 +357,7 @@
 					unionId:"",
 					date:"",
 					nickname:"",
-					uuid:"",
+					thirdId:"",
 					status:"",
 				}
 				this.getReflectList(1);

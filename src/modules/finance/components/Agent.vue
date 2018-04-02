@@ -60,7 +60,7 @@
 					直播ID：
 				</div>
 				<div class="content">
-					<el-input :clearable="true" v-model="filter.uuid" placeholder="请输入直播ID"></el-input>
+					<el-input :clearable="true" v-model="filter.thirdId" placeholder="请输入直播ID"></el-input>
 				</div>
 			</div>
 			<div class="filter_items">
@@ -80,28 +80,28 @@
 				</div>
 			</div>
 			<div class="opt_btn">
-				<el-button @click="getAccountList(1)" type="primary">查询</el-button>
+				<el-button @click="getAgentList(1)" type="primary">查询</el-button>
 				<el-button @click="resetFilter">重置</el-button>
 			</div>
 		</div>
 		<div ref="operate" class="operate">
-			<el-button @click="">批量发放</el-button>
+			<!-- <el-button @click="">批量发放</el-button> -->
 			<div class="opt_right" style="float:right;">
 				<el-button @click="">订单导出</el-button>
 			</div>
 		</div>
 		<div class="filter_list">
-			<el-table v
+			<el-table
 			    ref="multipleTable"
-			    :data="accountList"
+			    :data="agentList"
 			    :height="tableHeight"
 			    tooltip-effect="dark"
 			    style="width: 100%"
 			    @selection-change="">
-			    <el-table-column
+			    <!-- <el-table-column
 			      type="selection"
 			      width="55">
-			    </el-table-column>
+			    </el-table-column> -->
 			    <el-table-column
 			      label="月份"
 			      width="120"
@@ -109,62 +109,71 @@
 				    <template slot-scope="scope">{{ scope.row.createDate | timesToDate('yyyy-MM') }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="orderId"
+			      prop="trackNum"
 			      label="结算单号"
 			      width="120"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="platName"
 			      label="平台"
 			      show-overflow-tooltip>
+				   <template slot-scope="scope">{{ scope.row.creator.platName }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="unionName"
 			      label="公会"
 			      show-overflow-tooltip>
+				   <template slot-scope="scope">{{ scope.row.creator.unionName }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="agent_id"
 			      label="经纪人ID"
 			      show-overflow-tooltip>
+				   <template slot-scope="scope">{{ scope.row.creator.id }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="agent_name"
 			      label="经纪人名称"
+			      width="120"
 			      show-overflow-tooltip>
+				   <template slot-scope="scope">{{ scope.row.creator.nickname }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="pay"
 			      label="待遇"
 			      show-overflow-tooltip>
+				   <template slot-scope="scope">{{ scope.row.creator.payFloor }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="actor_flow"
+			      prop="actorThirdFlow"
 			      label="所辖艺人流水/元"
+			      width="140"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="divided"
+			      prop="totalSalary"
 			      label="分成/元"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="should_pay"
+			      prop="income"
 			      label="应发工资/元"
+			      width="120"
 			      show-overflow-tooltip>
 			    </el-table-column>
 
 			    <el-table-column
 			      label="发放状态"
 			      show-overflow-tooltip>
-				    <template slot-scope="scope">{{ scope.row.clearing == 0? '待发放':'已发放'}}</template>
+				    <template slot-scope="scope">{{ scope.row.status | salaryStatus}}</template>
 			    </el-table-column>
 			    <el-table-column label="操作" width="180" fixed="right">
 			      <template slot-scope="scope">
-			        <el-button
-			          size="mini"
-			          @click="handleEdit(scope.$index, scope.row)">发放</el-button>
+			      	<template v-if="scope.row.status == 0">
+				        <el-button
+				          size="mini"
+				          @click="agreeApply(scope.$index, scope.row)">发放</el-button>
+				        <el-button
+				          size="mini"
+				          type="danger"
+				          @click="rejectApply(scope.$index, scope.row)">拒绝</el-button>
+			          </template>
 			      </template>
 			    </el-table-column>
 
@@ -213,6 +222,9 @@
 				},{
 					uuid:1,
 					name:"已发放",
+				},{
+					uuid:2,
+					name:"拒绝发放",
 				}],
 				filter:{
 					orgId:"",
@@ -220,15 +232,14 @@
 					unionId:"",
 					date:"",
 					nickname:"",
-					uuid:"",
+					thirdId:"",
 					status:"",
-				},
-				accountList:[]
+				}
 			}
 		},
 		computed: {
 			...mapGetters({
-				// accountList: 'limitStore/actor/accountList',
+				agentList: 'financeStore/agent/agentList',
 				total: 'financeStore/actor/total',
 				currentPage: 'financeStore/actor/currentPage',
 				limit: 'financeStore/actor/limit',
@@ -236,14 +247,43 @@
 			})
 	    },
 		methods:{
-			handleDelete(index,data){
-				
+			agreeApply(index,data){
+				let msg = "确定要发放薪资吗？"
+				this.$confirm(msg, '提示', {
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消',
+		          	type: 'warning'
+		        }).then(() => {
+		        	let list = [];
+		        	list.push(data.uuid);
+		          	this.$store.dispatch('financeStore/agent/agreeApply',{list}).then(() => {
+		          		this.getAgentList();
+					})
+		        }).catch(() => {
+		                   
+		        });
+			},
+			rejectApply(index,data){
+				let msg = "确定要拒绝发放薪资吗？"
+				this.$confirm(msg, '提示', {
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消',
+		          	type: 'warning'
+		        }).then(() => {
+		        	let list = [];
+		        	list.push(data.uuid);
+		          	this.$store.dispatch('financeStore/agent/rejectApply',{list}).then(() => {
+		          		this.getAgentList();
+					})
+		        }).catch(() => {
+		                   
+		        });
 			},
 			handleSizeChange(limit){
-				this.getAccountList(1,limit);
+				this.getAgentList(1,limit);
 			},
 			handleCurrentChange(page){
-				this.getAccountList(page);
+				this.getAgentList(page);
 			},
 			setHeight(){
 		    	var container = this.$refs.container.offsetHeight;
@@ -261,10 +301,10 @@
 					unionId:"",
 					date:"",
 					nickname:"",
-					uuid:"",
+					thirdId:"",
 					status:"",
 				}
-				this.getAccountList(1);
+				this.getAgentList(1);
 		    },
 		    changePlat(uuid){
 		    	if(uuid){
@@ -284,37 +324,13 @@
 		    		}
 		    	}
 		    },
-		    getAccountList(currentPage,limit){//获取账号列表
-		  //   	currentPage = currentPage || this.currentPage;
-		  //   	limit = limit || this.limit;
-		  //   	let filter = this.filter;
-				// this.$store.dispatch('limitStore/account/getAccountList',{currentPage,limit,filter}).then(() => {
+		    getAgentList(currentPage,limit){//获取账号列表
+		    	currentPage = currentPage || this.currentPage;
+		    	limit = limit || this.limit;
+		    	let filter = this.filter;
+				this.$store.dispatch('financeStore/agent/getAgentList',{currentPage,limit,filter}).then(() => {
 
-				// })
-
-				var list = [];
-				for(var i=0;i<50;i++){
-					var temp = {
-						createDate:new Date().getTime(),
-						orderId:'num'+i,
-						platName:"斗鱼Tv",
-						platId:"2",
-						unionName:"开心公会",
-						unionId:"23",
-						agent_id:"233ddd"+i,
-						agent_name:"sniper"+i,
-						pay:"3/5",
-						actor_flow:"5000",
-						divided:"3420",
-						should_pay:"3000",
-						status:0,
-					}
-					list.push(temp);
-				}
-
-				this.accountList = list;
-
-
+				})
 		    },
 		    getPlatList(){
 		    	const orgId = this.user.orgId;
@@ -335,7 +351,7 @@
 	    	})
 	    },
 		created(){
-			this.getAccountList();
+			this.getAgentList();
 
 			this.getPlatList();
 			this.getUnionList();

@@ -34,6 +34,15 @@ export const filter = (Vue) => {
     return result;
   })
 
+  Vue.filter('salaryStatus', (str) => {//薪资发放状态
+    var result = "";
+    switch(str){
+      case 0: result = '待发放'; break;
+      case 1: result = '已发放'; break;
+      case 2: result = '拒绝发放'; break;
+    }
+    return result;
+  })
 
 
 

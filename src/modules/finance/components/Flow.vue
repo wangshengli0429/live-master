@@ -92,7 +92,7 @@
 			</div>
 		</div>
 		<div class="filter_list">
-			<el-table v
+			<el-table
 			    ref="multipleTable"
 			    :data="flowList"
 			    :height="tableHeight"
@@ -143,9 +143,9 @@
 				   <template slot-scope="scope">{{ scope.row.creator.identityName }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="pay"
 			      label="待遇"
 			      show-overflow-tooltip>
+				   <template slot-scope="scope">{{ scope.row.creator.payFloor }}</template>
 			    </el-table-column>
 			    <el-table-column
 			      label="动账类型"
@@ -262,7 +262,7 @@
 					unionId:"",
 					date:"",
 					nickname:"",
-					uuid:"",
+					thirdId:"",
 					status:"",
 				}
 				this.getFlowList(1);

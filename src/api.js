@@ -6,6 +6,7 @@ import Agent from '@/modules/agent/api'
 import Actor from '@/modules/actor/api'
 import Limit from '@/modules/limit/api'
 import Finance from '@/modules/finance/api'
+import Logs from '@/modules/logs/api'
 
 
 axios.interceptors.request.use(config => {
@@ -50,5 +51,6 @@ global.$API = {
   agent:Agent,
   actor:Actor,
   limit:Limit,
-  finance:Finance
+  finance:Finance,
+  logs:Logs
 };

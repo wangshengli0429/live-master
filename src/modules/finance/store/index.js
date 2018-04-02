@@ -1,7 +1,8 @@
 import account from './modules/account'
 import flow from './modules/flow'
 import reflect from './modules/reflect'
-import actor from './modules/flow'
+import actor from './modules/actor'
+import agent from './modules/agent'
 
 export default {
 	namespaced: true,
@@ -9,6 +10,7 @@ export default {
 		account,
 		flow,
 		reflect,
-		actor
+		actor,
+		agent
 	}
 }

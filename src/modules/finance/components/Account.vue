@@ -90,7 +90,7 @@
 			<el-button @click="">批量入账</el-button>
 			<div class="opt_right" style="float:right;">
 				<el-button @click="">自动入账</el-button>
-				<el-button @click="">账单导入</el-button>
+				<el-button @click="goImportFlow">账单导入</el-button>
 			</div>
 		</div>
 		<div class="filter_list">
@@ -254,6 +254,9 @@
 </template>
 <script>
 	import {mapGetters,mapActions} from 'vuex';
+	import ImportFlow from '@/modules/widget/import-flow';
+
+
 	export default{
 		data(){
 			return {
@@ -329,6 +332,20 @@
 		        }).catch(() => {
 		                   
 		        });
+			},
+			goImportFlow(){
+				let param = localStorage.getItem('requestParam');
+				if(param){
+					param = JSON.parse(param);
+				}
+				ImportFlow({
+					token:param.token,
+					plat:param.plat,
+					orgId:this.user.orgId,
+					callback:() => {
+						
+					}
+				})
 			},
 			handleSizeChange(limit){
 				this.getAccountList(1,limit);
