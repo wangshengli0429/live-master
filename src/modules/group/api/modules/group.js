@@ -40,6 +40,12 @@ export default {
       if(filter.orgId){
         params.orgId = filter.orgId
       }
+      if(filter.adminName){
+        params.adminName = filter.adminName
+      }
+
+
+      
     }
 
     httpAgent(url,'GET', params,successCb,erroCb)

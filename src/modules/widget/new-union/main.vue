@@ -77,17 +77,18 @@
                             </el-select>
                         </div>
                     </div>
-                    <div v-if="union.autoPay == 1" class="items">
+                    <div v-if="union.autoPay == 1 && union.uuid" class="items">
                         <div class="name">自动日期</div>
                         <div class="content">
-                            <el-date-picker
-                              v-model="union.autoPayDate"
-                              type="datetime"
-                              placeholder="自动代发日期">
-                            </el-date-picker>
+                            {{union.autoPayDate | timesToDate('yyyy-MM-dd HH:mm:ss')}}
                         </div>
                     </div>
-                    
+                    <div v-if="union.uuid" class="items">
+                        <div class="name">即将生效</div>
+                        <div class="content">
+                            {{union.preSetAutoPay == 0?'代发工资':'自动代发工资'}}
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -231,11 +232,11 @@
 
         },
         mounted(){
-            if(!this.union.autoPayDate){
-                this.union.autoPayDate = ''
-            }else{
-                this.union.autoPayDate = new Date(this.union.autoPayDate);
-            }
+            // if(!this.union.autoPayDate){
+            //     this.union.autoPayDate = ''
+            // }else{
+            //     this.union.autoPayDate = new Date(this.union.autoPayDate);
+            // }
 
             if(this.union.majorAdmin){
                 this.union.adminName = this.union.majorAdmin.loginName;
@@ -323,6 +324,8 @@
                     }
                     .content{
                         margin-left: 80px;
+                        height: 30px;
+                        line-height: 30px;
                         .info{
                             margin-top: 2px;
                             font-size: 12px;

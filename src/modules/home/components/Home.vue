@@ -5,7 +5,14 @@
 				星火传媒
 			</div>
 			<div class="user">
-				{{user.nickname}}<i class="el-icon el-icon-caret-bottom"></i>
+				<el-dropdown trigger="click" @command="handleCommand">
+				  <span class="el-dropdown-link">
+				    {{user.nickname}}<i class="el-icon-arrow-down el-icon--right"></i>
+				  </span>
+				  <el-dropdown-menu slot="dropdown">
+				    <el-dropdown-item command="signout">退出登录</el-dropdown-item>
+				  </el-dropdown-menu>
+				</el-dropdown>
 			</div>
 		</div>
 		<div class="container">
@@ -31,6 +38,7 @@
 	import {mapGetters,mapActions} from 'vuex';
 	import BreadCrumb from './BreadCrumb';
 	import NavItems from './NavItems'
+	import {Link} from '@/config/utils'
 
 	export default{
 		components:{
@@ -51,7 +59,18 @@
 			...mapActions({
 		    }),
 		    switchNav(){
-		    }
+		    },
+		    handleCommand(command) {
+		    	console.log(command)
+		    	if(command == 'signout'){//退出登录
+		    		var requestParam = {
+		                plat:'web',
+		            }
+          			$axios.defaults.params = requestParam;//重新修改全局联网配置
+					localStorage.setItem('requestParam','');
+					Link('/login');
+		    	}
+	      	}
 		},
 		created(){
 			this.$store.dispatch('homeStore/home/initNav')

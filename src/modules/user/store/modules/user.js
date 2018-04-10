@@ -18,6 +18,9 @@ const actions = {
 		return new Promise((resolve,reject)=>{
 			$API.user.login({identify,password}, resp => {
         		commit(types.INIT_USER_INFO, resp)
+        		if(resp.user && resp.user.authorityGroupId){
+					dispatch('getUserAuthorities',{uuid:resp.user.authorityGroupId})
+				}
 				resolve(resp);
 			},resp => {
 				resolve(resp);

@@ -38,7 +38,7 @@ export const modifyUnion = (union,successCb,erroCb) => {
         status:union.status,
         orgType:union.orgType,
         parentId:union.parentId,
-        autoPay:union.autoPay
+        preSetAutoPay:union.autoPay
     }
     if(union.autoPayDate){
         param.autoPayDate = new Date(union.autoPayDate).getTime();

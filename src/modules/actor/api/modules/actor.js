@@ -15,7 +15,7 @@ export default {
       if(filter.status || filter.status == 0){
         params.status = filter.status
       }
-      if(filter.brokerId){
+      if(filter.brokerId || filter.brokerId == ''){
         params.brokerId = filter.brokerId
       }
       if(filter.thirdId){

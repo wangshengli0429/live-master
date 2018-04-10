@@ -148,7 +148,7 @@
 			    <el-table-column
 			      label="数据级别"
 			      show-overflow-tooltip>
-				    <template slot-scope="scope">{{ scope.row.org && scope.row.org.orgType | filterOrgType }}</template>
+				    <template slot-scope="scope">{{ scope.row.authorityGroup && scope.row.authorityGroup.orgType | filterOrgType }}</template>
 			    </el-table-column>
 			    <el-table-column
 			      prop="platName"

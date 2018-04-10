@@ -54,15 +54,7 @@
 					管理员：
 				</div>
 				<div class="content">
-					<el-input v-model="filter.group" placeholder="请输入管理员名称"></el-input>
-				</div>
-			</div>
-			<div class="filter_items">
-				<div class="name">
-					联系方式：
-				</div>
-				<div class="content">
-					<el-input v-model="filter.group" placeholder="请输入管理员联系方式"></el-input>
+					<el-input v-model="filter.adminName" placeholder="请输入管理员名称"></el-input>
 				</div>
 			</div>
 
@@ -104,7 +96,7 @@
 				    <template slot-scope="scope">{{ scope.row.createDate | timesToDate('yyyy-MM-dd') }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="platform"
+			      prop="parentName"
 			      label="归属平台"
 			      show-overflow-tooltip>
 			    </el-table-column>
@@ -190,6 +182,7 @@
 					id:"",
 					orgId:"",
 					status:0,
+					adminName:""
 				}
 			}
 		},

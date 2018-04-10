@@ -95,7 +95,7 @@
                 if(this.authorityGroup && this.authorityGroup.authorities){
                     for(var items of this.authorityGroup.authorities){
                         if(items.readStatus || items.writeStatus){
-                            result.push(items.modelName);
+                            result.push(items.summary);
                         }
                     }
                 }

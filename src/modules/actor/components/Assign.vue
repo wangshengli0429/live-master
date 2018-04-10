@@ -376,7 +376,13 @@
 		    },
 		    getAgentList(){
 		    	this.$store.dispatch('agentStore/agent/getAgentList',{currentPage:1,limit:50}).then((resp) => {
-		    		this.agentList = resp.list;
+		    		let list = resp.list;
+		    		var temp = {
+		    			nickname:"无",
+		    			uuid:""
+		    		}
+		    		list.unshift(temp)
+		    		this.agentList = list;
 				})
 		    }
 	    },
