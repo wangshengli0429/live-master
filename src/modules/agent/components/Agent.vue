@@ -117,12 +117,6 @@
 				    <template slot-scope="scope">{{ scope.row.status == 0?"已启用":"已停用" }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="agent_account"
-			      label="经纪人账号"
-			      width="140"
-			      show-overflow-tooltip>
-			    </el-table-column>
-			    <el-table-column
 			      prop="shareRatio"
 			      label="分成比例"
 			      show-overflow-tooltip>
