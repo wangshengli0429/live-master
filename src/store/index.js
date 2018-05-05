@@ -11,6 +11,7 @@ import groupStore from '@/modules/group/store'
 import financeStore from '@/modules/finance/store'
 import agentStore from '@/modules/agent/store'
 import logsStore from '@/modules/logs/store'
+import analyzeStore from '@/modules/analyze/store'
 
 
 
@@ -27,7 +28,8 @@ const store = new Vuex.Store({
 		groupStore,
 		financeStore,
 		agentStore,
-		logsStore
+		logsStore,
+		analyzeStore
 	},
 	plugins: process.env.NODE_ENV !== 'production'
     ? [createLogger()]

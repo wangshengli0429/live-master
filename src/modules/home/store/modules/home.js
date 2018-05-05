@@ -57,6 +57,15 @@ const state = {
             name:"艺人管理",
             uuid:"actor_manage",
           }
+        },
+        {
+          name:"艺人申请",
+          path:"/actor/apply",
+          uuid:"actor_apply",
+          parent:{
+            name:"艺人管理",
+            uuid:"actor_manage",
+          }
         }
       ]
     },{

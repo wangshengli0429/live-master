@@ -12,7 +12,12 @@ export const createPlat = (plat,successCb,erroCb) => {
         entryMax:plat.entryMax,
         status:plat.status,
         orgType:plat.orgType,
-        parentId:plat.parentId
+        parentId:plat.parentId,
+        autoTimeMin:plat.autoTimeMin,
+        autoTimeMax:plat.autoTimeMax,
+        autoDayMax:plat.autoDayMax,
+        handleTimeMax:plat.handleTimeMax,
+        handleTimeMin:plat.handleTimeMin
     }
     if(plat.admin){
         var list = [];
@@ -32,7 +37,12 @@ export const modifyPlat = (plat,successCb,erroCb) => {
         entryMax:plat.entryMax,
         status:plat.status,
         orgType:plat.orgType,
-        parentId:plat.parentId
+        parentId:plat.parentId,
+        autoTimeMin:plat.autoTimeMin,
+        autoTimeMax:plat.autoTimeMax,
+        autoDayMax:plat.autoDayMax,
+        handleTimeMax:plat.handleTimeMax,
+        handleTimeMin:plat.handleTimeMin
     }
 
     httpAgent(url, 'PUT', param, successCb,erroCb);

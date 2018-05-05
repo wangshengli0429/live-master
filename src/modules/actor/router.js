@@ -1,5 +1,6 @@
 import Assign from './components/Assign'
 import Management from './components/Management'
+import Apply from './components/Apply'
 
 
 const routes = [
@@ -8,6 +9,9 @@ const routes = [
 	},
 	{ 
 		path: '/actor/management', component: Management
+	},
+	{ 
+		path: '/actor/apply', component: Apply
 	},
 ]
 

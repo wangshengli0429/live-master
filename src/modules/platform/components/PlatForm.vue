@@ -50,6 +50,40 @@
 			      show-overflow-tooltip>
 				    <template slot-scope="scope">{{ scope.row.majorAdmin && scope.row.majorAdmin.loginName}}</template>
 			    </el-table-column>
+			    <el-table-column
+			      width="140"
+			      prop="autoTimeMin"
+			      label="小额提现下限／次"
+			      show-overflow-tooltip>
+			    </el-table-column>
+			    <el-table-column
+			      width="140"
+			      prop="autoTimeMax"
+			      label="小额提现上限／次"
+			      show-overflow-tooltip>
+			    </el-table-column>
+			    <el-table-column
+			      width="140"
+			      prop="autoDayMax"
+			      label="小额提现上限／天"
+			      show-overflow-tooltip>
+			    </el-table-column>
+			    <el-table-column
+			      width="140"
+			      prop="handleTimeMax"
+			      label="大额提现上限／次"
+			      show-overflow-tooltip>
+			    </el-table-column>
+			    <el-table-column
+			      width="140"
+			      prop="handleTimeMin"
+			      label="大额提现下限／次"
+			      show-overflow-tooltip>
+			    </el-table-column>
+
+
+
+
 			    <el-table-column label="操作" width="180" fixed="right">
 			      <template slot-scope="scope">
 			        <el-button

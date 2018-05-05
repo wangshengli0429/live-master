@@ -41,8 +41,15 @@ const actions = {
 			})
 	    })
 	},
+	getApplyList ({commit, state,dispatch},{currentPage,limit,filter}){
+		const start = (currentPage-1)*limit;
+		return new Promise((resolve,reject)=>{
+			$API.actor.getApplyList({start,limit,filter},resp => {
+				resolve(resp);
+			})
+	    })
+	},
 	
-
 
 
 

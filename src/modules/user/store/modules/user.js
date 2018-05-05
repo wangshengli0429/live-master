@@ -3,13 +3,19 @@ import * as types from '../mutation-types'
 // initial state
 const state = {
 	user: null,
-	authorities:[]
+	authorities:[],
+	system:null,
+	platInfo:null,
+	unionInfo:null
 }
 
 // getters
 const getters = {
 	user: state => state.user,
 	authorities: state => state.authorities,
+	system: state => state.system,
+	platInfo: state => state.platInfo,
+	unionInfo: state => state.unionInfo,
 }
 
 // actions
@@ -33,6 +39,13 @@ const actions = {
 				commit(types.GET_USER_MY_INFO, resp)
 				if(resp.user && resp.user.authorityGroupId){
 					dispatch('getUserAuthorities',{uuid:resp.user.authorityGroupId})
+				}
+				dispatch('getSystemInfo');
+				if(resp.user.platId){
+					dispatch('getPlatInfo',{uuid:resp.user.platId});
+				}
+				if(resp.user.unionId){
+					dispatch('getUnionInfo',{uuid:resp.user.unionId});
 				}
 				resolve(resp);
 			},resp => {
@@ -58,7 +71,43 @@ const actions = {
 				resolve(resp);
 			})
 	    })
-	}
+	},
+	getSystemInfo({ commit, state, dispatch }){
+		return new Promise((resolve, reject) => {
+			$API.user.getSystemInfo(resp => {
+        		commit(types.INIT_SYSTEM_INFO, resp)
+				resolve(resp);
+			},resp => {
+				resolve(resp);
+			})
+	    })
+	},
+
+	getPlatInfo({ commit, state, dispatch },{uuid}){
+		return new Promise((resolve, reject) => {
+			$API.user.getOrgInfo({uuid},resp => {
+        		commit(types.INIT_PLAT_INFO, resp)
+				resolve(resp);
+			},resp => {
+				resolve(resp);
+			})
+	    })
+	},
+
+	getUnionInfo({ commit, state, dispatch },{uuid}){
+		return new Promise((resolve, reject) => {
+			$API.user.getOrgInfo({uuid},resp => {
+        		commit(types.INIT_UNION_INFO, resp)
+				resolve(resp);
+			},resp => {
+				resolve(resp);
+			})
+	    })
+	},
+
+
+
+
 }
 
 
@@ -80,9 +129,15 @@ const mutations = {
 	[types.INIT_USER_AUTHORITIES](state,data) {
 	    state.authorities = data.authorityGroup.authorities;
 	},
-
-
-
+	[types.INIT_SYSTEM_INFO](state,data) {
+	    state.system = data.org;
+	},
+	[types.INIT_PLAT_INFO](state,data) {
+	    state.platInfo = data.org;
+	},
+	[types.INIT_UNION_INFO](state,data) {
+	    state.unionInfo = data.org;
+	},
 
 
 }

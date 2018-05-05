@@ -49,6 +49,41 @@
                             </el-select>
                         </div>
                     </div>
+
+                    <div class="items">
+                        <div class="name">小额提现下限／次</div>
+                        <div class="content">
+                            <el-input  :clearable="true" type="number" v-model="plat.autoTimeMin" placeholder="请输入小额提现下限／次"></el-input>
+                        </div>
+                    </div>
+                    <div class="items">
+                        <div class="name">小额提现上限／次</div>
+                        <div class="content">
+                            <el-input  :clearable="true" type="number" v-model="plat.autoTimeMax" placeholder="请输入小额提现上限／次"></el-input>
+                        </div>
+                    </div>
+                    <div class="items">
+                        <div class="name">小额提现上限／天</div>
+                        <div class="content">
+                            <el-input  :clearable="true" type="number" v-model="plat.autoDayMax" placeholder="请输入小额提现上限／天"></el-input>
+                        </div>
+                    </div>
+                    <div class="items">
+                        <div class="name">大额提现上限／次</div>
+                        <div class="content">
+                            <el-input  :clearable="true" type="number" v-model="plat.handleTimeMax" placeholder="请输入大额提现上限／次"></el-input>
+                        </div>
+                    </div>
+                    <div class="items">
+                        <div class="name">大额提现下限／次</div>
+                        <div class="content">
+                            <el-input  :clearable="true" type="number" v-model="plat.handleTimeMin" placeholder="请输入大额提现下限／次"></el-input>
+                        </div>
+                    </div>
+
+
+
+
                 </div>
             </div>
             
@@ -88,7 +123,12 @@
                     orgType:"PLAT",
                     parentId:"",
                     admin:"",
-                    adminName:""
+                    adminName:"",
+                    autoTimeMin:0,
+                    autoTimeMax:0,
+                    autoDayMax:0,
+                    handleTimeMax:0,
+                    handleTimeMin:0
                 }
             }
         },
@@ -182,7 +222,7 @@
 <style rel="stylesheet/less" lang="less" scoped>
     @import "~@/config/config.less";
     .modify_actor{
-        width: 475px;
+        width: 730px;
         overflow: auto;
         .group{
             margin-bottom: 10px;
@@ -201,9 +241,10 @@
                 }
             }
             .warpper{
-                padding-left: 30px;
+                padding-left:10px;
                 .items{
-                    margin: 10px 60px 20px 0;
+                    margin: 10px 30px 20px 0;
+                    float:left;
                     &.stage{
                         float: none;
                         /deep/ .el-input{
@@ -230,23 +271,23 @@
                         }
                     }
                     /deep/ .el-select{
-                        width: 330px;
+                        width: 210px;
                     }
                     /deep/ .el-input{
-                        width: 330px;
+                        width: 210px;
                     }
 
                     &:nth-child(2n){
                         margin-right: 0;
                     }
                     .name{
-                        width: 80px;
+                        width: 120px;
                         height: 30px;
                         line-height: 30px;
                         float: left;
                     }
                     .content{
-                        margin-left: 80px;
+                        margin-left: 120px;
                         .info{
                             margin-top: 2px;
                             font-size: 12px;
