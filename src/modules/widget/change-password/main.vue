@@ -16,7 +16,7 @@
             <div class="items clearfix">
                 <div class="name">确认密码</div>
                 <div class="content">
-                    <el-input placeholder="旧密码" type="password" v-model="password.confirm"></el-input>
+                    <el-input placeholder="确认密码" type="password" v-model="password.confirm"></el-input>
                 </div>
             </div>
 

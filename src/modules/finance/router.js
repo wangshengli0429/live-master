@@ -3,6 +3,7 @@ import Flow from './components/Flow'
 import Reflect from './components/Reflect'
 import Actor from './components/Actor'
 import Agent from './components/Agent'
+import Union from './components/Union'
 
 
 const routes = [
@@ -20,6 +21,9 @@ const routes = [
 	},
 	{ 
 		path: '/finance/agent', component: Agent
+	},
+	{ 
+		path: '/finance/union', component: Union
 	}
 ]
 

@@ -58,7 +58,7 @@
 					},5000)
 					this.login({identify:this.loginInfo.identify,password:this.loginInfo.password}).then((resp) => {
 						if(resp.result == 0){
-							Link('/information')
+							Link('/home')
 						}else{
 							this.$message({
 					          message: resp.msg,

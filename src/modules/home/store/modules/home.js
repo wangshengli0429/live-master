@@ -119,6 +119,15 @@ const state = {
             name:"财务管理",
             uuid:"finance_manage",
           }
+        },{
+          
+          name:"公会结算",
+          path:"/finance/union",
+          uuid:"nav_finance_union",
+          parent:{
+            name:"财务管理",
+            uuid:"finance_manage",
+          }
         }
       ]
     },{

@@ -22,7 +22,7 @@
 				</ul>
 			</div>
 			<div class="wrapper">
-				<div class="bread_crumb">
+				<div v-if="$route.path != '/home'" class="bread_crumb">
 					<bread-crumb></bread-crumb>
 				</div>
 				<div class="router_container">
@@ -74,6 +74,8 @@
 		},
 		created(){
 			this.$store.dispatch('homeStore/home/initNav')
+
+
 		}
 
 	}

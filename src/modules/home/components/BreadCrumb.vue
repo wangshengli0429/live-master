@@ -2,7 +2,7 @@
 	<div class="live_breadcrumb">
 		<div v-for="(items,index) in bread_crumb" class="items">
 			<span class="name">{{items.name}}</span>
-			<span v-if="index < bread_crumb.length-1" class="icon el-icon-arrow-right"></span>
+			<span v-if="index < bread_crumb.length-1 && bread_crumb.length > 1" class="icon el-icon-arrow-right"></span>
 		</div>
 	</div>
 </template>
