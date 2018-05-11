@@ -3,6 +3,7 @@ import Flow from './modules/flow.js'
 import Reflect from './modules/reflect.js'
 import Agent from './modules/agent.js'
 import Actor from './modules/actor.js'
+import Union from './modules/union.js'
 
 
 
@@ -12,6 +13,7 @@ export default{
   ...Flow,
   ...Reflect,
   ...Agent,
-  ...Actor
+  ...Actor,
+  ...Union
 }
 

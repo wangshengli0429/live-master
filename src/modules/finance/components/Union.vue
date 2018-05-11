@@ -64,17 +64,17 @@
 				</div>
 			</div>
 			<div class="opt_btn">
-				<el-button @click="getActorSalaryList(1)" type="primary">查询</el-button>
+				<el-button @click="getUnionSalaryList(1)" type="primary">查询</el-button>
 				<el-button @click="resetFilter">重置</el-button>
 			</div>
 		</div>
 		<div ref="operate" class="operate">
-			<div class="opt_right" style="float:right;">
+			<!-- <div class="opt_right" style="float:right;">
 				<el-button @click="">导出账单</el-button>
 			</div>
 			<div class="opt_right" style="float:right;">
 				<el-button @click="">批量结算</el-button>
-			</div>
+			</div> -->
 		</div>
 		<div class="filter_list">
 			<el-table
@@ -103,41 +103,45 @@
 			    <el-table-column
 			      label="平台名称"
 			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.org && scope.row.org.parentName}}</template>
 			    </el-table-column>
 			    <el-table-column
 			      label="公会名称"
 			      show-overflow-tooltip>
+				  <template slot-scope="scope">{{ scope.row.org && scope.row.org.name}}</template>
 			    </el-table-column>
 			    <el-table-column
 			      label="公会ID"
 			      show-overflow-tooltip>
+				  <template slot-scope="scope">{{ scope.row.org && scope.row.org.uuid}}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="thirdFlow"
+			      prop="unionThirdFlow"
 			      label="月流水/元"
 			      width="120"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="platFlow"
-			      label="平均入账/元"
+			      prop="unionPlatFlow"
+			      label="平台入账/元"
 			      width="120"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="pretaxIncome"
 			      label="分成%"
 			      show-overflow-tooltip>
+				  <template slot-scope="scope">{{ scope.row.org && scope.row.org.shareRatio}}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="income"
 			      label="税点%"
 			      show-overflow-tooltip>
+				  <template slot-scope="scope">{{ scope.row.org && scope.row.org.taxRatio}}</template>
 			    </el-table-column>
 			    <el-table-column
 			      prop="income"
 			      label="艺人工资代发"
 			      show-overflow-tooltip>
+				  <template slot-scope="scope">{{ scope.row.autoPay == 0?'代发工资':'自动'}}</template>
 			    </el-table-column>
 			    <el-table-column
 			      prop="income"
@@ -147,7 +151,7 @@
 			    <el-table-column
 			      label="结算状态"
 			      show-overflow-tooltip>
-				    <template slot-scope="scope">{{ scope.row.status | salaryStatus}}</template>
+				    <template slot-scope="scope">{{ scope.row.status == 0?'未结算':'已结算'}}</template>
 			    </el-table-column>
 			    <el-table-column label="操作" width="180" fixed="right">
 			      <template slot-scope="scope">
@@ -184,13 +188,13 @@
 				unionList:[],
 				tableHeight:200,
 				statusList:[{
-					uuid:0,
+					uuid:'',
 					name:"全部",
 				},{
 					uuid:1,
 					name:"已结算",
 				},{
-					uuid:2,
+					uuid:0,
 					name:"未结算",
 				}],
 				filter:{
@@ -206,16 +210,16 @@
 		},
 		computed: {
 			...mapGetters({
-				salaryList: 'financeStore/actor/salaryList',
-				total: 'financeStore/actor/total',
-				currentPage: 'financeStore/actor/currentPage',
-				limit: 'financeStore/actor/limit',
+				salaryList: 'financeStore/union/salaryList',
+				total: 'financeStore/union/total',
+				currentPage: 'financeStore/union/currentPage',
+				limit: 'financeStore/union/limit',
 				user: 'userStore/user/user',
 			})
 	    },
 		methods:{
 			agreeApply(index,data){
-				let msg = "确定要发放薪资吗？"
+				let msg = "确定要结算薪资吗？"
 				this.$confirm(msg, '提示', {
 		          	confirmButtonText: '确定',
 		          	cancelButtonText: '取消',
@@ -223,8 +227,8 @@
 		        }).then(() => {
 		        	let list = [];
 		        	list.push(data.uuid);
-		          	this.$store.dispatch('financeStore/actor/agreeApply',{list}).then(() => {
-		          		this.getActorSalaryList();
+		          	this.$store.dispatch('financeStore/union/agreeApply',{list}).then(() => {
+		          		this.getUnionSalaryList();
 					})
 		        }).catch(() => {
 		                   
@@ -239,18 +243,18 @@
 		        }).then(() => {
 		        	let list = [];
 		        	list.push(data.uuid);
-		          	this.$store.dispatch('financeStore/actor/rejectApply',{list}).then(() => {
-		          		this.getActorSalaryList();
+		          	this.$store.dispatch('financeStore/union/rejectApply',{list}).then(() => {
+		          		this.getUnionSalaryList();
 					})
 		        }).catch(() => {
 		                   
 		        });
 			},
 			handleSizeChange(limit){
-				this.getActorSalaryList(1,limit);
+				this.getUnionSalaryList(1,limit);
 			},
 			handleCurrentChange(page){
-				this.getActorSalaryList(page);
+				this.getUnionSalaryList(page);
 			},
 			setHeight(){
 		    	var container = this.$refs.container.offsetHeight;
@@ -271,7 +275,7 @@
 					thirdId:"",
 					status:"",
 				}
-				this.getActorSalaryList(1);
+				this.getUnionSalaryList(1);
 		    },
 		    changePlat(uuid){
 		    	if(uuid){
@@ -291,11 +295,11 @@
 		    		}
 		    	}
 		    },
-		    getActorSalaryList(currentPage,limit){//获取账号列表
+		    getUnionSalaryList(currentPage,limit){//获取账号列表
 		    	currentPage = currentPage || this.currentPage;
 		    	limit = limit || this.limit;
 		    	let filter = this.filter;
-				this.$store.dispatch('financeStore/actor/getActorSalaryList',{currentPage,limit,filter}).then(() => {
+				this.$store.dispatch('financeStore/union/getUnionSalaryList',{currentPage,limit,filter}).then(() => {
 
 				})
 		    },
@@ -318,7 +322,7 @@
 	    	})
 	    },
 		created(){
-			this.getActorSalaryList();
+			this.getUnionSalaryList();
 
 			this.getPlatList();
 			this.getUnionList();

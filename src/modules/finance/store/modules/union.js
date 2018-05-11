@@ -19,18 +19,18 @@ const getters = {
 
 // actions
 const actions = {
-	getActorSalaryList ({commit, state,dispatch},{currentPage,limit,filter}){
+	getUnionSalaryList ({commit, state,dispatch},{currentPage,limit,filter}){
 		const start = (currentPage-1)*limit;
 		return new Promise((resolve,reject)=>{
-			$API.finance.getActorSalaryList({start,limit,filter},resp => {
-    			commit(types.INIT_ACTOR_SALARY_LIST,{resp,currentPage,limit})
+			$API.finance.getUnionSalaryList({start,limit,filter},resp => {
+    			commit(types.INIT_UNION_SALARY_LIST,{resp,currentPage,limit})
 				resolve(resp);
 			})
 	    })
 	},
 	agreeApply ({commit, state,dispatch},{list}){
 		return new Promise((resolve,reject)=>{
-			$API.finance.agreeActorApply({list},resp => {
+			$API.finance.agreeUnionApply({list},resp => {
 				resolve(resp);
 			})
 	    })
@@ -51,7 +51,7 @@ const actions = {
 
 // mutations
 const mutations = {
-	[types.INIT_ACTOR_SALARY_LIST] (state,{resp,currentPage,limit}) {
+	[types.INIT_UNION_SALARY_LIST] (state,{resp,currentPage,limit}) {
 		state.currentPage = currentPage;
 		state.limit = limit;
 	    state.salaryList = resp.list;
