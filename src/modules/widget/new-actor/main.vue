@@ -72,7 +72,7 @@
                     <div class="items">
                         <div class="name">代发工资</div>
                         <div class="content">
-                            <el-input :disabled="true" :value="actor.autoPay == 0?'人工代发工资':'系统自动代发工资'" placeholder="代发工资"></el-input>
+                            <el-input :disabled="true" :value="actor.autoPay | filterAutoPay" placeholder="代发工资"></el-input>
                         </div>
                     </div>
                 </div>
@@ -95,7 +95,7 @@
                     <div class="items">
                         <div class="name">身份证</div>
                         <div class="content">
-                            <el-input :minlength="15" :maxlength="18" v-model="actor.identityCardId" placeholder="请输入身份证"></el-input>
+                            <el-input :minlength="15" :maxlength="18" @change="changeIdentityCard" v-model="actor.identityCardId" placeholder="请输入身份证"></el-input>
                         </div>
                     </div>
                 </div>
@@ -183,7 +183,7 @@
                     <div class="items">
                         <div class="name">保底薪资</div>
                         <div class="content">
-                            <el-input v-model="actor.payFloor"  type="number" placeholder="请输入保底薪资"></el-input>
+                            <el-input v-model="actor.payFloor" @change="changePayFloor" type="number" placeholder="请输入保底薪资"></el-input>
                         </div>
                     </div>
                     <div class="items">
@@ -372,6 +372,29 @@
                     }
                 }
 
+            },
+            changeIdentityCard(key){//身份证号
+                // console.log(key);
+                if(key){
+                    if(/(^\d{15}$)|(^\d{17}([0-9]|X)$)/.test(key)){
+                        this.actor.identityCardId = key;
+                    }else{
+                        this.actor.identityCardId = '';
+                    }
+                }
+            },
+            changePayFloor(key){
+                if(key){
+                    if(/^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/.test(key)){
+                        if(key.substr(key.length-1,key.length) == '.'){
+                            key = key.substr(0,key.length-1)
+                        }
+                        this.actor.payFloor = key;
+                    }else{
+                        console.log("false")
+                        this.actor.payFloor = '';
+                    }
+                }
             },
             goModify(part){
                 console.log(this.actor)

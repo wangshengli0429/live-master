@@ -167,9 +167,18 @@
 			    </el-table-column>
 			    <el-table-column label="操作" width="180" fixed="right">
 			      <template slot-scope="scope">
-			        <el-button
-			          size="mini"
-			          @click="handleEdit(scope.$index, scope.row)">入账</el-button>
+			      	<template v-if="scope.row.creator.unionId">
+			      		<el-button
+				          size="mini"
+				          @click="handleEdit(scope.$index, scope.row)">入账</el-button>
+			      	</template>
+			      	<template v-else>
+			      		<el-tooltip class="item" effect="dark" content="分配公会才可入账" placement="bottom">
+			      			<el-button size="mini" disabled>入账</el-button>
+					    </el-tooltip>
+			      	</template>
+			        
+
 			        <el-button
 			          size="mini"
 			          type="danger"

@@ -26,6 +26,21 @@
                     </a></p>
                 </div>
             </div>
+            <div class="import-task-group clearfix">
+                <div class="content">
+                    <p>数据导入成功并反馈导入信息；</p>
+                    <p v-if="result.total > 0">
+                    <span class="num-item total" @click="showResultList('total')">总数：{{ result.total }}条</span>
+                    <span class="num-item success" @click="showResultList('success')">成功：{{ result.success }}条</span>
+                    <span class="num-item fail" @click="showResultList('fail')">失败：{{ result.fail }}条</span></p>
+                    <template v-if="result.fail != 0">
+                        <span style="margin-top:6px;">
+                            <el-button type="warning" plain @click="exportFailData">导出失败数据</el-button>
+                        </span>
+                    </template>
+                    
+                </div>
+            </div>
         </div>
     </modal>
 </template>
@@ -35,6 +50,7 @@
     import { dateToTimes,timesToDate } from '@/config/utils'
     import Modal from '@/modules/widget/common/Modal.vue';
     import Toast from '@/modules/widget/toast';
+    import config_server from '@/config/config'
 
   export default{
     components:{
@@ -78,6 +94,10 @@
             this.orgId = uuid;
             this.initUpload();
         },
+        exportFailData(){
+            var url = config_server.server_api + '/plat/flow/import/result/fail/excel.json?opt_id='+this.groupId;
+            window.open(url);
+        },
         importProgress(){
             api.projectImportStatus({groupId:this.groupId}, data => {
                 //console.log(data);
@@ -85,8 +105,12 @@
                 this.result.success = data.successCount;
                 this.result.fail = data.failCount;
                 this.result.done = data.done;
-                if(data.done < data.count){
-                   
+                if(data.done == data.count){
+                    Toast({
+                        content:"导入成功",
+                        type:"success"
+                    })
+                    this.importing = false;
                 }else{
                     setTimeout(() => {
                         this.importProgress();

@@ -6,7 +6,7 @@ const state = {
 	total:0,
 	currentPage:1,
 	limit:20,
-	analzye:{}
+	analyze:{}
 }
 
 // getters
@@ -15,7 +15,7 @@ const getters = {
 	total: state => state.total,
 	currentPage: state => state.currentPage,
 	limit: state => state.limit,
-	analzye: state => state.analzye,
+	analyze: state => state.analyze,
 
 }
 
@@ -59,7 +59,7 @@ const mutations = {
 	    state.accountList = resp.list;
 	    state.total = resp.count;
 	    /*设置统计信息*/
-	    state.analzye = resp;
+	    state.analyze = resp;
 
 	},
 
