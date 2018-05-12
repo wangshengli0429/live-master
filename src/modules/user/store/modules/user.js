@@ -27,6 +27,15 @@ const actions = {
         		if(resp.user && resp.user.authorityGroupId){
 					dispatch('getUserAuthorities',{uuid:resp.user.authorityGroupId})
 				}
+
+				dispatch('getSystemInfo');
+				if(resp.user.platId){
+					dispatch('getPlatInfo',{uuid:resp.user.platId});
+				}
+				if(resp.user.unionId){
+					dispatch('getUnionInfo',{uuid:resp.user.unionId});
+				}
+
 				resolve(resp);
 			},resp => {
 				resolve(resp);

@@ -6,7 +6,7 @@
 					平台名称：
 				</div>
 				<div class="content">
-					<el-select :clearable="true" v-model="filter.platId" @change="changePlat" placeholder="请选择平台">
+					<el-select :disabled="user.platId?true:false" :clearable="true" v-model="filter.platId" @change="changePlat" placeholder="请选择平台">
 					    <el-option
 							v-for="item in platList"
 							:key="item.uuid"
@@ -22,7 +22,7 @@
 					公会名称：
 				</div>
 				<div class="content">
-					<el-select :clearable="true" v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会">
+					<el-select :disabled="user.unionId?true:false" :clearable="true" v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会">
 					    <el-option
 							v-for="item in unionList"
 							:key="item.uuid"
@@ -170,15 +170,45 @@
 			    </el-table-column>
 			    
 			    <el-table-column label="操作" width="180" fixed="right">
+
 			      <template slot-scope="scope">
-			        <el-button
-			          size="mini"
-			          @click="agreeApply(scope.$index, scope.row)">通过</el-button>
-			        <el-button
-			          size="mini"
-			          type="danger"
-			          @click="rejectApply(scope.$index, scope.row)">拒绝</el-button>
+
+			      	<template v-if="scope.row.status == 'WAITING_APPROVAL'">
+			      		<el-button
+				          size="mini"
+				          @click="agreeApply(scope.$index, scope.row)">通过</el-button>
+				        <el-button
+				          size="mini"
+				          type="danger"
+				          @click="rejectApply(scope.$index, scope.row)">拒绝</el-button>
+			      	</template>
+			      	<template v-else-if="scope.row.status == 'WAITING_PAY'">
+			      		<el-button
+				          size="mini"
+				          @click="agreeApply(scope.$index, scope.row)">打款</el-button>
+				        <el-button
+				          size="mini"
+				          type="danger"
+				          @click="rejectApply(scope.$index, scope.row)">拒绝</el-button>
+			      	</template>
+
+			      	<template v-else-if="scope.row.status == 'APPROVAL_REJECT' || scope.row.status == 'PAY_REJECT'">
+			      		<el-button
+				          size="mini"
+				          >已拒绝</el-button>
+			      	</template>
+
+
+
+
+			        
+
+
+
+
 			      </template>
+
+
 			    </el-table-column>
 
 
@@ -361,6 +391,8 @@
 					status:"",
 				}
 				this.getReflectList(1);
+				this.getUnionList();
+				
 		    },
 		    changePlat(uuid){
 		    	if(uuid){
@@ -396,18 +428,31 @@
 		    },
 		    getUnionList(parentId){
 		    	let orgId = this.user.orgId;
+		    	parentId = parentId ||  this.user.platId;
 		    	this.$store.dispatch('groupStore/group/getGroupList',{orgId,parentId,currentPage:1,limit:50}).then((resp) => {
 		    		this.unionList = resp.list;
 				})
 		    },
-		},
+			setDefaultOrg(){
+		    	if(this.user){
+		    		this.filter.platId = this.user.platId;
+		    		this.filter.unionId = this.user.unionId;
+		    	}
+		    }
+	    },
+	    watch:{
+	    	user(){
+	    		this.setDefaultOrg();
+	    	}
+	    },
 		mounted(){
 	    	setTimeout(() => {
 	    		this.setHeight();
+	    		this.setDefaultOrg();
+				this.getReflectList();
 	    	})
 	    },
 		created(){
-			this.getReflectList();
 
 			this.getPlatList();
 			this.getUnionList();

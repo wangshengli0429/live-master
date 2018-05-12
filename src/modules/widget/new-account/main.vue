@@ -177,7 +177,7 @@
                         this.disabledUnion = true;
                     }else if(obj[0].orgType == 'PLAT'){
                         this.disabledPlat = false;
-                        this.disabledUnion = false;
+                        this.disabledUnion = true;
                     }else if(obj[0].orgType == 'UNION'){
                         this.disabledPlat = true;
                         this.disabledUnion = false;

@@ -21,6 +21,13 @@ export default {
       if(filter.thirdId){
         params.thirdId = filter.thirdId
       }
+      if(filter.id){
+        params.id = filter.id
+      }
+      if(filter.nickname){
+        params.nickname = filter.nickname
+      }
+
       if(filter.unionId){
         params.orgId = filter.unionId
       }else{

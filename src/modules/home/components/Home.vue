@@ -7,7 +7,13 @@
 			<div class="user">
 				<el-dropdown trigger="click" @command="handleCommand">
 				  <span class="el-dropdown-link">
-				    {{user.nickname}}<i class="el-icon-arrow-down el-icon--right"></i>
+				    {{user.nickname || user.loginName}}
+				    <template v-if="user.platName || user.unionName">
+				    	（{{user.platName}}
+					    <template v-if="user.unionName">-{{user.unionName}}</template>
+					    ）
+					</template>
+				    <i class="el-icon-arrow-down el-icon--right"></i>
 				  </span>
 				  <el-dropdown-menu slot="dropdown">
 				    <el-dropdown-item command="signout">退出登录</el-dropdown-item>

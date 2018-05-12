@@ -6,7 +6,7 @@
 					归属平台：
 				</div>
 				<div class="content">
-					<el-select v-model="filter.orgId" @change="" placeholder="请选择归属平台">
+					<el-select :disabled="user.platId?true:false" v-model="filter.orgId" @change="" placeholder="请选择归属平台">
 					    <el-option
 							v-for="item in platList"
 							:key="item.uuid"
@@ -22,7 +22,7 @@
 					公会名称：
 				</div>
 				<div class="content">
-					<el-input v-model="filter.name" placeholder="请输入公会名称"></el-input>
+					<el-input :disabled="disableUnion" v-model="filter.name" placeholder="请输入公会名称"></el-input>
 				</div>
 			</div>
 			<div class="filter_items">
@@ -118,7 +118,7 @@
 			    <el-table-column
 			      label="代发工资"
 			      show-overflow-tooltip>
-				   <template slot-scope="scope">{{ scope.row.autoPay == 0?"代发工资":"自动" }}</template>
+				   <template slot-scope="scope">{{ scope.row.autoPay | filterAutoPay}}</template>
 			    </el-table-column>
 			    <el-table-column
 			      label="管理员账号"
@@ -183,7 +183,9 @@
 					orgId:"",
 					status:0,
 					adminName:""
-				}
+				},
+				disablePlat:false,
+				disableUnion:false
 			}
 		},
 		computed:{
@@ -265,18 +267,27 @@
 				this.$store.dispatch('platStore/platform/getPlatFormList',{orgId,currentPage:1,limit:50}).then((resp) => {
 					this.platList = resp.list
 				})
+		    },
+			setDefaultOrg(){
+		    	if(this.user){
+		    		this.filter.orgId = this.user.platId;
+		    	}
 		    }
-
-
-		},
+	    },
+	    watch:{
+	    	user(){
+	    		this.setDefaultOrg();
+	    	}
+	    },
 		mounted(){
 	    	setTimeout(() => {
 	    		this.setHeight();
+	    		this.setDefaultOrg();
+				this.getUnionList();
 	    	})
 	    },
 		created(){
 			this.getPlatList();
-			this.getUnionList();
 		}
 	}
 </script>

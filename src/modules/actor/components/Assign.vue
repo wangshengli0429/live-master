@@ -6,7 +6,7 @@
 					平台：
 				</div>
 				<div class="content">
-					<el-select v-model="filter.platId" @change="changePlat" placeholder="请选择平台">
+					<el-select :disabled="user.platId?true:false" v-model="filter.platId" @change="changePlat" placeholder="请选择平台">
 					    <el-option
 							v-for="item in platList"
 							:key="item.uuid"
@@ -19,10 +19,10 @@
 			</div>
 			<div class="filter_items">
 				<div class="name">
-					工会：
+					公会：
 				</div>
 				<div class="content">
-					<el-select v-model="filter.unionId" @change="" placeholder="请选择工会">
+					<el-select :disabled="user.unionId?true:false" v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会">
 					    <el-option
 							v-for="item in unionList"
 							:key="item.uuid"
@@ -95,7 +95,7 @@
 			</div>
 		</div>
 		<div ref="operate" class="operate">
-			<el-button @click="batchDistribute">分配</el-button>
+			<el-button v-if="filter.platId" @click="batchDistribute">分配</el-button>
 		</div>
 
 		<div class="filter_list">
@@ -132,7 +132,7 @@
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="platId"
+			      prop="thirdId"
 			      label="平台ID"
 			      show-overflow-tooltip>
 			    </el-table-column>
@@ -159,7 +159,7 @@
 			    <el-table-column
 			      label="结算方式"
 			      show-overflow-tooltip>
-			      <template slot-scope="scope">{{ scope.row.autoPay == 0?'人工代发工资':'系统自动代发工资' }}</template>
+			      <template slot-scope="scope">{{ scope.row.autoPay | filterAutoPay }}</template>
 			    </el-table-column>
 			    <el-table-column
 			      label="待遇"
@@ -235,6 +235,7 @@
 				limit:20,
 				filter:{
 					platId:"",
+					platName:"",
 					unionId:"",
 					status:0,
 					brokerId:"",//经纪人id
@@ -253,6 +254,7 @@
 		    resetFilter(){
 		    	this.filter = {
 					platId:"",
+					platName:"",
 					unionId:"",
 					distributeStatus:0,//0 未分配 1分配
 					brokerId:"",//经纪人id
@@ -260,6 +262,8 @@
 					orgId:"",//平台／工会id
 				}
 				this.getActorList(1);
+	    		this.getUnionList();
+
 		    },
 	    	goFilter(){
 	    		// console.log(this.filter)
@@ -274,10 +278,10 @@
 		        	}
 		        	AssignActor({
 	    				actor:{
-	    					platId:"",
-	    					platName:"",
-	    					unionId:"",
-	    					unionName:""
+	    					platId:this.filter.platId || "",
+	    					platName:this.filter.platName || "",
+	    					unionId:this.filter.unionId || "",
+	    					unionName:this.filter.unionName || ""
 	    				},
 	    				user:this.user,
 	    				callback:(uuid) => {
@@ -346,6 +350,7 @@
 		    	currentPage = currentPage || this.currentPage;
 		    	limit = limit || this.limit;
 		    	let filter = this.filter;
+
 		    	this.$store.dispatch('actorStore/actor/getActorList',{currentPage,limit,filter}).then((resp) => {
 		    		this.currentPage = currentPage;
 					this.limit = limit;
@@ -354,6 +359,7 @@
 		    	})
 		    },
 		    changePlat(uuid){
+		    	console.log(uuid);
 		    	if(uuid){
 		    		this.filter.orgId = uuid;
 		    	}else{
@@ -361,6 +367,27 @@
 		    	}
 		    	this.filter.unionId = "";
 		    	this.getUnionList(uuid);
+
+		    	for(var items of this.platList){
+		    		if(items.uuid == uuid){
+		    			this.filter.platName = items.name;
+		    		}
+		    	}
+
+
+
+		    },
+		    changeUnion(uuid){
+		    	this.filter.unionId = uuid;
+		    	for(var items of this.unionList){
+		    		if(items.uuid == uuid){
+		    			this.filter.unionName = items.name
+		    			if(items.parentOrg){
+		    				this.filter.platId = items.parentOrg.uuid;
+		    				this.filter.platName = items.parentOrg.name;
+		    			}
+		    		}
+		    	}
 		    },
 		    getPlatList(){
 		    	const orgId = this.user.orgId;
@@ -370,6 +397,7 @@
 		    },
 		    getUnionList(parentId){
 		    	let orgId = this.user.orgId;
+		    	parentId = parentId ||  this.user.platId;
 		    	this.$store.dispatch('groupStore/group/getGroupList',{orgId,parentId,currentPage:1,limit:50}).then((resp) => {
 		    		this.unionList = resp.list;
 				})
@@ -384,18 +412,30 @@
 		    		list.unshift(temp)
 		    		this.agentList = list;
 				})
+		    },
+		    setDefaultOrg(){
+		    	if(this.user){
+		    		this.filter.platId = this.user.platId;
+		    		this.filter.unionId = this.user.unionId;
+		    	}
 		    }
+	    },
+	    watch:{
+	    	user(){
+	    		this.setDefaultOrg();
+	    	}
 	    },
 	    mounted(){
 	    	setTimeout(() => {
 	    		this.setHeight();
+	    		this.setDefaultOrg();
+	    		this.getActorList();
 	    	})
 	    },
 	    created(){
 	    	this.getPlatList();
 	    	this.getUnionList();
 	    	this.getAgentList();
-	    	this.getActorList();
 	    },
 	}
 </script>

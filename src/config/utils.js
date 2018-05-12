@@ -150,8 +150,9 @@ export const httpAgent = function(url, requestType, param, successCb,erroCb){
   .then(function (resp) {
     const data = resp.data;
     if (data.result && data.result != 0) {
-      if(data.result == -10001){//token过期了
+      if(data.result == 12){//token过期了
         //tokenIsOverdue();
+        Link('/login');//跳转登录
       }else if(data.result == -10100){//强制升级客户端
         //mandatoryUpgrade();
       }else{

@@ -40,19 +40,21 @@ export default {
     httpAgent(url,'GET', params,successCb,erroCb)
   },
   agreeApply({list},successCb, erroCb){
-    let url = `${config_server.server_api}/finance/cash/apply/pass.json`;
-    let params = '';
+    let url = `${config_server.server_api}/finance/cash/apply/pass.json?`;
+    let params = {
+    };
     for(var items of list){
-      params = params + '&uuid='+items;
+      url = url + 'uuid='+items;
     }
     // console.log(params);
     httpAgent(url,'POST', params,successCb,erroCb)
   },
   rejectApply({list},successCb, erroCb){
-    let url = `${config_server.server_api}/finance/cash/apply/reject.json`;
-    let params = '';
+    let url = `${config_server.server_api}/finance/cash/apply/reject.json?`;
+    let params = {
+    };
     for(var items of list){
-      params = params + '&uuid='+items;
+      url = url + 'uuid='+items;
     }
     // console.log(params);
     httpAgent(url,'POST', params,successCb,erroCb)

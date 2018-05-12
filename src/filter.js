@@ -44,7 +44,14 @@ export const filter = (Vue) => {
     return result;
   })
 
-
+  Vue.filter('filterAutoPay', (str) => {//代发工资
+    var result = "";
+    switch(str){
+      case 0: result = '手动'; break;
+      case 1: result = '系统'; break;
+    }
+    return result;
+  })
 
 
 

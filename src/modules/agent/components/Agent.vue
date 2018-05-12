@@ -6,7 +6,7 @@
 					平台：
 				</div>
 				<div class="content">
-					<el-select v-model="filter.platId" @change="changePlat" placeholder="请选择平台">
+					<el-select :disabled="user.platId?true:false" v-model="filter.platId" @change="changePlat" placeholder="请选择平台">
 					    <el-option
 							v-for="item in platList"
 							:key="item.uuid"
@@ -19,10 +19,10 @@
 			</div>
 			<div class="filter_items">
 				<div class="name">
-					工会：
+					公会：
 				</div>
 				<div class="content">
-					<el-select v-model="filter.unionId" @change="changeUnion" placeholder="请选择工会">
+					<el-select :disabled="user.unionId?true:false" v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会">
 					    <el-option
 							v-for="item in unionList"
 							:key="item.uuid"
@@ -208,6 +208,7 @@
 					status:0,
 				};
 				this.getAgentList(1);
+	    		this.getUnionList();
 			},
 			handleEdit(index,data){
 				newAgent({
@@ -300,20 +301,33 @@
 		    },
 		    getUnionList(parentId){
 		    	let orgId = this.user.orgId;
+		    	parentId = parentId ||  this.user.platId;
 		    	this.$store.dispatch('groupStore/group/getGroupList',{orgId,parentId,currentPage:1,limit:50}).then((resp) => {
 		    		this.unionList = resp.list;
 				})
 		    },
-		},
+			setDefaultOrg(){
+		    	if(this.user){
+		    		this.filter.platId = this.user.platId;
+		    		this.filter.unionId = this.user.unionId;
+		    	}
+		    }
+	    },
+	    watch:{
+	    	user(){
+	    		this.setDefaultOrg();
+	    	}
+	    },
 		mounted(){
 	    	setTimeout(() => {
 	    		this.setHeight();
+	    		this.setDefaultOrg();
+				this.getAgentList();
 	    	})
 	    },
 		created(){
 			this.getPlatList();
 	    	this.getUnionList();
-			this.getAgentList();
 		}
 	}
 </script>

@@ -6,7 +6,7 @@
 					平台：
 				</div>
 				<div class="content">
-					<el-select v-model="filter.platId" @change="changePlat" placeholder="请选择平台">
+					<el-select :disabled="user.platId?true:false" v-model="filter.platId" @change="changePlat" placeholder="请选择平台">
 					    <el-option
 							v-for="item in platList"
 							:key="item.uuid"
@@ -19,10 +19,10 @@
 			</div>
 			<div class="filter_items">
 				<div class="name">
-					工会：
+					公会：
 				</div>
 				<div class="content">
-					<el-select v-model="filter.unionId" @change="" placeholder="请选择工会">
+					<el-select :disabled="user.unionId?true:false" v-model="filter.unionId" @change="" placeholder="请选择公会">
 					    <el-option
 							v-for="item in unionList"
 							:key="item.uuid"
@@ -65,6 +65,24 @@
 					</el-select>
 				</div>
 			</div>
+			<div class="filter_items">
+				<div class="name">
+					分配：
+				</div>
+				<div class="content">
+					<el-select v-model="filter.distributeStatus" @change="" placeholder="请选择是否分配">
+					    <el-option
+							v-for="item in assignList"
+							:key="item.uuid"
+							:label="item.name"
+							:value="item.uuid"
+							>
+					    </el-option>
+					</el-select>
+				</div>
+			</div>
+
+
 			<div class="filter_items">
 				<div class="name">
 					ID：
@@ -132,7 +150,7 @@
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="platId"
+			      prop="thirdId"
 			      label="平台ID"
 			      show-overflow-tooltip>
 			    </el-table-column>
@@ -159,7 +177,7 @@
 			    <el-table-column
 			      label="结算方式"
 			      show-overflow-tooltip>
-			      <template slot-scope="scope">{{ scope.row.autoPay == 0?'人工代发工资':'系统自动代发工资' }}</template>
+			      <template slot-scope="scope">{{ scope.row.autoPay | filterAutoPay }}</template>
 			    </el-table-column>
 			    <el-table-column
 			      label="待遇"
@@ -223,6 +241,13 @@
 					name:"已停用",
 					uuid:1
 				}],
+				assignList:[{
+					name:"未分配",
+					uuid:0
+				},{
+					name:"已分配",
+					uuid:1
+				}],
 				multipleSelection:[],
 				tableHeight:250,
 
@@ -237,9 +262,12 @@
 					platId:"",
 					unionId:"",
 					status:0,
+					distributeStatus:0,
 					brokerId:"",//经纪人id
 					thirdId:"",//第三方id
 					orgId:"",//平台／工会id
+					id:"",
+					nickname:""
 				}
 			}
 		},
@@ -254,12 +282,17 @@
 		    	this.filter = {
 					platId:"",
 					unionId:"",
-					distributeStatus:0,//0 未分配 1分配
+					status:0,
+					distributeStatus:0,
 					brokerId:"",//经纪人id
 					thirdId:"",//第三方id
 					orgId:"",//平台／工会id
+					id:"",
+					nickname:""
 				}
 				this.getActorList(1);
+	    		this.getUnionList();
+
 		    },
 	    	goFilter(){
 	    		// console.log(this.filter)
@@ -360,6 +393,7 @@
 		    },
 		    getUnionList(parentId){
 		    	let orgId = this.user.orgId;
+		    	parentId = parentId ||  this.user.platId;
 		    	this.$store.dispatch('groupStore/group/getGroupList',{orgId,parentId,currentPage:1,limit:50}).then((resp) => {
 		    		this.unionList = resp.list;
 				})
@@ -374,18 +408,30 @@
 		    		list.unshift(temp)
 		    		this.agentList = list;
 				})
+		    },
+		    setDefaultOrg(){
+		    	if(this.user){
+		    		this.filter.platId = this.user.platId;
+		    		this.filter.unionId = this.user.unionId;
+		    	}
 		    }
+	    },
+	    watch:{
+	    	user(){
+	    		this.setDefaultOrg();
+	    	}
 	    },
 	    mounted(){
 	    	setTimeout(() => {
 	    		this.setHeight();
+	    		this.setDefaultOrg();
+	    		this.getActorList();
 	    	})
 	    },
 	    created(){
 	    	this.getPlatList();
 	    	this.getUnionList();
 	    	this.getAgentList();
-	    	this.getActorList();
 	    },
 	}
 </script>

@@ -64,7 +64,7 @@ const state = {
           uuid:"actor_apply",
           parent:{
             name:"艺人管理",
-            uuid:"actor_manage",
+            uuid:"actor_apply",
           }
         }
       ]
@@ -79,7 +79,7 @@ const state = {
       children:[{
           name:"入账管理",
           path:"/finance/account",
-          uuid:"nav_finance_account",
+          uuid:"finance_income",
           parent:{
             name:"财务管理",
             uuid:"finance_manage",
@@ -96,7 +96,7 @@ const state = {
           
           name:"提现管理",
           path:"/finance/reflect",
-          uuid:"nav_finance_reflect",
+          uuid:"finance_cash",
           parent:{
             name:"财务管理",
             uuid:"finance_manage",
@@ -105,7 +105,7 @@ const state = {
           
           name:"艺人薪资结算",
           path:"/finance/actor",
-          uuid:"nav_finance_actor",
+          uuid:"finance_cator",
           parent:{
             name:"财务管理",
             uuid:"finance_manage",
@@ -114,7 +114,7 @@ const state = {
           
           name:"经纪人薪资结算",
           path:"/finance/agent",
-          uuid:"nav_finance_agent",
+          uuid:"finance_broker",
           parent:{
             name:"财务管理",
             uuid:"finance_manage",
@@ -123,7 +123,7 @@ const state = {
           
           name:"公会结算",
           path:"/finance/union",
-          uuid:"nav_finance_union",
+          uuid:"finance_union",
           parent:{
             name:"财务管理",
             uuid:"finance_manage",

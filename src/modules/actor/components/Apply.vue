@@ -105,7 +105,7 @@
 			    </el-table-column>
 			    <el-table-column
 			      prop="summary"
-			      label="解除渠道"
+			      label="接触渠道"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column

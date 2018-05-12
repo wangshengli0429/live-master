@@ -12,7 +12,7 @@
                     <div class="items">
                         <div class="name">平台</div>
                         <div class="content">
-                            <el-select v-model="agent.platName" @change="changePlat" placeholder="请选择平台">
+                            <el-select :disabled="user.platId?true:false" v-model="agent.platName" @change="changePlat" placeholder="请选择平台">
                                 <el-option
                                   v-for="item in platList"
                                   :key="item.uuid"
@@ -25,7 +25,7 @@
                     <div class="items">
                         <div class="name">公会</div>
                         <div class="content">
-                            <el-select v-model="agent.unionName" @change="changeUnion" placeholder="请选择公会">
+                            <el-select :disalbed="user.unionId?true:false" v-model="agent.unionName" @change="changeUnion" placeholder="请选择公会">
                                 <el-option
                                   v-for="item in unionList"
                                   :key="item.uuid"
@@ -194,7 +194,7 @@
             },
             getUnionList(parentId){
                 let orgId = this.user.orgId;
-                parentId = parentId || '';
+                parentId = parentId || this.user.platId;
                 $API.group.getGroupList({orgId,parentId,currentPage:1,limit:50},(resp) => {
                     this.unionList = resp.list;
                 })
@@ -212,10 +212,22 @@
 
         },
         mounted(){
+            if(this.user && this.user.platId){
+                this.agent.platId = this.user.platId;
+                this.agent.platName = this.user.platName;
+            }
+            if(this.user && this.user.unionId){
+                this.agent.unionId = this.user.unionId;
+                this.agent.unionName = this.user.unionName;
+            }
             this.setHeight();
             this.getAccountList();
             this.getPlatList();
             this.getUnionList();
+            
+
+
+
 
         }
     }

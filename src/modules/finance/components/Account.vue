@@ -6,7 +6,7 @@
 					平台名称：
 				</div>
 				<div class="content">
-					<el-select :clearable="true" v-model="filter.platId" @change="changePlat" placeholder="请选择平台">
+					<el-select :disabled="user.platId?true:false" :clearable="true" v-model="filter.platId" @change="changePlat" placeholder="请选择平台">
 					    <el-option
 							v-for="item in platList"
 							:key="item.uuid"
@@ -22,7 +22,7 @@
 					公会名称：
 				</div>
 				<div class="content">
-					<el-select :clearable="true" v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会">
+					<el-select :disabled="user.unionId?true:false" :clearable="true" v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会">
 					    <el-option
 							v-for="item in unionList"
 							:key="item.uuid"
@@ -184,7 +184,7 @@
 						今日导入账单金额/元
 					</div>
 					<div class="bottom">
-						2132423
+						{{analyze && analyze.todayShareNum || 0}}
 					</div>
 				</div>
 				<div class="items">
@@ -192,7 +192,7 @@
 						今日导入账单数
 					</div>
 					<div class="bottom">
-						3456
+						{{analyze && analyze.todayShareCount || 0}}
 					</div>
 				</div>
 				<div class="items">
@@ -200,7 +200,7 @@
 						今日已入账金额/元
 					</div>
 					<div class="bottom">
-						1132423
+						{{analyze && analyze.todayDoneShareNum || 0}}
 					</div>
 				</div>
 				<div class="items">
@@ -208,7 +208,7 @@
 						今日待入账金额/元
 					</div>
 					<div class="bottom">
-						1000000
+						{{analyze && analyze.todayWaitShareNum || 0}}
 					</div>
 				</div>
 				<div class="items">
@@ -216,7 +216,7 @@
 						今日待入账账单数
 					</div>
 					<div class="bottom">
-						232
+						{{analyze && analyze.todayWaitShareCount || 0}}
 					</div>
 				</div>
 				<div class="items">
@@ -224,7 +224,7 @@
 						历史待入账账单数
 					</div>
 					<div class="bottom">
-						567
+						{{analyze && analyze.shareNum || 0}}
 					</div>
 				</div>
 				<div class="items">
@@ -232,7 +232,7 @@
 						入账阀值/元
 					</div>
 					<div class="bottom">
-						567
+						{{analyze && analyze.maxEntry || 0}}
 					</div>
 				</div>
 			</div>
@@ -294,6 +294,7 @@
 		computed: {
 			...mapGetters({
 				accountList: 'financeStore/account/accountList',
+				analyze: 'financeStore/account/analyze',
 				total: 'financeStore/account/total',
 				currentPage: 'financeStore/account/currentPage',
 				limit: 'financeStore/account/limit',
@@ -364,16 +365,18 @@
 		    	this.tableHeight = tableHeight;
 		    },
 		    resetFilter(){
-		    	this.filter = {
+		    	this.filter ={
 					orgId:"",
 					platId:"",
 					unionId:"",
 					date:"",
 					nickname:"",
 					thirdId:"",
-					status:""
+					status:0
 				}
 				this.getAccountList(1);
+				this.getUnionList();
+
 		    },
 		    changePlat(uuid){
 		    	if(uuid){
@@ -415,18 +418,31 @@
 		    },
 		    getUnionList(parentId){
 		    	let orgId = this.user.orgId;
+		    	parentId = parentId ||  this.user.platId;
 		    	this.$store.dispatch('groupStore/group/getGroupList',{orgId,parentId,currentPage:1,limit:50}).then((resp) => {
 		    		this.unionList = resp.list;
 				})
 		    },
-		},
+			setDefaultOrg(){
+		    	if(this.user){
+		    		this.filter.platId = this.user.platId;
+		    		this.filter.unionId = this.user.unionId;
+		    	}
+		    }
+	    },
+	    watch:{
+	    	user(){
+	    		this.setDefaultOrg();
+	    	}
+	    },
 		mounted(){
 	    	setTimeout(() => {
 	    		this.setHeight();
+	    		this.setDefaultOrg();
+				this.getAccountList();
 	    	})
 	    },
 		created(){
-			this.getAccountList();
 
 			this.getPlatList();
 			this.getUnionList();

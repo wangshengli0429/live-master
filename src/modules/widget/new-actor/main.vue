@@ -196,11 +196,11 @@
                         <div class="name">有效天数</div>
                         <div class="content">
                             <el-input v-model="actor.validDayHour"  type="number" placeholder="请输入有效天数"></el-input>
-                            <div class="info">当日直播时长超过2小时记为有效天</div>
+                            <div v-if="actor.validDay" class="info">当日直播时长超过{{actor.validDay}}小时记为有效天</div>
                         </div>
                     </div>
                     <div class="items">
-                        <div class="name">有效时长</div>
+                        <div class="name">有效总时长</div>
                         <div class="content">
                             <el-input v-model="actor.validHour"  type="number" placeholder="请输入有效时长"></el-input>小时
                         </div>
@@ -453,7 +453,7 @@
                 actor.uuid = this.actor.uuid;
                 api.modifyActor(actor,(resp) => {
                     this.callback && this.callback();
-                    this.destroy();
+                    // this.destroy();
                 })
             }
 
@@ -465,6 +465,18 @@
             const parentId = this.actor.platId || "";
             this.getUnionList(parentId);
             this.setHeight();
+
+
+            var temp = {
+                shareRatio:"",
+                maxLimit:"",
+                delete:0
+            }
+            if(this.actor.shareProperties && this.actor.shareProperties.length == 0){
+                this.actor.shareProperties.push(temp);
+            }
+
+
         }
     }
 </script>

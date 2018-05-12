@@ -6,7 +6,7 @@
 					平台名称：
 				</div>
 				<div class="content">
-					<el-select :clearable="true" v-model="filter.platId" @change="changePlat" placeholder="请选择平台">
+					<el-select :disabled="user.platId?true:false" :clearable="true" v-model="filter.platId" @change="changePlat" placeholder="请选择平台">
 					    <el-option
 							v-for="item in platList"
 							:key="item.uuid"
@@ -22,7 +22,7 @@
 					公会名称：
 				</div>
 				<div class="content">
-					<el-select :clearable="true" v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会">
+					<el-select :disabled="user.unionId?true:false" :clearable="true" v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会">
 					    <el-option
 							v-for="item in unionList"
 							:key="item.uuid"
@@ -141,7 +141,7 @@
 			      prop="income"
 			      label="艺人工资代发"
 			      show-overflow-tooltip>
-				  <template slot-scope="scope">{{ scope.row.autoPay == 0?'代发工资':'自动'}}</template>
+				  <template slot-scope="scope">{{ scope.row.autoPay | filterAutoPay}}</template>
 			    </el-table-column>
 			    <el-table-column
 			      prop="income"
@@ -276,6 +276,8 @@
 					status:"",
 				}
 				this.getUnionSalaryList(1);
+				this.getUnionList();
+				
 		    },
 		    changePlat(uuid){
 		    	if(uuid){
@@ -311,18 +313,32 @@
 		    },
 		    getUnionList(parentId){
 		    	let orgId = this.user.orgId;
+		    	parentId = parentId ||  this.user.platId;
 		    	this.$store.dispatch('groupStore/group/getGroupList',{orgId,parentId,currentPage:1,limit:50}).then((resp) => {
 		    		this.unionList = resp.list;
 				})
 		    },
-		},
+			setDefaultOrg(){
+		    	if(this.user){
+		    		this.filter.platId = this.user.platId;
+		    		this.filter.unionId = this.user.unionId;
+		    	}
+		    }
+	    },
+	    watch:{
+	    	user(){
+	    		this.setDefaultOrg();
+	    	}
+	    },
 		mounted(){
 	    	setTimeout(() => {
 	    		this.setHeight();
+	    		this.setDefaultOrg();
+				this.getUnionSalaryList();
+
 	    	})
 	    },
 		created(){
-			this.getUnionSalaryList();
 
 			this.getPlatList();
 			this.getUnionList();

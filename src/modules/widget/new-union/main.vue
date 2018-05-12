@@ -26,7 +26,7 @@
                     <div class="items">
                         <div class="name">平台</div>
                         <div class="content">
-                            <el-select v-model="union.parentId" placeholder="请选择平台">
+                            <el-select :disabled="user.platId?true:false" v-model="union.parentId" placeholder="请选择平台">
                                 <el-option
                                     v-for="item in platList"
                                     :key="item.uuid"
@@ -110,10 +110,10 @@
                 authorityGroup:[],
                 autoPayList:[{
                     uuid:0,
-                    name:"代发工资",
+                    name:"手动",
                 },{
                     uuid:1,
-                    name:"自动",
+                    name:"系统",
                 }],
                 statusList:[{
                     uuid:1,
@@ -247,9 +247,12 @@
 
             this.setHeight();
             this.getAccountList();
-
-
             this.getPlatList();
+            if(this.user.platId){
+                this.union.parentId = this.user.platId;
+            }
+
+
 
 
         }
