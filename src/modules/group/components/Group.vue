@@ -64,7 +64,7 @@
 			</div>
 		</div>
 		<div ref="operate" class="operate">
-			<el-button @click="goAddUnion">添加</el-button>
+			<el-button v-if="edit" @click="goAddUnion">添加</el-button>
 		</div>
 		<div class="filter_list">
 			<el-table
@@ -74,10 +74,10 @@
 			    tooltip-effect="dark"
 			    style="width: 100%"
 			    @selection-change="">
-			    <el-table-column
+		<!-- 	    <el-table-column
 			      type="selection"
 			      width="55">
-			    </el-table-column>
+			    </el-table-column> -->
 			    <el-table-column
 			      prop="id"
 			      label="公会ID"
@@ -127,7 +127,7 @@
 				    <template slot-scope="scope">{{ scope.row.majorAdmin && scope.row.majorAdmin.loginName}}</template>
 			    </el-table-column>
 
-			    <el-table-column label="操作" width="180" fixed="right">
+			    <el-table-column v-if="edit" label="操作" width="180" fixed="right">
 			      <template slot-scope="scope">
 			        <el-button
 			          size="mini"
@@ -160,6 +160,7 @@
 <script>
 	import {mapGetters,mapActions} from 'vuex';
 	import newUnion from '@/modules/widget/new-union'
+	import {Operate} from '@/config/operate'
 
 
 
@@ -195,7 +196,13 @@
 				currentPage: 'groupStore/group/currentPage',
 				limit: 'groupStore/group/limit',
 				groupList: 'groupStore/group/groupList',
-			})
+				nav: 'homeStore/home/nav',
+				authorities_nav: 'userStore/user/authorities',
+			}),
+			edit(){
+				let path = this.$route.path;
+				return Operate(this.user,path,this.nav,this.authorities_nav);
+			}
 		},
 		methods:{
 			handleEdit(index,data){

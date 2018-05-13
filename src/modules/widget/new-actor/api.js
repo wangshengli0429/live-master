@@ -13,6 +13,9 @@ export const modifyActor = (actor,successCb,erroCb) => {
     }
     if(actor.brokerId){
         param.brokerId = actor.brokerId
+    }else{
+        param.brokerId = ''
+
     }
     if(actor.nickname){
         param.nickname = actor.nickname
@@ -47,7 +50,9 @@ export const modifyActor = (actor,successCb,erroCb) => {
         param.validHour = actor.validHour
     }
 
-
+    if(actor.status){
+        param.status = actor.status
+    }
 
     if(actor.shareRatio){
         param.shareRatio = actor.shareRatio

@@ -1,7 +1,7 @@
 <template>
 	<div ref="container" class="account_group">
 		<div ref="operate" class="operate">
-			<el-button @click="goAddAccountGroup">添加</el-button>
+			<el-button v-if="edit" @click="goAddAccountGroup">添加</el-button>
 		</div>
 		<div class="account_group_list">
 			<el-table
@@ -45,7 +45,7 @@
 				  	{{ scope.row.status == 0?"已启用":"已停用" }}
 				  </template>
 			    </el-table-column>
-			    <el-table-column label="操作" width="90" fixed="right">
+			    <el-table-column v-if="edit" label="操作" width="90" fixed="right">
 			      <template slot-scope="scope">
 			        <el-button
 			          size="mini"
@@ -75,6 +75,8 @@
 <script>
 	import {mapGetters,mapActions} from 'vuex';
 	import newAccountGroup from '@/modules/widget/new-account-group'
+	import {Operate} from '@/config/operate'
+	
 	export default{
 		data(){
 			return {
@@ -88,8 +90,15 @@
 				total: 'limitStore/limit/total',
 				currentPage: 'limitStore/limit/currentPage',
 				limit: 'limitStore/limit/limit',
+				user: 'userStore/user/user',
 				authorities: 'limitStore/limit/authorities',
-			})
+				nav: 'homeStore/home/nav',
+				authorities_nav: 'userStore/user/authorities',
+			}),
+			edit(){
+				let path = this.$route.path;
+				return Operate(this.user,path,this.nav,this.authorities_nav);
+			}
 	    },
 		methods:{
 			goAddAccountGroup(){

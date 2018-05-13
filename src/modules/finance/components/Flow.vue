@@ -87,7 +87,7 @@
 			</div>
 		</div>
 		<div ref="operate" class="operate">
-			<div class="opt_right" style="float:right;">
+			<div class="opt_right" v-if="edit" style="float:right;">
 				<el-button @click="">账单导出</el-button>
 			</div>
 		</div>
@@ -99,10 +99,10 @@
 			    tooltip-effect="dark"
 			    style="width: 100%"
 			    @selection-change="">
-			    <el-table-column
+		<!-- 	    <el-table-column
 			      type="selection"
 			      width="55">
-			    </el-table-column>
+			    </el-table-column> -->
 			    <el-table-column
 			      label="日期"
 			      width="120"
@@ -193,6 +193,9 @@
 </template>
 <script>
 	import {mapGetters,mapActions} from 'vuex';
+	import {Operate} from '@/config/operate'
+
+
 	export default{
 		data(){
 			return {
@@ -234,7 +237,13 @@
 				currentPage: 'financeStore/flow/currentPage',
 				limit: 'financeStore/flow/limit',
 				user: 'userStore/user/user',
-			})
+				nav: 'homeStore/home/nav',
+				authorities_nav: 'userStore/user/authorities',
+			}),
+			edit(){
+				let path = this.$route.path;
+				return Operate(this.user,path,this.nav,this.authorities_nav);
+			}
 	    },
 		methods:{
 			handleDelete(index,data){

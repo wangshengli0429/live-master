@@ -86,7 +86,7 @@
 		</div>
 		<div ref="operate" class="operate">
 			<!-- <el-button @click="">批量发放</el-button> -->
-			<div class="opt_right" style="float:right;">
+			<div v-if="edit" class="opt_right" style="float:right;">
 				<el-button @click="">订单导出</el-button>
 			</div>
 		</div>
@@ -186,7 +186,7 @@
 			      show-overflow-tooltip>
 				    <template slot-scope="scope">{{ scope.row.status | salaryStatus}}</template>
 			    </el-table-column>
-			    <el-table-column label="操作" width="180" fixed="right">
+			    <el-table-column v-if="edit" label="操作" width="180" fixed="right">
 			      <template slot-scope="scope">
 			      	<template v-if="scope.row.status == 0">
 				        <el-button
@@ -218,6 +218,9 @@
 </template>
 <script>
 	import {mapGetters,mapActions} from 'vuex';
+	import {Operate} from '@/config/operate'
+
+
 	export default{
 		data(){
 			return {
@@ -252,7 +255,13 @@
 				currentPage: 'financeStore/actor/currentPage',
 				limit: 'financeStore/actor/limit',
 				user: 'userStore/user/user',
-			})
+				nav: 'homeStore/home/nav',
+				authorities_nav: 'userStore/user/authorities',
+			}),
+			edit(){
+				let path = this.$route.path;
+				return Operate(this.user,path,this.nav,this.authorities_nav);
+			}
 	    },
 		methods:{
 			agreeApply(index,data){

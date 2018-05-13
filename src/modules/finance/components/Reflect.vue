@@ -85,12 +85,16 @@
 			</div>
 		</div>
 		<div ref="operate" class="operate">
-			<el-button @click="batchAgree">批量通过	</el-button>
+			<template v-if="edit">
+				<el-button @click="batchAgree">批量通过	</el-button>
 			<!-- <el-button @click="">批量打款</el-button> -->
-			<el-button @click="batchReject" type="danger">批量拒绝</el-button>
-			<div class="opt_right" style="float:right;">
-				<el-button @click="">订单导出</el-button>
-			</div>
+				<el-button @click="batchReject" type="danger">批量拒绝</el-button>
+				<div class="opt_right" style="float:right;">
+					<el-button @click="">订单导出</el-button>
+				</div>
+			</template>
+			
+
 		</div>
 		<div class="filter_list">
 			<el-table
@@ -169,7 +173,7 @@
 				    <template slot-scope="scope">{{ scope.row.status | reflectStatus}}</template>
 			    </el-table-column>
 			    
-			    <el-table-column label="操作" width="180" fixed="right">
+			    <el-table-column v-if="edit" label="操作" width="180" fixed="right">
 
 			      <template slot-scope="scope">
 
@@ -234,6 +238,10 @@
 </template>
 <script>
 	import {mapGetters,mapActions} from 'vuex';
+	import {Operate} from '@/config/operate'
+
+
+
 	export default{
 		data(){
 			return {
@@ -285,7 +293,13 @@
 				currentPage: 'financeStore/reflect/currentPage',
 				limit: 'financeStore/reflect/limit',
 				user: 'userStore/user/user',
-			})
+				nav: 'homeStore/home/nav',
+				authorities_nav: 'userStore/user/authorities',
+			}),
+			edit(){
+				let path = this.$route.path;
+				return Operate(this.user,path,this.nav,this.authorities_nav);
+			}
 	    },
 		methods:{
 			handleSelectionChange(val) {

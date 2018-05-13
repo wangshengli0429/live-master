@@ -9,10 +9,10 @@ export default {
       limit
     }
     if(filter){
-      if(filter.distributeStatus || filter.distributeStatus == 0){
+      if(filter.distributeStatus || filter.distributeStatus === 0){
         params.distributeStatus = filter.distributeStatus
       }
-      if(filter.status || filter.status == 0){
+      if(filter.status || filter.status === 0){
         params.status = filter.status
       }
       if(filter.brokerId || filter.brokerId == ''){

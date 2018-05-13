@@ -21,7 +21,7 @@
                     <div class="items">
                         <div class="name">平台</div>
                         <div class="content">
-                            <el-select v-model="actor.platName" @change="changePlat" placeholder="请选择平台">
+                            <el-select :disabled="user.platId?true:false" v-model="actor.platName" @change="changePlat" placeholder="请选择平台">
                                 <el-option
                                   v-for="item in platList"
                                   :key="item.uuid"
@@ -40,7 +40,7 @@
                     <div class="items">
                         <div class="name">公会</div>
                         <div class="content">
-                            <el-select v-model="actor.unionName" @change="changeUnion" placeholder="请选择公会">
+                            <el-select :disabled="user.unionId?true:false" v-model="actor.unionName" @change="changeUnion" placeholder="请选择公会">
                                 <el-option
                                   v-for="item in unionList"
                                   :key="item.uuid"
@@ -59,7 +59,7 @@
                     <div class="items">
                         <div class="name">经纪人</div>
                         <div class="content">
-                            <el-select v-model="actor.brokerId" placeholder="请选择经纪人">
+                            <el-select v-model="actor.brokerName" :clearable="true" @change="changeBroker" placeholder="请选择经纪人">
                                 <el-option
                                   v-for="item in agentList"
                                   :key="item.uuid"
@@ -211,6 +211,15 @@
                 </div>
             </div>
 
+            <div class="group">
+                <div class="title">
+                    <span class="icon"></span>状态
+                </div>
+                <div class="btns" style="margin-top:10px;">
+                    <el-button v-if="actor.status != 0" @click="changeStatus(0)" size="mini" type="primary">启用</el-button>
+                    <el-button v-if="actor.status != 1" @click="changeStatus(1)" size="mini" type="danger">停用</el-button>
+                </div>
+            </div>
 
 
         </div>
@@ -307,8 +316,25 @@
             submit(){
 
             },
-            getAgentList(){
-                $API.agent.getAgentList({start:0,limit:50},resp => {
+            changeBroker(uuid){
+                console.log(uuid);
+                if(uuid){
+                    for(var items of this.agentList){
+                        if(items.uuid == uuid){
+                            this.actor.brokerId = items.uuid;
+                            this.actor.brokerName = items.nickname;
+                            this.actor.broker = items;
+                        }
+                    }
+                }else{
+                    this.actor.brokerId = '';
+                    this.actor.brokerName = '';
+                    this.actor.broker = null;
+                }
+
+            },
+            getAgentList(filter){
+                $API.agent.getAgentList({start:0,limit:50,filter},resp => {
                     this.agentList = resp.list;
                 })
             },
@@ -321,6 +347,21 @@
                 this.actor.unionId = "";
                 this.actor.unionName = "";
                 this.getUnionList(uuid);
+
+                if(this.actor.broker){
+                    if(this.actor.broker.platId != uuid){
+                        this.actor.brokerId = '';
+                        this.actor.brokerName = '';
+                        this.actor.broker = null;
+                    }
+                }
+
+                let filter = {
+                    platId:uuid
+                }
+                this.getAgentList(filter);
+
+
             },
             changeUnion(uuid){
                 if(uuid){
@@ -336,6 +377,19 @@
                     this.actor.unionName = union.name;
                     this.actor.autoPay = union.autoPay;
                 }
+
+                if(this.actor.broker){
+                    if(this.actor.broker.union != uuid){
+                        this.actor.brokerId = '';
+                        this.actor.brokerName = '';
+                        this.actor.broker = null;
+                    }
+                }
+
+                let filter = {
+                    unionId:uuid
+                }
+                this.getAgentList(filter);
 
             },
             getPlatList(){
@@ -395,6 +449,16 @@
                         this.actor.payFloor = '';
                     }
                 }
+            },
+            changeStatus(status){
+                var actor = {
+                    status:status,
+                    uuid:this.actor.uuid
+                }
+                api.modifyActor(actor,(resp) => {
+                    this.callback && this.callback();
+                    this.destroy();
+                })
             },
             goModify(part){
                 console.log(this.actor)
@@ -483,7 +547,14 @@
         },
         mounted(){
             this.deleteShareList = [];
-            this.getAgentList();
+            let filter = {}
+            if(this.actor.platId){
+                filter.platId = this.actor.platId;
+            }
+            if(this.actor.unionId){
+                filter.unionId = this.actor.unionId;
+            }
+            this.getAgentList(filter);
             this.getPlatList();
             const parentId = this.actor.platId || "";
             this.getUnionList(parentId);

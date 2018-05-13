@@ -101,7 +101,7 @@
 			</div>
 			<div class="filter_items">
 				<div class="name">
-					直播平台ID：
+					平台用户ID：
 				</div>
 				<div class="content">
 					<el-input v-model="filter.thirdId" placeholder="请输入直播平台ID"></el-input>
@@ -113,7 +113,7 @@
 			</div>
 		</div>
 		<div ref="operate" class="operate">
-			<el-button @click="batchDelete" type="danger">删除</el-button>
+			<el-button v-if="edit" @click="batchDelete" type="danger">删除</el-button>
 		</div>
 
 		<div class="filter_list">
@@ -127,6 +127,7 @@
 			    @selection-change="handleSelectionChange">
 			    <el-table-column
 			    	type="selection"
+			    	v-if="edit"
 			    	fixed="left"
 			    	width="55">
 			    </el-table-column>
@@ -192,10 +193,10 @@
 			      prop="status"
 			      label="状态"
 			      show-overflow-tooltip>
-			      <template slot-scope="scope">{{ scope.row.status == 0?'已启用':'已停用' }}</template>
+			      <template slot-scope="scope">{{ scope.row.status | actorStatus }}</template>
 			    </el-table-column>
 
-			    <el-table-column label="操作" width="180" fixed="right">
+			    <el-table-column v-if="edit" label="操作" width="180" fixed="right">
 			      <template slot-scope="scope">
 			        <el-button
 			          size="mini"
@@ -204,6 +205,7 @@
 			          size="mini"
 			          type="danger"
 			          @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+
 			      </template>
 			    </el-table-column>
 
@@ -229,12 +231,19 @@
 <script>
 	import {mapGetters,mapActions} from 'vuex';
 	import NewActor from '@/modules/widget/new-actor'
+	import {Operate} from '@/config/operate'
 
 
 	export default{
 		data(){
 			return {
 				statusList:[{
+					name:"全部",
+					uuid:''
+				},{
+					name:"待编辑",
+					uuid:-1
+				},{
 					name:"已启用",
 					uuid:0
 				},{
@@ -242,6 +251,9 @@
 					uuid:1
 				}],
 				assignList:[{
+					name:"全部",
+					uuid:''
+				},{
 					name:"未分配",
 					uuid:0
 				},{
@@ -261,8 +273,8 @@
 				filter:{
 					platId:"",
 					unionId:"",
-					status:0,
-					distributeStatus:0,
+					status:'',
+					distributeStatus:'',
 					brokerId:"",//经纪人id
 					thirdId:"",//第三方id
 					orgId:"",//平台／工会id
@@ -274,7 +286,13 @@
 		computed: {
 			...mapGetters({
 				user: 'userStore/user/user',
-			})
+				nav: 'homeStore/home/nav',
+				authorities_nav: 'userStore/user/authorities',
+			}),
+			edit(){
+				let path = this.$route.path;
+				return Operate(this.user,path,this.nav,this.authorities_nav);
+			}
 	    },
 
 	    methods:{
@@ -282,8 +300,8 @@
 		    	this.filter = {
 					platId:"",
 					unionId:"",
-					status:0,
-					distributeStatus:0,
+					status:'',
+					distributeStatus:'',
 					brokerId:"",//经纪人id
 					thirdId:"",//第三方id
 					orgId:"",//平台／工会id
@@ -338,8 +356,13 @@
 	    	handleEdit(index,data){
 	    		const user_id = data.uuid;
 	    		this.$store.dispatch('userStore/user/getUserDetail',{user_id}).then((resp) => {
+	    			let actor = JSON.parse(JSON.stringify(resp.user));
+	    			if(actor.broker){
+	    				actor.brokerName = actor.broker.nickname;
+	    			}
+
 	    			NewActor({
-		    			actor:JSON.parse(JSON.stringify(resp.user)),
+		    			actor:actor,
 		    			user:this.user,
 		    			callback:() => {
 		    				this.getActorList(this.currentPage);

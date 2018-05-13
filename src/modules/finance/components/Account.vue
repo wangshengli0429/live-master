@@ -87,8 +87,8 @@
 			</div>
 		</div>
 		<div ref="operate" class="operate">
-			<el-button @click="">批量入账</el-button>
-			<div class="opt_right" style="float:right;">
+			<el-button v-if="edit" @click="">批量入账</el-button>
+			<div v-if="!user.unionId && edit" class="opt_right" style="float:right;">
 				<el-button @click="">自动入账</el-button>
 				<el-button @click="goImportFlow">账单导入</el-button>
 			</div>
@@ -103,6 +103,7 @@
 			    @selection-change="">
 			    <el-table-column
 			      type="selection"
+			      v-if="edit"
 			      width="55">
 			    </el-table-column>
 			    <el-table-column
@@ -165,7 +166,7 @@
 			      width="120"
 			      show-overflow-tooltip>
 			    </el-table-column>
-			    <el-table-column label="操作" width="180" fixed="right">
+			    <el-table-column v-if="edit" label="操作" width="180" fixed="right">
 			      <template slot-scope="scope">
 			      	<template v-if="scope.row.creator.unionId">
 			      		<el-button
@@ -233,7 +234,7 @@
 						历史待入账账单数
 					</div>
 					<div class="bottom">
-						{{analyze && analyze.shareNum || 0}}
+						{{analyze && analyze.shareCount || 0}}
 					</div>
 				</div>
 				<div class="items">
@@ -264,6 +265,7 @@
 <script>
 	import {mapGetters,mapActions} from 'vuex';
 	import ImportFlow from '@/modules/widget/import-flow';
+	import {Operate} from '@/config/operate'
 
 
 	export default{
@@ -308,7 +310,13 @@
 				currentPage: 'financeStore/account/currentPage',
 				limit: 'financeStore/account/limit',
 				user: 'userStore/user/user',
-			})
+				nav: 'homeStore/home/nav',
+				authorities_nav: 'userStore/user/authorities',
+			}),
+			edit(){
+				let path = this.$route.path;
+				return Operate(this.user,path,this.nav,this.authorities_nav);
+			}
 	    },
 		methods:{
 			handleDelete(index,data){

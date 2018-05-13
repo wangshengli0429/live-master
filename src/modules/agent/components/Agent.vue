@@ -72,7 +72,7 @@
 			</div>
 		</div>
 		<div ref="operate" class="operate">
-			<el-button @click="goAddAgent">添加</el-button>
+			<el-button v-if="edit" @click="goAddAgent">添加</el-button>
 		</div>
 		<div class="filter_list">
 			<el-table
@@ -131,7 +131,7 @@
 			      label="主播数量"
 			      show-overflow-tooltip>
 			    </el-table-column>
-			    <el-table-column label="操作" width="180" fixed="right">
+			    <el-table-column v-if="edit" label="操作" width="180" fixed="right">
 			      <template slot-scope="scope">
 			        <el-button
 			          size="mini"
@@ -164,6 +164,7 @@
 <script>
 	import {mapGetters,mapActions} from 'vuex';
 	import newAgent from '@/modules/widget/new-agent'
+	import {Operate} from '@/config/operate'
 
 
 	export default{
@@ -196,7 +197,13 @@
 				currentPage: 'agentStore/agent/currentPage',
 				limit: 'agentStore/agent/limit',
 				user: 'userStore/user/user',
-			})
+				nav: 'homeStore/home/nav',
+				authorities_nav: 'userStore/user/authorities',
+			}),
+			edit(){
+				let path = this.$route.path;
+				return Operate(this.user,path,this.nav,this.authorities_nav);
+			}
 	    },
 		methods:{
 			resetFilter(){

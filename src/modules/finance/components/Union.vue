@@ -153,7 +153,7 @@
 			      show-overflow-tooltip>
 				    <template slot-scope="scope">{{ scope.row.status == 0?'未结算':'已结算'}}</template>
 			    </el-table-column>
-			    <el-table-column label="操作" width="180" fixed="right">
+			    <el-table-column v-if="edit" label="操作" width="180" fixed="right">
 			      <template slot-scope="scope">
 			      	<template v-if="scope.row.status == 0">
 				        <el-button
@@ -181,6 +181,8 @@
 </template>
 <script>
 	import {mapGetters,mapActions} from 'vuex';
+	import {Operate} from '@/config/operate'
+
 	export default{
 		data(){
 			return {
@@ -215,7 +217,13 @@
 				currentPage: 'financeStore/union/currentPage',
 				limit: 'financeStore/union/limit',
 				user: 'userStore/user/user',
-			})
+				nav: 'homeStore/home/nav',
+				authorities_nav: 'userStore/user/authorities',
+			}),
+			edit(){
+				let path = this.$route.path;
+				return Operate(this.user,path,this.nav,this.authorities_nav);
+			}
 	    },
 		methods:{
 			agreeApply(index,data){

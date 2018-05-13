@@ -53,8 +53,17 @@ export const filter = (Vue) => {
     return result;
   })
 
+  Vue.filter('actorStatus', (str) => {//代发工资
+    var result = "";
+    switch(str){
+      case 0: result = '已启用'; break;
+      case 1: result = '已停用'; break;
+      case -1: result = '待编辑'; break;
+    }
+    return result;
+  })
 
-
+  
 
 
 
