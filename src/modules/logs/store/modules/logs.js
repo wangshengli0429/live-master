@@ -6,6 +6,8 @@ const state = {
 	total:0,
 	currentPage:1,
 	limit:20,
+	logs_types:[],
+	logs_maps:{}
 }
 
 // getters
@@ -14,6 +16,8 @@ const getters = {
 	total: state => state.total,
 	currentPage: state => state.currentPage,
 	limit: state => state.limit,
+	logs_types: state => state.logs_types,
+	logs_maps: state => state.logs_maps,
 
 }
 
@@ -28,9 +32,14 @@ const actions = {
 			})
 	    })
 	},
-
-	
-
+	getLogsTypes({commit, state,dispatch}){
+		return new Promise((resolve,reject)=>{
+			$API.logs.getLogsTypes({},resp => {
+    			commit(types.INIT_LOGS_TYPES,{resp})
+				resolve(resp);
+			})
+	    })
+	}
 
 }
 
@@ -44,6 +53,17 @@ const mutations = {
 	    state.logs = resp.list;
 	    state.total = resp.count;
 	},
+	[types.INIT_LOGS_TYPES] (state,{resp}) {
+		state.logs_types = resp.list;
+		let maps = {}
+		for(var items of resp.list){
+			maps[items.value] = items.name;
+		}
+		state.logs_maps = maps;
+	},
+
+
+
 
 }
 

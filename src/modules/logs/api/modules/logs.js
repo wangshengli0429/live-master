@@ -10,7 +10,12 @@ export default {
     }
     httpAgent(url,'GET', params,successCb,erroCb)
   },
-
+  getLogsTypes({}, successCb, erroCb){
+    let url = `${config_server.server_api}/logs/types.json`;
+    let params = {
+    }
+    httpAgent(url,'GET', params,successCb,erroCb)
+  },
 
 
 

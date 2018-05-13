@@ -2,11 +2,12 @@
 	<div ref="container" class="logs_wrapper">
 		<div class="logs_list">
 			<ul>
-				<li>
-					2017-12-26 15:32 张三申请提现
-				</li>
-				<li>
-					2017-12-26 15:32 李四新增了账号组 系统管理员
+				<li v-for="items in logs">
+					<span class="time">{{items.createDate | timesToDate('yyyy-MM-dd HH:mm:ss')}}</span>
+					用户
+					<span class="items"> {{items.creator.nickname}} </span>在
+					<span class="items">{{logs_maps[items.subjectType]}}</span>
+					菜单进行了操作
 				</li>
 			</ul>
 		</div>
@@ -41,24 +42,35 @@
 				total: 'logsStore/logs/total',
 				currentPage: 'logsStore/logs/currentPage',
 				limit: 'logsStore/logs/limit',
+				logs_types: 'logsStore/logs/logs_types',
+				logs_maps: 'logsStore/logs/logs_maps',
 				user: 'userStore/user/user',
 			})
 	    },
 		methods:{
 			
 			handleSizeChange(limit){
-				this.getAgentList(1,limit);
+				this.getLogsList(1,limit);
 			},
 			handleCurrentChange(page){
-				this.getAgentList(page);
+				this.getLogsList(page);
 			},
 			
 		    getLogsList(currentPage,limit){//获取账号列表
 		    	currentPage = currentPage || this.currentPage;
 		    	limit = limit || this.limit;
-				this.$store.dispatch('logsStore/logs/getLogsList',{currentPage,limit}).then(() => {
+		    	if(!this.logs_types || this.logs_types.length == 0){
+		    		this.$store.dispatch('logsStore/logs/getLogsTypes',{}).then(() => {
+		    			this.$store.dispatch('logsStore/logs/getLogsList',{currentPage,limit}).then(() => {
 
-				})
+						})
+					})
+		    	}else{
+		    		this.$store.dispatch('logsStore/logs/getLogsList',{currentPage,limit}).then(() => {
+
+					})
+		    	}
+				
 		    },
 		    
 		},
@@ -98,6 +110,12 @@
 				    background: #fff;
 				    &:hover{
 				    	background: #eaf5ff;
+				    }
+				    .time{
+				    	margin-right:6px;
+				    }
+				    .items{
+				    	color:@COMMON_BLUE;
 				    }
 	  			}
 	  		}
