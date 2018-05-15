@@ -1,7 +1,6 @@
 <template>
 	<div ref="container" class="actor_assign">
 		<div ref="filter" class="filter clearfix">
-
 			<div class="filter_items">
 				<div class="name">
 					申请日期：
@@ -22,7 +21,7 @@
 					申请平台：
 				</div>
 				<div class="content">
-					<el-select v-model="filter.platId" @change="changePlat" placeholder="请选择平台">
+					<el-select :disabled="user.platId?true:false" v-model="filter.platId" @change="changePlat" placeholder="请选择平台">
 					    <el-option
 							v-for="item in platList"
 							:key="item.uuid"
@@ -33,7 +32,22 @@
 					</el-select>
 				</div>
 			</div>
-			
+			<div class="filter_items">
+				<div class="name">
+					状态：
+				</div>
+				<div class="content">
+					<el-select v-model="filter.status" @change="" placeholder="请选择状态">
+					    <el-option
+							v-for="item in statusList"
+							:key="item.uuid"
+							:label="item.name"
+							:value="item.uuid"
+							>
+					    </el-option>
+					</el-select>
+				</div>
+			</div>
 			<div class="filter_items">
 				<div class="name">
 					真实姓名：
@@ -108,6 +122,13 @@
 			      label="接触渠道"
 			      show-overflow-tooltip>
 			    </el-table-column>
+
+			    <el-table-column
+			      label="状态"
+			      show-overflow-tooltip>
+			      <template slot-scope="scope">{{ scope.row.status == 0?'未审核':'已审核'}}</template>
+			    </el-table-column>
+
 			    <el-table-column
 			      label="照片"
 			      show-overflow-tooltip>
@@ -121,17 +142,18 @@
 			    </el-table-column>
 
 
-<!-- 			    <el-table-column label="操作" width="180" fixed="right">
+			    <el-table-column v-if="edit" label="操作" width="200" fixed="right">
 			      <template slot-scope="scope">
 			        <el-button
 			          size="mini"
-			          @click="handleEdit(scope.$index, scope.row)">分配</el-button>
+			          v-if="scope.row.status == 0"
+			          @click="handleEdit(scope.$index, scope.row)">审核通过</el-button>
 			        <el-button
 			          size="mini"
 			          type="danger"
 			          @click="handleDelete(scope.$index, scope.row)">删除</el-button>
 			      </template>
-			    </el-table-column> -->
+			    </el-table-column>
 
 
 
@@ -155,16 +177,20 @@
 <script>
 	import {mapGetters,mapActions} from 'vuex';
 	import AssignActor from '@/modules/widget/assign-actor'
+	import {Operate} from '@/config/operate'
 
 
 	export default{
 		data(){
 			return {
 				statusList:[{
-					name:"已启用",
+					name:"全部",
+					uuid:''
+				},{
+					name:"未审核",
 					uuid:0
 				},{
-					name:"已停用",
+					name:"已审核",
 					uuid:1
 				}],
 				multipleSelection:[],
@@ -181,14 +207,19 @@
 					platId:"",
 					identityName:"",
 					mobile:"",
-					date:""
+					date:"",
+					status:''
 				}
 			}
 		},
 		computed: {
 			...mapGetters({
 				user: 'userStore/user/user',
-			})
+			}),
+			edit(){
+				let path = this.$route.path;
+				return Operate(this.user,path,this.nav,this.authorities_nav);
+			}
 	    },
 
 	    methods:{
@@ -197,7 +228,9 @@
 					platId:"",
 					identityName:"",
 					mobile:"",
-					date:""
+					date:"",
+					status:''
+
 				}
 				this.getApplyList(1);
 		    },
@@ -236,7 +269,7 @@
 	    		}
 	    	},
 	    	handleDelete(index,data){
-	    		let msg = "确定要删除账号”"+data.nickname+"“吗？"
+	    		let msg = "确定要删除该申请吗？"
 				this.$confirm(msg, '提示', {
 		          	confirmButtonText: '确定',
 		          	cancelButtonText: '取消',
@@ -244,7 +277,7 @@
 		        }).then(() => {
 		        	let list = [];
 		        	list.push(data.uuid);
-		          	this.$store.dispatch('actorStore/actor/deleteActor',{list:list}).then(() => {
+		          	this.$store.dispatch('actorStore/actor/deleteApply',{list:list}).then(() => {
 		          		this.getApplyList(1);
 					})
 		        }).catch(() => {
@@ -252,21 +285,20 @@
 		        });
 	    	},
 	    	handleEdit(index,data){
-	    		const user_id = data.uuid;
-	    		this.$store.dispatch('userStore/user/getUserDetail',{user_id}).then((resp) => {
-	    			AssignActor({
-	    				actor:resp.user,
-	    				user:this.user,
-	    				callback:(uuid) => {
-	    					const orgId = uuid;
-	    					let list = [];
-	    					list.push(user_id);
-	    					this.$store.dispatch('actorStore/actor/assignActor',{orgId,list}).then((resp) => {
-		          				this.getApplyList(1);
-	    					})
-	    				}
-	    			})
-	    		})
+	    		const uuid = data.uuid;
+	    		let msg = "确定审核通过吗？"
+				this.$confirm(msg, '提示', {
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消',
+		          	type: 'warning'
+		        }).then(() => {
+		        	const status = 1;
+		          	this.$store.dispatch('actorStore/actor/changeApplyStatus',{uuid,status}).then(() => {
+		          		this.getApplyList(1);
+					})
+		        }).catch(() => {
+		                   
+		        });
 
 	    	},
 	    	handleSelectionChange(val) {
@@ -329,18 +361,29 @@
 		    		list.unshift(temp)
 		    		this.agentList = list;
 				})
+		    },
+		    setDefaultOrg(){
+		    	if(this.user){
+		    		this.filter.platId = this.user.platId;
+		    	}
 		    }
+	    },
+	    watch:{
+	    	user(){
+	    		this.setDefaultOrg();
+	    	}
 	    },
 	    mounted(){
 	    	setTimeout(() => {
 	    		this.setHeight();
+	    		this.setDefaultOrg();
+	    		this.getApplyList();
 	    	})
 	    },
 	    created(){
 	    	this.getPlatList();
 	    	// this.getUnionList();
 	    	// this.getAgentList();
-	    	this.getApplyList();
 	    },
 	}
 </script>

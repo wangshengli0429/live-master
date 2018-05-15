@@ -28,6 +28,7 @@ const actions = {
 					dispatch('getUserAuthorities',{uuid:resp.user.authorityGroupId})
 				}
 
+        		commit(types.CLEAR_ANALYZE_INFO)
 				dispatch('getSystemInfo');
 				if(resp.user.platId){
 					dispatch('getPlatInfo',{uuid:resp.user.platId});
@@ -49,6 +50,7 @@ const actions = {
 				if(resp.user && resp.user.authorityGroupId){
 					dispatch('getUserAuthorities',{uuid:resp.user.authorityGroupId})
 				}
+        		commit(types.CLEAR_ANALYZE_INFO)
 				dispatch('getSystemInfo');
 				if(resp.user.platId){
 					dispatch('getPlatInfo',{uuid:resp.user.platId});
@@ -61,6 +63,16 @@ const actions = {
 				resolve(resp);
 			})
 	    })
+	},
+	getUserAnalyzeInfo({commit, state,dispatch},{user}){
+		commit(types.CLEAR_ANALYZE_INFO);
+		dispatch('getSystemInfo');
+		if(user.platId){
+			dispatch('getPlatInfo',{uuid:user.platId});
+		}
+		if(user.unionId){
+			dispatch('getUnionInfo',{uuid:user.unionId});
+		}
 	},
 	getUserAuthorities ({commit, state,dispatch}, {uuid}){
 		return new Promise((resolve,reject)=>{
@@ -147,6 +159,13 @@ const mutations = {
 	[types.INIT_UNION_INFO](state,data) {
 	    state.unionInfo = data.org;
 	},
+	[types.CLEAR_ANALYZE_INFO](state,data) {
+	    state.system = null;
+	    state.platInfo = null;
+	    state.unionInfo = null;
+	},
+
+
 
 
 }

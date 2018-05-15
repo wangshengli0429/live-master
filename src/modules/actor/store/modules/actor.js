@@ -49,8 +49,20 @@ const actions = {
 			})
 	    })
 	},
-	
-
+	changeApplyStatus ({commit, state,dispatch},{uuid,status}){
+		return new Promise((resolve,reject)=>{
+			$API.actor.changeApplyStatus({uuid,status},resp => {
+				resolve(resp);
+			})
+	    })
+	},
+	deleteApply ({commit, state,dispatch},{list}){
+		return new Promise((resolve,reject)=>{
+			$API.actor.deleteApply({list},resp => {
+				resolve(resp);
+			})
+	    })
+	},
 
 
 

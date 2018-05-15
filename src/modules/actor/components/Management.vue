@@ -65,7 +65,7 @@
 					</el-select>
 				</div>
 			</div>
-			<div class="filter_items">
+<!-- 			<div class="filter_items">
 				<div class="name">
 					分配：
 				</div>
@@ -80,7 +80,7 @@
 					    </el-option>
 					</el-select>
 				</div>
-			</div>
+			</div> -->
 
 
 			<div class="filter_items">

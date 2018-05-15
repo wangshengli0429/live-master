@@ -49,7 +49,7 @@
 					</el-select>
 				</div>
 			</div>
-			<div class="filter_items">
+<!-- 			<div class="filter_items">
 				<div class="name">
 					状态：
 				</div>
@@ -64,7 +64,26 @@
 					    </el-option>
 					</el-select>
 				</div>
+			</div> -->
+			<div class="filter_items">
+				<div class="name">
+					分配：
+				</div>
+				<div class="content">
+					<el-select v-model="filter.distributeStatus" @change="" placeholder="请选择是否分配">
+					    <el-option
+							v-for="item in assignList"
+							:key="item.uuid"
+							:label="item.name"
+							:value="item.uuid"
+							>
+					    </el-option>
+					</el-select>
+				</div>
 			</div>
+
+
+
 			<div class="filter_items">
 				<div class="name">
 					ID：
@@ -173,9 +192,9 @@
 			    </el-table-column>
 			    <el-table-column
 			      prop="status"
-			      label="状态"
+			      label="分配"
 			      show-overflow-tooltip>
-			      <template slot-scope="scope">{{ scope.row.status | actorStatus }}</template>
+			      <template slot-scope="scope">{{ scope.row.unionId?'已分配':'未分配' }}</template>
 			    </el-table-column>
 
 			    <el-table-column v-if="edit" label="操作" width="100" fixed="right">
@@ -231,6 +250,16 @@
 					name:"已停用",
 					uuid:1
 				}],
+				assignList:[{
+					name:"全部",
+					uuid:''
+				},{
+					name:"未分配",
+					uuid:0
+				},{
+					name:"已分配",
+					uuid:1
+				}],
 				multipleSelection:[],
 				tableHeight:250,
 
@@ -246,6 +275,7 @@
 					platName:"",
 					unionId:"",
 					status:'',
+					distributeStatus:"",
 					brokerId:"",//经纪人id
 					thirdId:"",//第三方id
 					orgId:"",//平台／工会id
@@ -271,6 +301,7 @@
 					platName:"",
 					unionId:"",
 					status:'',
+					distributeStatus:"",
 					brokerId:"",//经纪人id
 					thirdId:"",//第三方id
 					orgId:"",//平台／工会id

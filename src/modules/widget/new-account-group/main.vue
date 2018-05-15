@@ -86,7 +86,8 @@
                     status:0,
                     createDate:new Date().getTime(),
                     authorities:[]
-                }
+                },
+                locked:false
             }
         },
         computed:{
@@ -117,18 +118,28 @@
                     });
                     return false;
                 }
-                console.log(this.authorityGroup)
-                if(this.authorityGroup.uuid){//修改
-                    api.modifyAuthorityGroup(this.authorityGroup,() => {
-                        this.callback && this.callback();
-                        close && close();
-                    })
-                }else{//新建
-                    api.createAuthorityGroup(this.authorityGroup,() => {
-                        this.callback && this.callback();
-                        close && close();
-                    })
+                if(!this.locked){
+                    this.locked = true;
+                    setTimeout(() => {
+                        this.locked = false;
+                    },5000)
+                    console.log(this.authorityGroup)
+                    if(this.authorityGroup.uuid){//修改
+                        api.modifyAuthorityGroup(this.authorityGroup,() => {
+                            this.locked = false;
+                            this.callback && this.callback();
+                            close && close();
+                        })
+                    }else{//新建
+                        api.createAuthorityGroup(this.authorityGroup,() => {
+                            this.locked = false;
+                            this.callback && this.callback();
+                            close && close();
+                        })
+                    }
                 }
+
+                
 
 
                 

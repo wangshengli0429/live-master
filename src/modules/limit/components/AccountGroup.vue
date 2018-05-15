@@ -45,12 +45,18 @@
 				  	{{ scope.row.status == 0?"已启用":"已停用" }}
 				  </template>
 			    </el-table-column>
-			    <el-table-column v-if="edit" label="操作" width="90" fixed="right">
+			    <el-table-column v-if="edit" label="操作" width="180" fixed="right">
 			      <template slot-scope="scope">
 			        <el-button
 			          size="mini"
 			          @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+			      <el-button
+			          size="mini"
+			          type="danger"
+			          @click="handleDelete(scope.$index, scope.row)">删除</el-button>
 			      </template>
+
+
 			    </el-table-column>
 
 
@@ -124,14 +130,14 @@
 			},
 			handleDelete(index,data){
 				const uuid = data.uuid;
-				const msg = "确定要删除 “"+data.name+'” 吗？'
+				const msg = "确定要删除该账号组吗？";
 				this.$confirm(msg, '提示', {
 		          	confirmButtonText: '确定',
 		          	cancelButtonText: '取消',
 		          	type: 'warning'
 		        }).then(() => {
 		          	this.$store.dispatch('limitStore/limit/deleteAccountGroup',{uuid}).then((resp) => {
-						
+						this.getAccountGroup(1);
 					})
 		        }).catch(() => {
 		        	

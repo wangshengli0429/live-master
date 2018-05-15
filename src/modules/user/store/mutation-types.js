@@ -5,6 +5,7 @@ export const INIT_SYSTEM_INFO = 'INIT_SYSTEM_INFO'
 
 export const INIT_PLAT_INFO = 'INIT_PLAT_INFO'
 export const INIT_UNION_INFO = 'INIT_UNION_INFO'
+export const CLEAR_ANALYZE_INFO = 'CLEAR_ANALYZE_INFO'
 
 
 

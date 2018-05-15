@@ -87,7 +87,7 @@
 			</div>
 		</div>
 		<div ref="operate" class="operate">
-			<el-button v-if="edit" @click="">批量入账</el-button>
+			<el-button v-if="edit" @click="batchCalculate">批量入账</el-button>
 			<div v-if="!user.unionId && edit" class="opt_right" style="float:right;">
 				<el-button @click="">自动入账</el-button>
 				<el-button @click="goImportFlow">账单导入</el-button>
@@ -100,7 +100,7 @@
 			    :height="tableHeight"
 			    tooltip-effect="dark"
 			    style="width: 100%"
-			    @selection-change="">
+			    @selection-change="handleSelectionChange">
 			    <el-table-column
 			      type="selection"
 			      v-if="edit"
@@ -110,7 +110,7 @@
 			      label="日期"
 			      width="120"
 			      show-overflow-tooltip>
-				    <template slot-scope="scope">{{ scope.row.createDate | timesToDate('yyyy-MM-dd') }}</template>
+				    <template slot-scope="scope">{{ scope.row.day | timesToDate('yyyy-MM-dd') }}</template>
 			    </el-table-column>
 			    <el-table-column
 			      prop="trackNum"
@@ -118,11 +118,11 @@
 			      width="120"
 			      show-overflow-tooltip>
 			    </el-table-column>
-			    <el-table-column
+<!-- 			    <el-table-column
 			      label="平台"
 			      show-overflow-tooltip>
 				   <template slot-scope="scope">{{ scope.row.creator.platName }}</template>
-			    </el-table-column>
+			    </el-table-column> -->
 			    <el-table-column
 			      label="直播ID"
 			      show-overflow-tooltip>
@@ -138,11 +138,30 @@
 			      show-overflow-tooltip>
 				   <template slot-scope="scope">{{ scope.row.creator.nickname }}</template>
 			    </el-table-column>
+
+			   	<el-table-column
+			      prop="showHour"
+			      label="直播时长"
+			      show-overflow-tooltip>
+			    </el-table-column>
 			    <el-table-column
+			      width="120"
+			      prop="yesterdayFansCount"
+			      label="昨日粉丝量"
+			      show-overflow-tooltip>
+			    </el-table-column>
+			    <el-table-column
+			      width="120"
+			      prop="todayFansCount"
+			      label="今日粉丝量"
+			      show-overflow-tooltip>
+			    </el-table-column>
+
+<!-- 			    <el-table-column
 			      label="真实姓名"
 			      show-overflow-tooltip>
 				   <template slot-scope="scope">{{ scope.row.creator.identityName }}</template>
-			    </el-table-column>
+			    </el-table-column> -->
 			    <el-table-column
 			      prop="shareNum"
 			      label="入账金额/元"
@@ -154,27 +173,32 @@
 			      show-overflow-tooltip>
 				    <template slot-scope="scope">{{ scope.row.status == 0?"待入账":"已入账" }}</template>
 			    </el-table-column>
-			    <el-table-column
+	<!-- 		    <el-table-column
 			      prop="month_money"
 			      label="本月已入账/元"
 			      width="120"
 			      show-overflow-tooltip>
-			    </el-table-column>
-			    <el-table-column
+			    </el-table-column> -->
+	<!-- 		    <el-table-column
 			      prop="average_money"
 			      label="平均入账/元"
 			      width="120"
 			      show-overflow-tooltip>
-			    </el-table-column>
+			    </el-table-column> -->
 			    <el-table-column v-if="edit" label="操作" width="180" fixed="right">
 			      <template slot-scope="scope">
-			      	<template v-if="scope.row.creator.unionId">
+			      	<template v-if="scope.row.creator.unionId && scope.row.creator.status == 0 && scope.row.status != 1">
 			      		<el-button
 				          size="mini"
 				          @click="handleEdit(scope.$index, scope.row)">入账</el-button>
 			      	</template>
+			      	<template v-else-if="scope.row.status == 1">
+			      		<el-tooltip class="item" effect="dark" content="" placement="bottom">
+			      			<el-button size="mini" disabled>已入账</el-button>
+					    </el-tooltip>
+			      	</template>
 			      	<template v-else>
-			      		<el-tooltip class="item" effect="dark" content="分配公会才可入账" placement="bottom">
+			      		<el-tooltip class="item" effect="dark" content="分配公会并且已启用才可入账" placement="bottom">
 			      			<el-button size="mini" disabled>入账</el-button>
 					    </el-tooltip>
 			      	</template>
@@ -300,6 +324,8 @@
 					thirdId:"",
 					status:0
 				},
+				multipleSelection:[],
+
 			}
 		},
 		computed: {
@@ -319,6 +345,9 @@
 			}
 	    },
 		methods:{
+			handleSelectionChange(val) {
+		        this.multipleSelection = val;
+		    },
 			handleDelete(index,data){
 				let msg = "确定要删除吗？"
 				this.$confirm(msg, '提示', {
@@ -335,6 +364,28 @@
 		                   
 		        });
 			},
+			batchCalculate(){
+	    		let account = this.multipleSelection;
+	    		if(account.length > 0){
+	    			let msg = "确定要批量入账吗？"
+					this.$confirm(msg, '提示', {
+			          	confirmButtonText: '确定',
+			          	cancelButtonText: '取消',
+			          	type: 'warning'
+			        }).then(() => {
+			        	let list = [];
+			        	for(var items of account){
+			        		list.push(items.uuid);
+			        	}
+			        	this.$store.dispatch('financeStore/account/calculateAccount',{list}).then(() => {
+			          		this.getAccountList();
+						})
+			        }).catch(() => {
+			                   
+			        });
+	    			
+	    		}
+	    	},
 			handleEdit(index,data){
 				let msg = "确定要入账吗？"
 				this.$confirm(msg, '提示', {

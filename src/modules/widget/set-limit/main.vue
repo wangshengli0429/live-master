@@ -58,7 +58,8 @@
             return {
                 authoritiesList:[],
                 authoritiesMaps:{},
-                filterList:[]
+                filterList:[],
+                locked:false,
             }
         },
         methods:{
@@ -108,8 +109,11 @@
                 this.authoritiesMaps = maps;
                 if(this.authorities && this.authorities.length > 0){//数据覆盖
                     for(var items of this.authorities){
-                        this.authoritiesMaps[items.uuid].readStatus = items.readStatus;
-                        this.authoritiesMaps[items.uuid].writeStatus = items.writeStatus;
+                        if(this.authoritiesMaps[items.uuid]){
+                            this.authoritiesMaps[items.uuid].readStatus = items.readStatus;
+                            this.authoritiesMaps[items.uuid].writeStatus = items.writeStatus;
+                        }
+                        
                     }
                 }
 

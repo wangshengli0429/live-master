@@ -107,6 +107,7 @@
         data(){
             return {
                 height:200,
+                locked:false,
                 statusList:[{
                     uuid:1,
                     name:"已停用",
@@ -181,17 +182,31 @@
                     return false;
                 }
 
-                if(this.plat.uuid){
-                    api.modifyPlat(this.plat,() => {
-                        this.callback && this.callback()
-                        close && close();
-                    })
-                }else{
-                    api.createPlat(this.plat,() => {
-                        this.callback && this.callback()
-                        close && close();
-                    })
+                if(!this.locked){
+                    this.locked = true;
+                    setTimeout(() => {
+                        this.locked = false;
+                    },5000)
+                    if(this.plat.uuid){
+                        api.modifyPlat(this.plat,() => {
+                            this.locked = false;
+                            this.callback && this.callback()
+                            close && close();
+                        })
+                    }else{
+                        api.createPlat(this.plat,() => {
+                            this.locked = false;
+                            this.callback && this.callback()
+                            close && close();
+                        })
+                    }
                 }
+
+
+
+
+
+                
                 
             },
             getAccountList(){

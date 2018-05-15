@@ -49,34 +49,36 @@
 				</div>
 			</div>
 		</div>
-		<div class="title">系统信息</div>
-		<div v-if="system" class="group clearfix">
-			<div class="items">
-				<div class="name">系统名称</div>
-				<div class="content">
-					<el-input :value="system.name" placeholder="" :readonly="true"></el-input>
+		<template v-if="system && user && !user.platId && !user.unionId">
+			<div class="title">系统信息</div>
+			<div class="group clearfix">
+				<div class="items">
+					<div class="name">系统名称</div>
+					<div class="content">
+						<el-input :value="system.name" placeholder="" :readonly="true"></el-input>
+					</div>
+				</div>
+				<div class="items">
+					<div class="name">平台数量</div>
+					<div class="content">
+						<el-input :value="system.platCount" placeholder="" :readonly="true"></el-input>
+					</div>
+				</div>
+				<div class="items">
+					<div class="name">公会数量</div>
+					<div class="content">
+						<el-input :value="system.unionCount" placeholder="" :readonly="true"></el-input>
+					</div>
+				</div>
+				<div class="items">
+					<div class="name">艺人数量</div>
+					<div class="content">
+						<el-input :value="system.actorCount" placeholder="" :readonly="true"></el-input>
+					</div>
 				</div>
 			</div>
-			<div class="items">
-				<div class="name">平台数量</div>
-				<div class="content">
-					<el-input :value="system.platCount" placeholder="" :readonly="true"></el-input>
-				</div>
-			</div>
-			<div class="items">
-				<div class="name">公会数量</div>
-				<div class="content">
-					<el-input :value="system.unionCount" placeholder="" :readonly="true"></el-input>
-				</div>
-			</div>
-			<div class="items">
-				<div class="name">艺人数量</div>
-				<div class="content">
-					<el-input :value="system.actorCount" placeholder="" :readonly="true"></el-input>
-				</div>
-			</div>
-		</div>
-		<template v-if="platInfo">
+		</template>
+		<template v-if="platInfo && user &&  !user.unionId">
 			<div class="title">平台信息</div>
 			<div class="group clearfix">
 				<div class="items">
@@ -218,7 +220,15 @@
 	    				
 	    			}
 	    		})
+	    	},
+	    	getUserAnalyzeInfo(){
+	    		if(this.user){
+	    			this.$store.dispatch('userStore/user/getUserAnalyzeInfo',{user:this.user})
+	    		}
 	    	}
+	    },
+	    mounted(){
+	    	this.getUserAnalyzeInfo();
 	    }
 	}
 </script>

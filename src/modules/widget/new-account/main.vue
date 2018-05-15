@@ -156,7 +156,8 @@
                     status:0,
                     platId:"",
                     unionId:""
-                }
+                },
+                locked:false
             }
         },
         methods:{
@@ -217,17 +218,28 @@
                     }
                 }
 
-                if(this.account.uuid){
-                    api.modifyAccount(this.account,() => {
-                        this.callback && this.callback();
-                        close && close();
-                    })
-                }else{
-                    api.createAccount(this.account,() => {
-                        this.callback && this.callback();
-                        close && close();
-                    })
+                if(!this.locked){
+                    this.locked = true;
+                    setTimeout(() => {
+                        this.locked = false;
+                    },5000)
+                    if(this.account.uuid){
+                        api.modifyAccount(this.account,() => {
+                            this.locked = false;
+                            this.callback && this.callback();
+                            close && close();
+                        })
+                    }else{
+                        api.createAccount(this.account,() => {
+                            this.locked = false;
+                            this.callback && this.callback();
+                            close && close();
+                        })
+                    }
                 }
+
+
+                
 
 
             },

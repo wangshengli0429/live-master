@@ -63,6 +63,15 @@ export const filter = (Vue) => {
     return result;
   })
 
+  Vue.filter('distributeStatus', (str) => {//艺人分配
+    var result = "";
+    switch(str){
+      case 0: result = '未分配'; break;
+      case 1: result = '已分配'; break;
+    }
+    return result;
+  })
+
   
 
 

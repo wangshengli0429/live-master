@@ -137,7 +137,8 @@
                     admin:"",
                     adminName:""
 
-                }
+                },
+                locked:false
             }
         },
         computed:{
@@ -197,19 +198,27 @@
                     });
                     return false;
                 }
-
-
-                if(this.union.uuid){
-                    api.modifyUnion(this.union,() => {
-                        this.callback && this.callback();
-                        close && close();
-                    })
-                }else{
-                    api.createUnion(this.union,() => {
-                        this.callback && this.callback();
-                        close && close();
-                    })
+                if(!this.locked){
+                    this.locked = true;
+                    setTimeout(() => {
+                        this.locked = false;
+                    },5000)
+                    if(this.union.uuid){
+                        api.modifyUnion(this.union,() => {
+                            this.locked = false;
+                            this.callback && this.callback();
+                            close && close();
+                        })
+                    }else{
+                        api.createUnion(this.union,() => {
+                            this.locked = false;
+                            this.callback && this.callback();
+                            close && close();
+                        })
+                    }
                 }
+
+                
 
 
             },

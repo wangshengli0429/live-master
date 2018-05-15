@@ -25,6 +25,7 @@ export default {
   deleteAccountGroup({uuid},successCb, erroCb){
     let url = `${config_server.server_api}/authority_group/${uuid}.json`;
     let params = {
+      _method:"delete"
     }
     httpAgent(url,'DELETE', params,successCb,erroCb)
   },

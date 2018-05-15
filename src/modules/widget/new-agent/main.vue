@@ -25,7 +25,7 @@
                     <div class="items">
                         <div class="name">公会</div>
                         <div class="content">
-                            <el-select :disalbed="user.unionId?true:false" v-model="agent.unionName" @change="changeUnion" placeholder="请选择公会">
+                            <el-select :disabled="user.unionId?true:false" v-model="agent.unionName" @change="changeUnion" placeholder="请选择公会">
                                 <el-option
                                   v-for="item in unionList"
                                   :key="item.uuid"
@@ -97,7 +97,8 @@
                     platName:"",    
                     unionId:"",
                     unionName:""
-                }
+                },
+                locked:false
             }
         },
         computed:{
@@ -146,18 +147,26 @@
                     return false;
                 }
 
-
-                if(this.agent.uuid){
-                    api.modifyAgent(this.agent,() => {
-                        this.callback && this.callback()
-                        close && close();
-                    })
-                }else{
-                    api.createAgent(this.agent,() => {
-                        this.callback && this.callback()
-                        close && close();
-                    })
+                if(!this.locked){
+                    this.locked = true;
+                    setTimeout(() => {
+                        this.locked = false;
+                    },5000)
+                    if(this.agent.uuid){
+                        api.modifyAgent(this.agent,() => {
+                            this.locked = false;
+                            this.callback && this.callback()
+                            close && close();
+                        })
+                    }else{
+                        api.createAgent(this.agent,() => {
+                            this.locked = false;
+                            this.callback && this.callback()
+                            close && close();
+                        })
+                    }
                 }
+                
                 
             },
             changePlat(uuid){

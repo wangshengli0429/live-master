@@ -56,6 +56,10 @@ export default {
         params.platId = filter.platId;
       }
 
+      if(filter.status){
+        params.status = filter.status;
+      }
+
       if(filter.date){
         params.startDate = new Date(filter.date[0]).getTime();
         params.endDate = new Date(filter.date[1]).getTime();
@@ -90,9 +94,24 @@ export default {
   },
 
 
+  changeApplyStatus({uuid,status},successCb, erroCb){
+    let url = `${config_server.server_api}/user/actor/apply/${uuid}/status.json`;
+    let params = {
+      status
+    }
+    // console.log(params);
+    httpAgent(url,'POST', params,successCb,erroCb)
+  },
 
-
-
+  deleteApply({list},successCb, erroCb){
+    let url = `${config_server.server_api}/user/actor/apply.json?_method=delete`;
+    let mems = [];
+    for(var items of list){
+      url = url + '&uuid='+items;
+    }
+    // console.log(params);
+    httpAgent(url,'DELETE', {},successCb,erroCb)
+  },
 
 
 

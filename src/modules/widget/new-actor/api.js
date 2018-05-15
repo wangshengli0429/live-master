@@ -50,7 +50,7 @@ export const modifyActor = (actor,successCb,erroCb) => {
         param.validHour = actor.validHour
     }
 
-    if(actor.status){
+    if(actor.status || actor.status == 0){
         param.status = actor.status
     }
 
