@@ -3,7 +3,7 @@
         <div class="import_task_wrapper">
             <div class="import-task-group clearfix">
                 选择导入平台：
-                <el-select :clearable="true" v-model="orgName" @change="changePlat" placeholder="请选择导入平台">
+                <el-select :disabled="user.platId?true:false" :clearable="true" v-model="orgName" @change="changePlat" placeholder="请选择导入平台">
                         <el-option
                             v-for="item in platList"
                             :key="item.uuid"
@@ -198,6 +198,14 @@
             this.initUpload();
             this.getPlatList();
         },500)
+    },
+    created(){
+        if(this.user){
+            if(this.user.platId){
+                this.orgId = this.user.platId;
+                this.orgName = this.user.platName;
+            }
+        }
     }
   }
 </script>
@@ -240,23 +248,28 @@
                 }
                 .import-btn{
                     font-size:13px;
-                    color: #686868;
                     padding: 0 36px;
                     width: 90px;
                     height: 28px;
                     line-height: 28px;
-                    border: 1px solid #d2d2d2;
-                    background-color: #fff;
                     border-radius: 2px;
                     display: inline-block;
                     cursor: pointer;
                     position: relative;
                     text-align: center;
                     margin-top: 10px;
+
+                    color: #fff;
+                    background-color: #409EFF;
+                    border-color: #409EFF;
+
                     &:hover{
                       //background-color:#2889ea;
                       //color: #fff;
                       //border: 1px solid #2889ea;
+                        background: #66b1ff;
+                        border-color: #66b1ff;
+                        color: #fff;
                     }
                     .import-file{
                         display: block;

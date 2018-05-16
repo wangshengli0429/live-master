@@ -68,7 +68,7 @@
 		      @size-change="handleSizeChange"
 		      @current-change="handleCurrentChange"
 		      :current-page="currentPage"
-		      :page-sizes="[20, 30, 40, 50]"
+		      :page-sizes="[10,20, 30, 40, 50]"
 		      :page-size="limit"
 		      layout="total, sizes, prev, pager, next, jumper"
 		      :total="total">
@@ -88,6 +88,7 @@
 			return {
 				groupList:[],
 				tableHeight:250,
+				limit:10
 			}
 		},
 		computed: {
@@ -95,7 +96,7 @@
 				accountGroup: 'limitStore/limit/accountGroup',
 				total: 'limitStore/limit/total',
 				currentPage: 'limitStore/limit/currentPage',
-				limit: 'limitStore/limit/limit',
+				// limit: 'limitStore/limit/limit',
 				user: 'userStore/user/user',
 				authorities: 'limitStore/limit/authorities',
 				nav: 'homeStore/home/nav',

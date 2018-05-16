@@ -123,11 +123,7 @@
 			      show-overflow-tooltip>
 				   <template slot-scope="scope">{{ scope.row.creator.platName }}</template>
 			    </el-table-column> -->
-			    <el-table-column
-			      label="直播ID"
-			      show-overflow-tooltip>
-				   <template slot-scope="scope">{{ scope.row.creator.thirdId }}</template>
-			    </el-table-column>
+			    
 			    <el-table-column
 			      label="公会"
 			      show-overflow-tooltip>
@@ -138,7 +134,12 @@
 			      show-overflow-tooltip>
 				   <template slot-scope="scope">{{ scope.row.creator.nickname }}</template>
 			    </el-table-column>
-
+			    <el-table-column
+			    	width="120"
+			      label="平台用户ID"
+			      show-overflow-tooltip>
+				   <template slot-scope="scope">{{ scope.row.creator.thirdId }}</template>
+			    </el-table-column>
 			   	<el-table-column
 			      prop="showHour"
 			      label="直播时长"
@@ -276,7 +277,7 @@
 			      @size-change="handleSizeChange"
 			      @current-change="handleCurrentChange"
 			      :current-page="currentPage"
-			      :page-sizes="[20, 30, 40, 50]"
+			      :page-sizes="[10,20, 30, 40, 50]"
 			      :page-size="limit"
 			      layout="total, sizes, prev, pager, next, jumper"
 			      :total="total">
@@ -325,6 +326,7 @@
 					status:0
 				},
 				multipleSelection:[],
+				limit:10
 
 			}
 		},
@@ -334,7 +336,7 @@
 				analyze: 'financeStore/account/analyze',
 				total: 'financeStore/account/total',
 				currentPage: 'financeStore/account/currentPage',
-				limit: 'financeStore/account/limit',
+				// limit: 'financeStore/account/limit',
 				user: 'userStore/user/user',
 				nav: 'homeStore/home/nav',
 				authorities_nav: 'userStore/user/authorities',
@@ -411,12 +413,14 @@
 					token:param.token,
 					plat:param.plat,
 					orgId:this.user.orgId,
+					user:this.user,
 					callback:() => {
 						
 					}
 				})
 			},
 			handleSizeChange(limit){
+				this.limit = limit;
 				this.getAccountList(1,limit);
 			},
 			handleCurrentChange(page){

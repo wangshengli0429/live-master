@@ -119,11 +119,7 @@
 			      show-overflow-tooltip>
 				   <template slot-scope="scope">{{ scope.row.creator.platName }}</template>
 			    </el-table-column>
-			    <el-table-column
-			      label="直播ID"
-			      show-overflow-tooltip>
-				   <template slot-scope="scope">{{ scope.row.creator.thirdId }}</template>
-			    </el-table-column>
+			    
 			    <el-table-column
 			      label="公会"
 			      show-overflow-tooltip>
@@ -133,6 +129,12 @@
 			      label="昵称"
 			      show-overflow-tooltip>
 				   <template slot-scope="scope">{{ scope.row.creator.nickname }}</template>
+			    </el-table-column>
+			    <el-table-column
+			    	width="120"
+			      label="平台用户ID"
+			      show-overflow-tooltip>
+				   <template slot-scope="scope">{{ scope.row.creator.thirdId }}</template>
 			    </el-table-column>
 			    <el-table-column
 			      label="真实姓名"
@@ -206,7 +208,7 @@
 			      @size-change="handleSizeChange"
 			      @current-change="handleCurrentChange"
 			      :current-page="currentPage"
-			      :page-sizes="[20, 30, 40, 50]"
+			      :page-sizes="[10,20, 30, 40, 50]"
 			      :page-size="limit"
 			      layout="total, sizes, prev, pager, next, jumper"
 			      :total="total">
@@ -246,6 +248,7 @@
 					thirdId:"",
 					status:"",
 				},
+				limit:10
 			}
 		},
 		computed: {
@@ -253,7 +256,7 @@
 				salaryList: 'financeStore/actor/salaryList',
 				total: 'financeStore/actor/total',
 				currentPage: 'financeStore/actor/currentPage',
-				limit: 'financeStore/actor/limit',
+				// limit: 'financeStore/actor/limit',
 				user: 'userStore/user/user',
 				nav: 'homeStore/home/nav',
 				authorities_nav: 'userStore/user/authorities',
@@ -297,6 +300,7 @@
 		        });
 			},
 			handleSizeChange(limit){
+				this.limit = limit;
 				this.getActorSalaryList(1,limit);
 			},
 			handleCurrentChange(page){

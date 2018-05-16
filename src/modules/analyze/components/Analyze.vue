@@ -103,7 +103,7 @@
 		      @size-change="handleSizeChange"
 		      @current-change="handleCurrentChange"
 		      :current-page="currentPage"
-		      :page-sizes="[20, 30, 40, 50]"
+		      :page-sizes="[10,20, 30, 40, 50]"
 		      :page-size="limit"
 		      layout="total, sizes, prev, pager, next, jumper"
 		      :total="total">
@@ -136,7 +136,7 @@
 				analyzeList:[],
 				total:0,
 				currentPage:1,
-				limit:20,
+				limit:10,
 				filter:{
 					orgId:"",
 					platId:"",
@@ -178,6 +178,7 @@
 		    	this.tableHeight = tableHeight;
 		    },
 		    handleSizeChange(limit){
+				this.limit = limit;
 				this.getAnalyzeList(1,limit);
 			},
 			handleCurrentChange(page){

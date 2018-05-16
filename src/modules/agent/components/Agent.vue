@@ -151,7 +151,7 @@
 			      @size-change="handleSizeChange"
 			      @current-change="handleCurrentChange"
 			      :current-page="currentPage"
-			      :page-sizes="[20, 30, 40, 50]"
+			      :page-sizes="[10,20, 30, 40, 50]"
 			      :page-size="limit"
 			      layout="total, sizes, prev, pager, next, jumper"
 			      :total="total">
@@ -187,7 +187,8 @@
 					platId:"",
 					unionId:"",
 					status:0,
-				}
+				},
+				limit:10
 			}
 		},
 		computed: {
@@ -195,7 +196,7 @@
 				agentList: 'agentStore/agent/agentList',
 				total: 'agentStore/agent/total',
 				currentPage: 'agentStore/agent/currentPage',
-				limit: 'agentStore/agent/limit',
+				// limit: 'agentStore/agent/limit',
 				user: 'userStore/user/user',
 				nav: 'homeStore/home/nav',
 				authorities_nav: 'userStore/user/authorities',
@@ -242,6 +243,7 @@
 		        });
 			},
 			handleSizeChange(limit){
+				this.limit = limit;
 				this.getAgentList(1,limit);
 			},
 			handleCurrentChange(page){

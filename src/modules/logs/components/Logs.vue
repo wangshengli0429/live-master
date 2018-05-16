@@ -7,7 +7,8 @@
 					用户
 					<span class="items"> {{items.creator.nickname}} </span>在
 					<span class="items">{{logs_maps[items.subjectType]}}</span>
-					菜单进行了操作
+					菜单
+					<span v-html="items.content"></span>
 				</li>
 			</ul>
 		</div>
@@ -16,7 +17,7 @@
 		      @size-change="handleSizeChange"
 		      @current-change="handleCurrentChange"
 		      :current-page="currentPage"
-		      :page-sizes="[20, 30, 40, 50]"
+		      :page-sizes="[10,20, 30, 40, 50]"
 		      :page-size="limit"
 		      layout="total, sizes, prev, pager, next, jumper"
 		      :total="total">
@@ -33,7 +34,7 @@
 	export default{
 		data(){
 			return {
-
+				limit:10,
 			}
 		},
 		computed: {
@@ -41,7 +42,7 @@
 				logs: 'logsStore/logs/logs',
 				total: 'logsStore/logs/total',
 				currentPage: 'logsStore/logs/currentPage',
-				limit: 'logsStore/logs/limit',
+				// limit: 'logsStore/logs/limit',
 				logs_types: 'logsStore/logs/logs_types',
 				logs_maps: 'logsStore/logs/logs_maps',
 				user: 'userStore/user/user',
@@ -50,6 +51,7 @@
 		methods:{
 			
 			handleSizeChange(limit){
+				this.limit = limit;
 				this.getLogsList(1,limit);
 			},
 			handleCurrentChange(page){
@@ -97,17 +99,18 @@
   		.logs_list{
   			flex-grow: 1;
   			height: 0;
+  			overflow:auto;
   			ul{
 				background: #f4f4f4;
 				padding: 12px 10px;
 	  			li{
-	  				height: 39px;
-				    line-height: 39px;
+				    line-height: 24px;
 				    border-bottom: 1px solid #f4f4f4;
 				    font-size: 12px;
 				    color: #333;
 				    padding-left: 6px;
 				    background: #fff;
+				    padding: 8px;
 				    &:hover{
 				    	background: #eaf5ff;
 				    }

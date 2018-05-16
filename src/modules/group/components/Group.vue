@@ -147,7 +147,7 @@
 			      @size-change="handleSizeChange"
 			      @current-change="handleCurrentChange"
 			      :current-page="currentPage"
-			      :page-sizes="[20, 30, 40, 50]"
+			      :page-sizes="[10,20, 30, 40, 50]"
 			      :page-size="limit"
 			      layout="total, sizes, prev, pager, next, jumper"
 			      :total="total">
@@ -186,7 +186,8 @@
 					adminName:""
 				},
 				disablePlat:false,
-				disableUnion:false
+				disableUnion:false,
+				limit:10
 			}
 		},
 		computed:{
@@ -194,7 +195,7 @@
 				user: 'userStore/user/user',
 				total: 'groupStore/group/total',
 				currentPage: 'groupStore/group/currentPage',
-				limit: 'groupStore/group/limit',
+				// limit: 'groupStore/group/limit',
 				groupList: 'groupStore/group/groupList',
 				nav: 'homeStore/home/nav',
 				authorities_nav: 'userStore/user/authorities',
@@ -246,6 +247,7 @@
 				this.getUnionList(1);
 			},
 			handleSizeChange(limit){
+				this.limit = limit;
 				this.getUnionList(1,limit);
 			},
 			handleCurrentChange(page){

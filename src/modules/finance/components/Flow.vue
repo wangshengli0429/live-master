@@ -68,7 +68,7 @@
 					动账类型：
 				</div>
 				<div class="content">
-					<el-select :clearable="true" v-model="filter.status" @change="" placeholder="请选择动账类型">
+					<el-select :clearable="true" v-model="filter.type" @change="" placeholder="请选择动账类型">
 					    <el-option
 							v-for="item in statusList"
 							:key="item.uuid"
@@ -120,12 +120,12 @@
 			      show-overflow-tooltip>
 				   <template slot-scope="scope">{{ scope.row.creator.platName }}</template>
 			    </el-table-column>
-			    <el-table-column
+	<!-- 		    <el-table-column
 			      prop="platId"
 			      label="平台ID"
 			      show-overflow-tooltip>
 				   <template slot-scope="scope">{{ scope.row.creator.platId }}</template>
-			    </el-table-column>
+			    </el-table-column> -->
 			    <el-table-column
 			      prop="unionName"
 			      label="公会"
@@ -150,7 +150,7 @@
 			    <el-table-column
 			      label="动账类型"
 			      show-overflow-tooltip>
-				    <template slot-scope="scope">{{ scope.row.status == 0?"入账":"提现" }}</template>
+				    <template slot-scope="scope">{{ scope.row.type == 0?"入账":"提现" }}</template>
 			    </el-table-column>
 			    <el-table-column
 			      prop="moneyBase"
@@ -167,6 +167,8 @@
 			      prop="moneyNum"
 			      label="动账/元"
 			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.type == 0?scope.row.moneyNum:"-"+scope.row.moneyNum }}</template>
+
 			    </el-table-column>
 			    <el-table-column
 			      prop="moneyAfter"
@@ -181,7 +183,7 @@
 			      @size-change="handleSizeChange"
 			      @current-change="handleCurrentChange"
 			      :current-page="currentPage"
-			      :page-sizes="[20, 30, 40, 50]"
+			      :page-sizes="[10,20, 30, 40, 50]"
 			      :page-size="limit"
 			      layout="total, sizes, prev, pager, next, jumper"
 			      :total="total">
@@ -226,8 +228,9 @@
 					date:"",
 					nickname:"",
 					thirdId:"",
-					status:"",
+					type:"",
 				},
+				limit:10
 			}
 		},
 		computed: {
@@ -235,7 +238,7 @@
 				flowList: 'financeStore/flow/flowList',
 				total: 'financeStore/flow/total',
 				currentPage: 'financeStore/flow/currentPage',
-				limit: 'financeStore/flow/limit',
+				// limit: 'financeStore/flow/limit',
 				user: 'userStore/user/user',
 				nav: 'homeStore/home/nav',
 				authorities_nav: 'userStore/user/authorities',
@@ -250,6 +253,7 @@
 				
 			},
 			handleSizeChange(limit){
+				this.limit = limit;
 				this.getFlowList(1,limit);
 			},
 			handleCurrentChange(page){
@@ -272,7 +276,7 @@
 					date:"",
 					nickname:"",
 					thirdId:"",
-					status:"",
+					type:"",
 				}
 				this.getFlowList(1);
 				this.getUnionList();

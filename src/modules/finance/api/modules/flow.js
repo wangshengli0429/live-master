@@ -21,6 +21,11 @@ export default {
         params.status = filter.status;
       }
 
+
+      if(filter.type || filter.type === 0){
+        params.type = filter.type;
+      }
+
       if(filter.nickname){
         params.nickname = filter.nickname;
       }

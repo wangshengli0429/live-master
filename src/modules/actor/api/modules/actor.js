@@ -56,7 +56,7 @@ export default {
         params.platId = filter.platId;
       }
 
-      if(filter.status){
+      if(filter.status || filter.status === 0){
         params.status = filter.status;
       }
 

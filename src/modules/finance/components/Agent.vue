@@ -188,7 +188,7 @@
 			      @size-change="handleSizeChange"
 			      @current-change="handleCurrentChange"
 			      :current-page="currentPage"
-			      :page-sizes="[20, 30, 40, 50]"
+			      :page-sizes="[10,20, 30, 40, 50]"
 			      :page-size="limit"
 			      layout="total, sizes, prev, pager, next, jumper"
 			      :total="total">
@@ -236,7 +236,8 @@
 					nickname:"",
 					thirdId:"",
 					status:"",
-				}
+				},
+				limit:10
 			}
 		},
 		computed: {
@@ -244,7 +245,7 @@
 				agentList: 'financeStore/agent/agentList',
 				total: 'financeStore/actor/total',
 				currentPage: 'financeStore/actor/currentPage',
-				limit: 'financeStore/actor/limit',
+				// limit: 'financeStore/actor/limit',
 				user: 'userStore/user/user',
 				nav: 'homeStore/home/nav',
 				authorities_nav: 'userStore/user/authorities',
@@ -288,6 +289,7 @@
 		        });
 			},
 			handleSizeChange(limit){
+				this.limit = limit;
 				this.getAgentList(1,limit);
 			},
 			handleCurrentChange(page){

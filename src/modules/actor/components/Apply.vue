@@ -165,7 +165,7 @@
 		      @size-change="handleSizeChange"
 		      @current-change="handleCurrentChange"
 		      :current-page="currentPage"
-		      :page-sizes="[20, 30, 40, 50]"
+		      :page-sizes="[10,20, 30, 40, 50]"
 		      :page-size="limit"
 		      layout="total, sizes, prev, pager, next, jumper"
 		      :total="total">
@@ -202,7 +202,7 @@
 				actorList:[],
 				total:0,
 				currentPage:1,
-				limit:20,
+				limit:10,
 				filter:{
 					platId:"",
 					identityName:"",
@@ -215,6 +215,8 @@
 		computed: {
 			...mapGetters({
 				user: 'userStore/user/user',
+				nav: 'homeStore/home/nav',
+				authorities_nav: 'userStore/user/authorities',
 			}),
 			edit(){
 				let path = this.$route.path;
@@ -314,6 +316,7 @@
 		    	this.tableHeight = tableHeight;
 		    },
 		    handleSizeChange(limit){
+		    	this.limit = limit;
 				this.getApplyList(1,limit);
 			},
 			handleCurrentChange(page){

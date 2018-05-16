@@ -125,11 +125,11 @@
 			      show-overflow-tooltip>
 				   <template slot-scope="scope">{{ scope.row.creator.platName }}</template>
 			    </el-table-column>
-			    <el-table-column
+<!-- 			    <el-table-column
 			      label="平台ID"
 			      show-overflow-tooltip>
 				   <template slot-scope="scope">{{ scope.row.creator.platId }}</template>
-			    </el-table-column>
+			    </el-table-column> -->
 			    <el-table-column
 			      label="公会"
 			      show-overflow-tooltip>
@@ -226,7 +226,7 @@
 			      @size-change="handleSizeChange"
 			      @current-change="handleCurrentChange"
 			      :current-page="currentPage"
-			      :page-sizes="[20, 30, 40, 50]"
+			      :page-sizes="[10,20, 30, 40, 50]"
 			      :page-size="limit"
 			      layout="total, sizes, prev, pager, next, jumper"
 			      :total="total">
@@ -284,6 +284,7 @@
 					thirdId:"",
 					status:"",
 				},
+				limit:10
 			}
 		},
 		computed: {
@@ -291,7 +292,7 @@
 				reflectList: 'financeStore/reflect/reflectList',
 				total: 'financeStore/reflect/total',
 				currentPage: 'financeStore/reflect/currentPage',
-				limit: 'financeStore/reflect/limit',
+				// limit: 'financeStore/reflect/limit',
 				user: 'userStore/user/user',
 				nav: 'homeStore/home/nav',
 				authorities_nav: 'userStore/user/authorities',
@@ -380,6 +381,7 @@
 		        });
 			},
 			handleSizeChange(limit){
+				this.limit = limit;
 				this.getReflectList(1,limit);
 			},
 			handleCurrentChange(page){

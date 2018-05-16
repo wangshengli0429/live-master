@@ -5,7 +5,7 @@ const state = {
 	accountList:[],//账号组
 	total:0,
 	currentPage:1,
-	limit:20,
+	limit:10,
 }
 
 // getters
