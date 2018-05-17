@@ -103,6 +103,51 @@
                     <el-button @click="goModify(2)" size="mini" type="primary">保存</el-button>
                 </div>
             </div>
+
+            <div class="group">
+                <div class="title">
+                    <span class="icon"></span>提现账户
+                </div>
+                <template v-if="bankAccount">
+                    <div class="t_title">银行卡账号</div>
+                    <div class="warpper clearfix">
+                        <!--银行卡账户-->
+                            <div class="items">
+                                <div class="name">开户银行</div>
+                                <div class="content">
+                                    <el-input :minlength="1" :maxlength="20" v-model="bankAccount.BCName" placeholder="请输入开户银行"></el-input>
+                                </div>
+                            </div>
+                            <div class="items">
+                                <div class="name">所在城市</div>
+                                <div class="content">
+                                    <el-input :minlength="1" :maxlength="20" v-model="bankAccount.BCCity" placeholder="请输入开户银行"></el-input>
+                                </div>
+                            </div>
+                            <div class="items">
+                                <div class="name">开户支行</div>
+                                <div class="content">
+                                    <el-input :minlength="1" :maxlength="20" v-model="bankAccount.BCBranch" placeholder="请输入开户银行"></el-input>
+                                </div>
+                            </div>
+                            <div class="items">
+                                <div class="name">银行卡号</div>
+                                <div class="content">
+                                    <el-input :minlength="1" :maxlength="20" v-model="bankAccount.accountNum" placeholder="请输入开户银行"></el-input>
+                                </div>
+                            </div>
+                    </div>
+                   <!--  <div class="btns">
+                        <el-button @click="goModify(2)" size="mini" type="primary">保存</el-button>
+                    </div> -->
+                </template>
+
+            </div>
+
+
+
+
+
             <div class="group">
                 <div class="title">
                     <span class="icon"></span>联系方式
@@ -290,7 +335,10 @@
                     "validDay": 1.0,
                     "validDayHour": 2.0,
                     "validHour": 3.0
-                }
+                },
+                autoAccount:null,//小额提现账户
+                handleAccount:null,//大额支付宝提现账户
+                bankAccount:null,//大额银行卡提现账户
 
             }
         },
@@ -571,6 +619,27 @@
             }
 
 
+            if(this.actor.cashAccounts && this.actor.cashAccounts.length > 0){
+                 for(var items of this.actor.cashAccounts){
+                    if (items.accountType == 0 && items.deleted == 0) {
+                        this.autoAccount = items;
+                    }
+                    if (items.accountType == 1 && items.deleted == 0) {
+                        this.handleAccount = items;
+                    }
+                    if (items.accountType == 2 && items.deleted == 0) {
+                        this.bankAccount = items;
+                    }
+                }
+            }
+
+
+
+
+
+
+
+
         }
     }
 </script>
@@ -600,8 +669,13 @@
                     margin-top: 2px;
                 }
             }
+            .t_title{
+                margin-top: 10px;
+                padding-left: 20px;
+            }
             .warpper{
                 padding-left: 30px;
+
                 .items{
                     margin: 10px 60px 10px 0;
                     float: left;

@@ -175,11 +175,6 @@
 		</template>
 
 
-
-
-
-
-
 	</div>
 </template>
 <script>

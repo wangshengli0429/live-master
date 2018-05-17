@@ -17,6 +17,7 @@
 				  </span>
 				  <el-dropdown-menu slot="dropdown">
 				    <el-dropdown-item command="signout">退出登录</el-dropdown-item>
+				    <el-dropdown-item v-if="!user.platId && !user.unionId" command="kf">修改客服信息</el-dropdown-item>
 				  </el-dropdown-menu>
 				</el-dropdown>
 			</div>
@@ -45,7 +46,7 @@
 	import BreadCrumb from './BreadCrumb';
 	import NavItems from './NavItems'
 	import {Link} from '@/config/utils'
-
+	import ChangeKf from '@/modules/widget/change-kf'
 	export default{
 		components:{
 			BreadCrumb,
@@ -75,6 +76,10 @@
           			$axios.defaults.params = requestParam;//重新修改全局联网配置
 					localStorage.setItem('requestParam','');
 					Link('/login');
+		    	}else if(command == 'kf'){
+		    		ChangeKf({
+
+		    		})
 		    	}
 	      	}
 		},
