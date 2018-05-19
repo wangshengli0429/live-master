@@ -314,6 +314,7 @@
 					thirdId:"",
 					status:"",
 				}
+				this.setDefaultOrg();
 				this.getAgentList(1);
 				this.getUnionList();
 		    },

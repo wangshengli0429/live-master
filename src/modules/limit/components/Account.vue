@@ -327,6 +327,8 @@
 					loginName:"",
 					mobile:"",
 				};
+				this.setDefaultOrg();
+				this.setDefaultOrg();
 				this.getAccountList(1);
 		    },
 		    changePlat(uuid){

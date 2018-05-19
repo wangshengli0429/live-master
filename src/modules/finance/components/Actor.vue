@@ -325,6 +325,7 @@
 					thirdId:"",
 					status:"",
 				}
+				this.setDefaultOrg();
 				this.getActorSalaryList(1);
 				this.getUnionList();
 		    },

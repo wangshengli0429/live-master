@@ -215,6 +215,7 @@
 					unionId:"",
 					status:0,
 				};
+				this.setDefaultOrg();
 				this.getAgentList(1);
 	    		this.getUnionList();
 			},

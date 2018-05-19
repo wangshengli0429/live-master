@@ -278,6 +278,7 @@
 					thirdId:"",
 					type:"",
 				}
+				this.setDefaultOrg();
 				this.getFlowList(1);
 				this.getUnionList();
 		    },

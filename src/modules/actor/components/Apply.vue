@@ -234,6 +234,7 @@
 					status:''
 
 				}
+				this.setDefaultOrg();
 				this.getApplyList(1);
 		    },
 		    viewImg(url){

@@ -244,6 +244,7 @@
 					orgId:"",
 					status:0,
 				}
+				this.setDefaultOrg();
 				this.getUnionList(1);
 			},
 			handleSizeChange(limit){

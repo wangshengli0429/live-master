@@ -307,6 +307,7 @@
 					thirdId:"",//第三方id
 					orgId:"",//平台／工会id
 				}
+				this.setDefaultOrg();
 				this.getActorList(1);
 	    		this.getUnionList();
 

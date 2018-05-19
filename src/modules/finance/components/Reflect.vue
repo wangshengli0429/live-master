@@ -406,6 +406,7 @@
 					thirdId:"",
 					status:"",
 				}
+				this.setDefaultOrg();
 				this.getReflectList(1);
 				this.getUnionList();
 				

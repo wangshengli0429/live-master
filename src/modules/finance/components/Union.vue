@@ -285,6 +285,7 @@
 					thirdId:"",
 					status:"",
 				}
+				this.setDefaultOrg();
 				this.getUnionSalaryList(1);
 				this.getUnionList();
 				

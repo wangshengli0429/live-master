@@ -317,6 +317,7 @@
 					id:"",
 					nickname:""
 				}
+				this.setDefaultOrg();
 				this.getActorList(1);
 	    		this.getUnionList();
 

@@ -460,6 +460,7 @@
 					thirdId:"",
 					status:0
 				}
+				this.setDefaultOrg();
 				this.getAccountList(1);
 				this.getUnionList();
 
