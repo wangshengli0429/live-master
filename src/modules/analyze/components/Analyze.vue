@@ -6,7 +6,7 @@
 					平台名称：
 				</div>
 				<div class="content">
-					<el-select :clearable="true" v-model="filter.platId" @change="changePlat" placeholder="请选择平台">
+					<el-select :disabled="user.platId?true:false" :clearable="true" v-model="filter.platId" @change="changePlat" placeholder="请选择平台">
 					    <el-option
 							v-for="item in platList"
 							:key="item.uuid"
@@ -159,6 +159,7 @@
 					unionId:"",
 					date:"",
 				}
+				this.setDefaultOrg();
 				this.getAnalyzeList(1);
 		    },
 	    	goFilter(){
@@ -175,6 +176,9 @@
 		    	var page = this.$refs.page.offsetHeight;
 		    	var tableHeight = container - filter - charts -page -24;
 		    	console.log(tableHeight);
+		    	if(tableHeight < 200){
+		    		tableHeight = 200;
+		    	}
 		    	this.tableHeight = tableHeight;
 		    },
 		    handleSizeChange(limit){
@@ -303,16 +307,31 @@
 		    		this.unionList = resp.list;
 				})
 		    },
+	    	setDefaultOrg(){
+		    	if(this.user){
+		    		this.filter.platId = this.user.platId;
+		    		this.filter.unionId = this.user.unionId;
+		    		if(!this.user.unionId && this.user.managerOrgs && this.user.managerOrgs.length > 0){
+		    			this.filter.unionId = this.user.managerOrgs[0].uuid;
+		    		}
+		    	}
+		    }
+	    },
+	    watch:{
+	    	user(){
+	    		this.setDefaultOrg();
+	    	}
 	    },
 	    mounted(){
 	    	setTimeout(() => {
 	    		this.setHeight();
+	    		this.setDefaultOrg();
+	    		this.getAnalyzeList();
 	    	})
 	    },
 	    created(){
 	    	this.getPlatList();
 	    	this.getUnionList();
-	    	this.getAnalyzeList();
 	    },
 	}
 </script>

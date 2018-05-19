@@ -21,10 +21,10 @@ const getters = {
 
 // actions
 const actions = {
-	getAccountList ({commit, state,dispatch},{currentPage,limit,filter}){
+	getAccountList ({commit, state,dispatch},{currentPage,limit,filter,sorters}){
 		const start = (currentPage-1)*limit;
 		return new Promise((resolve,reject)=>{
-			$API.finance.getAccountList({start,limit,filter},resp => {
+			$API.finance.getAccountList({start,limit,filter,sorters},resp => {
     			commit(types.INIT_ACCOUNT_LIST,{resp,currentPage,limit})
 				resolve(resp);
 			})

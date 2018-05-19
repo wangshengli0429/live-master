@@ -2,8 +2,14 @@ import { httpAgent } from '@/config/utils'
 import qs from 'qs'
 
 export default {
-  getAccountList({start,limit,filter}, successCb, erroCb){
-    let url = `${config_server.server_api}/plat/flow.json`;
+  getAccountList({start,limit,filter,sorters}, successCb, erroCb){
+    let url = `${config_server.server_api}/plat/flow.json?`;
+
+    if(sorters && sorters.length > 0){
+      url = url + '&sorters='+encodeURIComponent(JSON.stringify(sorters));
+    }
+
+
     let params = {
       start,
       limit

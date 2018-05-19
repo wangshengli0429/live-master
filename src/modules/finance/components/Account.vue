@@ -100,6 +100,7 @@
 			    :height="tableHeight"
 			    tooltip-effect="dark"
 			    style="width: 100%"
+			    @sort-change="sortChange"
 			    @selection-change="handleSelectionChange">
 			    <el-table-column
 			      type="selection"
@@ -167,6 +168,7 @@
 			      prop="shareNum"
 			      label="入账金额/元"
 			      width="120"
+			      sortable="custom"
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
@@ -326,7 +328,8 @@
 					status:0
 				},
 				multipleSelection:[],
-				limit:10
+				limit:10,
+				sorters:[]
 
 			}
 		},
@@ -347,6 +350,28 @@
 			}
 	    },
 		methods:{
+			sortChange(data){
+				console.log(data);
+				if(data.prop){
+					let column = data.prop;
+					if(column == 'shareNum'){
+						column = 'share_num';
+					}
+
+
+					let direction = data.order == 'ascending'?'asc':'desc';
+					let sorters = {
+						column:column,
+						direction:direction
+					}
+					this.sorters.push(sorters);
+				}else{
+					this.sorters = [];
+				}
+				
+				this.getAccountList();
+
+			},
 			handleSelectionChange(val) {
 		        this.multipleSelection = val;
 		    },
@@ -487,10 +512,11 @@
 		    	currentPage = currentPage || this.currentPage;
 		    	limit = limit || this.limit;
 		    	let filter = this.filter;
+		    	let sorters = this.sorters;
 
 		    	console.log(this.filter)
 
-				this.$store.dispatch('financeStore/account/getAccountList',{currentPage,limit,filter}).then(() => {
+				this.$store.dispatch('financeStore/account/getAccountList',{currentPage,limit,filter,sorters}).then(() => {
 
 				})
 

@@ -2,7 +2,7 @@
 	<div class="app_wrapper">
 		<div class="header">
 			<div class="logo">
-				星火传媒
+				艺人管理系统
 			</div>
 			<div class="user">
 				<el-dropdown trigger="click" @command="handleCommand">
