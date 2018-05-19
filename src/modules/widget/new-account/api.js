@@ -4,7 +4,7 @@ const api = config_server.server_api;
 import { httpAgent } from '@/config/utils';
 
 
-export const createAccount = (account,successCb,erroCb) => {
+export const createAccount = (account,managerOrgs,successCb,erroCb) => {
     const url = api + '/users/admins.json';
     let param = {
     	loginName:account.loginName,
@@ -33,11 +33,17 @@ export const createAccount = (account,successCb,erroCb) => {
         }
     }
 
+    if(managerOrgs && managerOrgs.length > 0){
+        param.managerOrgs = managerOrgs;
+    }
+
+
+
     httpAgent(url, 'POST', param, successCb,erroCb);
 
 }
 
-export const modifyAccount = (account,successCb,erroCb) => {
+export const modifyAccount = (account,managerOrgs,successCb,erroCb) => {
     const url = api + '/users/admins/'+account.uuid+'.json';
     let param = {
         loginName:account.loginName,
@@ -62,6 +68,10 @@ export const modifyAccount = (account,successCb,erroCb) => {
         if(account.platId){
             param.orgId = account.platId;
         }
+    }
+
+    if(managerOrgs && managerOrgs.length > 0){
+        param.managerOrgs = managerOrgs;
     }
 
     httpAgent(url, 'PUT', param, successCb,erroCb);

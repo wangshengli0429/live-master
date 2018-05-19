@@ -40,7 +40,7 @@
                     <div class="items">
                         <div class="name">公会</div>
                         <div class="content">
-                            <el-select :disabled="user.unionId?true:false" v-model="actor.unionName" @change="changeUnion" placeholder="请选择公会">
+                            <el-select v-model="actor.unionName" @change="changeUnion" placeholder="请选择公会">
                                 <el-option
                                   v-for="item in unionList"
                                   :key="item.uuid"
@@ -115,19 +115,19 @@
                             <div class="items">
                                 <div class="name">开户银行</div>
                                 <div class="content">
-                                    <el-input :minlength="1" :maxlength="20" v-model="bankAccount.BCName" placeholder="请输入开户银行"></el-input>
+                                    <el-input :minlength="1" :maxlength="20" v-model="bankAccount.bcName" placeholder="请输入开户银行"></el-input>
                                 </div>
                             </div>
                             <div class="items">
                                 <div class="name">所在城市</div>
                                 <div class="content">
-                                    <el-input :minlength="1" :maxlength="20" v-model="bankAccount.BCCity" placeholder="请输入开户银行"></el-input>
+                                    <el-input :minlength="1" :maxlength="20" v-model="bankAccount.bcCity" placeholder="请输入开户银行"></el-input>
                                 </div>
                             </div>
                             <div class="items">
                                 <div class="name">开户支行</div>
                                 <div class="content">
-                                    <el-input :minlength="1" :maxlength="20" v-model="bankAccount.BCBranch" placeholder="请输入开户银行"></el-input>
+                                    <el-input :minlength="1" :maxlength="20" v-model="bankAccount.bcBranch" placeholder="请输入开户银行"></el-input>
                                 </div>
                             </div>
                             <div class="items">
@@ -137,9 +137,9 @@
                                 </div>
                             </div>
                     </div>
-                   <!--  <div class="btns">
-                        <el-button @click="goModify(2)" size="mini" type="primary">保存</el-button>
-                    </div> -->
+                    <div class="btns">
+                        <el-button @click="modifyCashAccount(2)" size="mini" type="primary">保存</el-button>
+                    </div>
                 </template>
 
             </div>
@@ -220,7 +220,7 @@
                     <el-button @click="goModify(4)" size="mini" type="primary">保存</el-button>
                 </div>
             </div>
-            <div class="group">
+            <div class="group payFloor">
                 <div class="title">
                     <span class="icon"></span>保底政策
                 </div>
@@ -232,20 +232,20 @@
                         </div>
                     </div>
                     <div class="items">
-                        <div class="name">有效天</div>
+                        <div class="name">月有效天数</div>
                         <div class="content">
                             <el-input v-model="actor.validDay"  type="number" placeholder="请输入有效天"></el-input>小时
                         </div>
                     </div>
                     <div class="items">
-                        <div class="name">有效天数</div>
+                        <div class="name">日有效小时</div>
                         <div class="content">
                             <el-input v-model="actor.validDayHour"  type="number" placeholder="请输入有效天数"></el-input>
                             <div v-if="actor.validDay" class="info">当日直播时长超过{{actor.validDay}}小时记为有效天</div>
                         </div>
                     </div>
                     <div class="items">
-                        <div class="name">有效总时长</div>
+                        <div class="name">月有效总时长</div>
                         <div class="content">
                             <el-input v-model="actor.validHour"  type="number" placeholder="请输入有效时长"></el-input>小时
                         </div>
@@ -590,7 +590,20 @@
                     this.callback && this.callback();
                     // this.destroy();
                 })
+            },
+
+            modifyCashAccount(type){
+                if(type == 2){//银行卡账号
+                    let account = this.bankAccount;
+                    api.modifyCashAccount({uuid:account.uuid,account},() => {
+                        
+                    })
+                }
             }
+
+
+
+
 
         },
         mounted(){
@@ -730,7 +743,27 @@
                     }
                 }
             }
-
+            &.payFloor{
+                .warpper{
+                    .items{
+                        margin: 10px 5px 10px 0 !important;
+                    }
+                }
+                .name{
+                    width: 90px !important;
+                    height: 30px;
+                    line-height: 30px;
+                    float: left;
+                }
+                .content{
+                    margin-left: 90px !important;
+                    .info{
+                        margin-top: 2px;
+                        font-size: 12px;
+                        color: @FONT_COLOR_FOUR;
+                    }
+                }
+            }
 
         }
 

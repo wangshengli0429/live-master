@@ -40,10 +40,10 @@ export default {
     httpAgent(url,'GET', params,successCb,erroCb)
   },
   deleteAccount({list},successCb, erroCb){
-    let url = `${config_server.server_api}/plat/flow.json`;
-    let params = '';
+    let url = `${config_server.server_api}/plat/flow.json?`;
+    let params = {};
     for(var items of list){
-      params = params + '&uuid='+items;
+      url = url + '&uuid='+items;
     }
     // console.log(params);
     httpAgent(url,'DELETE', params,successCb,erroCb)
@@ -57,6 +57,16 @@ export default {
     // console.log(params);
     httpAgent(url,'POST', params,successCb,erroCb)
   },
+  autoCalculate({},successCb, erroCb){
+    let url = `${config_server.server_api}/plat/flow/calculate/auto.json`;
+    let params = {};
+
+    // console.log(params);
+    httpAgent(url,'POST', params,successCb,erroCb)
+  },
+
+
+
 
 
 }

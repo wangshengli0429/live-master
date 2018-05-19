@@ -22,7 +22,7 @@
 					公会名称：
 				</div>
 				<div class="content">
-					<el-select :disabled="user.unionId?true:false" :clearable="true" v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会">
+					<el-select  :clearable="true" v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会">
 					    <el-option
 							v-for="item in unionList"
 							:key="item.uuid"
@@ -89,7 +89,7 @@
 		<div ref="operate" class="operate">
 			<el-button v-if="edit" @click="batchCalculate">批量入账</el-button>
 			<div v-if="!user.unionId && edit" class="opt_right" style="float:right;">
-				<el-button @click="">自动入账</el-button>
+				<el-button @click="goAutoCalculate">自动入账</el-button>
 				<el-button @click="goImportFlow">账单导入</el-button>
 			</div>
 		</div>
@@ -277,7 +277,7 @@
 			      @size-change="handleSizeChange"
 			      @current-change="handleCurrentChange"
 			      :current-page="currentPage"
-			      :page-sizes="[10,20, 30, 40, 50]"
+			      :page-sizes="[10,20, 50,100]"
 			      :page-size="limit"
 			      layout="total, sizes, prev, pager, next, jumper"
 			      :total="total">
@@ -349,6 +349,20 @@
 		methods:{
 			handleSelectionChange(val) {
 		        this.multipleSelection = val;
+		    },
+		    goAutoCalculate(){
+		    	let msg = "确定要自动入账吗？"
+				this.$confirm(msg, '提示', {
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消',
+		          	type: 'warning'
+		        }).then(() => {
+		          	this.$store.dispatch('financeStore/account/autoCalculate').then(() => {
+		          		this.getAccountList();
+					})
+		        }).catch(() => {
+		                   
+		        });
 		    },
 			handleDelete(index,data){
 				let msg = "确定要删除吗？"
@@ -490,7 +504,7 @@
 		    },
 		    getUnionList(parentId){
 		    	let orgId = this.user.orgId;
-		    	parentId = parentId ||  this.user.platId;
+		    	parentId = parentId ||  this.user.orgId;
 		    	this.$store.dispatch('groupStore/group/getGroupList',{orgId,parentId,currentPage:1,limit:50}).then((resp) => {
 		    		this.unionList = resp.list;
 				})
@@ -499,6 +513,9 @@
 		    	if(this.user){
 		    		this.filter.platId = this.user.platId;
 		    		this.filter.unionId = this.user.unionId;
+		    		if(!this.user.unionId && this.user.managerOrgs && this.user.managerOrgs.length > 0){
+		    			this.filter.unionId = this.user.managerOrgs[0].uuid;
+		    		}
 		    	}
 		    }
 	    },

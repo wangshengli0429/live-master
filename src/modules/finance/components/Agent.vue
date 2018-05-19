@@ -22,7 +22,7 @@
 					公会名称：
 				</div>
 				<div class="content">
-					<el-select :disabled="user.unionId?true:false" :clearable="true" v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会">
+					<el-select :clearable="true" v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会">
 					    <el-option
 							v-for="item in unionList"
 							:key="item.uuid"
@@ -351,7 +351,7 @@
 		    },
 		    getUnionList(parentId){
 		    	let orgId = this.user.orgId;
-		    	parentId = parentId ||  this.user.platId;
+		    	parentId = parentId ||  this.user.orgId;
 		    	this.$store.dispatch('groupStore/group/getGroupList',{orgId,parentId,currentPage:1,limit:50}).then((resp) => {
 		    		this.unionList = resp.list;
 				})
@@ -360,6 +360,9 @@
 		    	if(this.user){
 		    		this.filter.platId = this.user.platId;
 		    		this.filter.unionId = this.user.unionId;
+		    		if(!this.user.unionId && this.user.managerOrgs && this.user.managerOrgs.length > 0){
+		    			this.filter.unionId = this.user.managerOrgs[0].uuid;
+		    		}
 		    	}
 		    }
 	    },

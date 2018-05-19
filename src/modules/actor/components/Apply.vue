@@ -350,6 +350,7 @@
 		    },
 		    getUnionList(parentId){
 		    	let orgId = this.user.orgId;
+		    	parentId = parentId ||  this.user.orgId;
 		    	this.$store.dispatch('groupStore/group/getGroupList',{orgId,parentId,currentPage:1,limit:50}).then((resp) => {
 		    		this.unionList = resp.list;
 				})

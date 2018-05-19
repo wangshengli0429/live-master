@@ -44,6 +44,13 @@ const actions = {
 			})
 	    })
 	},
+	autoCalculate ({commit, state,dispatch}){
+		return new Promise((resolve,reject)=>{
+			$API.finance.autoCalculate({},resp => {
+				resolve(resp);
+			})
+	    })
+	},
 	
 
 

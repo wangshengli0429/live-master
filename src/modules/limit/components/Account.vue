@@ -46,7 +46,7 @@
 					平台名称：
 				</div>
 				<div class="content">
-					<el-select :clearable="true" v-model="filter.platId" @change="changePlat" placeholder="请选择平台">
+					<el-select :disabled="user.platId?true:false" :clearable="true" v-model="filter.platId" @change="changePlat" placeholder="请选择平台">
 					    <el-option
 							v-for="item in platList"
 							:key="item.uuid"
@@ -351,13 +351,29 @@
 		    	currentPage = currentPage || this.currentPage;
 		    	limit = limit || this.limit;
 		    	let filter = this.filter;
+
+		    	console.log(filter)
+
+
+
 				this.$store.dispatch('limitStore/account/getAccountList',{currentPage,limit,filter}).then(() => {
 
 				})
 		    },
 		    getAccountGroup(){
 		    	this.$store.dispatch('limitStore/limit/getAccountGroup',{currentPage:1,limit:50}).then((resp) => {
-		    		this.authorityGroup = resp.authorityGroup;
+		    		/*平台级别只能显示公会账号*/
+		    		if(this.user.platId){
+		    			var list = [];
+		    			for(var items of resp.authorityGroup){
+		    				if(items.orgType == 'UNION'){
+		    					list.push(items);
+		    				}
+		    			}
+		    			this.authorityGroup = list;
+		    		}else{
+		    			this.authorityGroup = resp.authorityGroup;
+		    		}
 				})
 		    },
 		    getPlatList(){
@@ -368,6 +384,7 @@
 		    },
 		    getUnionList(parentId){
 		    	let orgId = this.user.orgId;
+		    	parentId = parentId ||  this.user.orgId;
 		    	this.$store.dispatch('groupStore/group/getGroupList',{orgId,parentId,currentPage:1,limit:50}).then((resp) => {
 		    		this.unionList = resp.list;
 				})
@@ -386,15 +403,45 @@
 					this.filter.authorityGroupOrgType = "";
 				}
 				
+		    },
+			setDefaultOrg(){
+		    	if(this.user){
+		    		this.filter.platId = this.user.platId;
+		    		this.filter.unionId = this.user.unionId;
+		    		if(!this.user.unionId && this.user.managerOrgs && this.user.managerOrgs.length > 0){
+		    			this.filter.unionId = this.user.managerOrgs[0].uuid;
+		    		}
+		    		this.filter.orgId = this.filter.unionId || this.filter.platId;
+
+
+
+
+		    		if(this.filter.platId){//平台级别只能获取公会管理账号
+		    			this.disabledOrgType = true;
+		    			this.filter.authorityGroupOrgType = 'UNION';
+		    		}
+
+
+
+
+		    	}
 		    }
-		},
+	    },
+	    watch:{
+	    	user(){
+	    		this.setDefaultOrg();
+	    	}
+	    },
 		mounted(){
 	    	setTimeout(() => {
 	    		this.setHeight();
+	    		this.setDefaultOrg();
+				this.getAccountList();
+
 	    	})
 	    },
 		created(){
-			this.getAccountList();
+
 			this.getAccountGroup();
 
 			this.getPlatList();

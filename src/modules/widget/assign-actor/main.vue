@@ -107,6 +107,7 @@
             },
             getUnionList(parentId){
                 let orgId = this.user.orgId;
+                parentId = parentId ||  this.user.orgId;
                 $API.group.getGroupList({orgId,parentId,currentPage:1,limit:50},(resp) => {
                     this.unionList = resp.list;
                 })

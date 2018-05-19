@@ -48,7 +48,7 @@
                             平台名称
                         </div>
                         <div class="content">
-                            <el-select :disabled="disabledPlat" :clearable="true" v-model="account.platId" @change="" placeholder="请选择平台">
+                            <el-select :disabled="disabledPlat" :clearable="true" v-model="account.platId" @change="changePlat" placeholder="请选择平台">
                                 <el-option
                                     v-for="item in platList"
                                     :key="item.uuid"
@@ -64,7 +64,7 @@
                             公会名称
                         </div>
                         <div class="content">
-                            <el-select :disabled="disabledUnion" :clearable="true" v-model="account.unionId" @change="" placeholder="请选择公会">
+                            <el-select :disabled="disabledUnion" :clearable="true" v-model="account.unionId" @change="changeUnion" placeholder="请选择公会">
                                 <el-option
                                     v-for="item in unionList"
                                     :key="item.uuid"
@@ -102,13 +102,21 @@
                         </div>
                     </div>
                 </div>
+
+                <div v-if="account.authorityGroupOrgType == 'UNION'" class="clearfix other_group">
+                    <div class="items">
+                        <div class="name">选择多个公会(仅运维管理员可用)</div>
+                        <div class="content" @click="goSelectUnion">
+                            <el-input
+                            type="textarea"
+                            :autosize="{ minRows: 2, maxRows: 4}"
+                             placeholder="选择多个公会" :value="filterGroups" :readonly="true"></el-input>
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
-            
-
-
-
-
-
 
         </div>
     </modal>
@@ -117,6 +125,10 @@
 <script>
     import * as api from './api';
     import Modal from '@/modules/widget/common/Modal.vue';
+    import SelectUnion from '@/modules/widget/select-union'
+
+
+
     export default{
         components:{
             Modal
@@ -155,9 +167,23 @@
                     password:"",
                     status:0,
                     platId:"",
-                    unionId:""
+                    unionId:"",
+                    managerOrgs:[]
                 },
-                locked:false
+                locked:false,
+                selectUnionList:[]
+            }
+        },
+        computed:{
+            filterGroups(){
+                var result = '';
+                for(var i=0;i<this.selectUnionList.length;i++){
+                    result = result + this.selectUnionList[i].name;
+                    if(i < this.selectUnionList.length-1){
+                        result = result + '，';
+                    }
+                }
+                return result;
             }
         },
         methods:{
@@ -166,6 +192,25 @@
                 this.$el.parentNode &&
                 this.$el.parentNode.removeChild(this.$el);
                 this.$destroy();
+            },
+            goSelectUnion(){
+                SelectUnion({
+                    user:this.user,
+                    select:this.selectUnionList,
+                    callback:(select) => {
+                        if(this.account.unionId){
+                            var list = [];
+                            for(var items of select){
+                                if(items.uuid != this.account.unionId){
+                                    list.push(items);
+                                }
+                            }
+                            this.selectUnionList = list;
+                        }else{
+                            this.selectUnionList = select;
+                        }
+                    }
+                })
             },
             changeAuthorityGroup(data){
                 var obj = this.authorityGroup.filter(function(item) { 
@@ -190,6 +235,24 @@
                     this.account.authorityGroupOrgType = "";
                 }
                 
+            },
+            onSame(array1,array2){//比较两个数组变化
+              var result = [];
+              for(var i = 0; i < array2.length; i++){
+                  var uuid2 = array2[i].uuid;
+                  var isExist = false;
+                  for(var j = 0; j < array1.length; j++){
+                      var uuid1 = array1[j].uuid;
+                      if(uuid1 == uuid2){
+                          isExist = true;
+                          break;
+                      }
+                  }
+                  if(!isExist){
+                      result.push(uuid2);
+                  }
+              }
+              return result;
             },
             submit(close){
                 if(!this.account.loginName){
@@ -224,13 +287,51 @@
                         this.locked = false;
                     },5000)
                     if(this.account.uuid){
-                        api.modifyAccount(this.account,() => {
+
+                        var oldMembers = this.account.managerOrgs || [];
+                        var data = this.selectUnionList;
+                        var deleteIds = this.onSame(data,oldMembers);
+                        var addIds = this.onSame(oldMembers,data);
+                        let managerOrgs = [];
+
+                        // console.log(deleteIds)
+                        // console.log(addIds)
+                        for(var items of deleteIds){
+                            var temp = {
+                                uuid:items,
+                                optType:"del"
+                            }
+                            managerOrgs.push(temp);
+                        }
+
+                        for(var items of addIds){
+                            var temp = {
+                                uuid:items,
+                                optType:"add"
+                            }
+                            managerOrgs.push(temp);
+                        }
+
+
+
+                        api.modifyAccount(this.account,managerOrgs,() => {
                             this.locked = false;
                             this.callback && this.callback();
                             close && close();
                         })
                     }else{
-                        api.createAccount(this.account,() => {
+
+                        let managerOrgs = [];
+                        for(var items of this.selectUnionList){
+                            var temp = {
+                                uuid:items.uuid
+                            }
+                            managerOrgs.push(temp)
+                        }
+
+
+
+                        api.createAccount(this.account,managerOrgs,() => {
                             this.locked = false;
                             this.callback && this.callback();
                             close && close();
@@ -245,18 +346,54 @@
             },
             getAccountGroup(){
                 $API.limit.getAccountGroup({start:0,limit:50},resp => {
-                    this.authorityGroup = resp.authorityGroup;
+                    /*若是平台级别，是否筛选平台账号组*/
+                    let authorityGroup = resp.authorityGroup;
+                    let temp_list = [];
+
+                    if(this.user.platId){
+                        for(var items of authorityGroup){
+                            if(items.orgType == 'UNION'){
+                                temp_list.push(items);
+                            }
+                        }
+                    }else{
+                        temp_list = authorityGroup;
+                    }
+
+                    this.authorityGroup = temp_list;
                 })
             },
+            changePlat(uuid){
+                if(uuid){
+                    this.actor.platId = uuid;
+                }else{
+                    this.actor.platId = "";
+                }
+                this.getUnionList(uuid);
+            },
+
+            changeUnion(uuid){
+                if(uuid && this.selectUnionList && this.selectUnionList.length > 0){
+                    var index = this.selectUnionList.findIndex((items) => {
+                        return items.uuid == uuid;
+                    })
+                    if(index || index == 0){
+                        this.selectUnionList.splice(index,1);
+                    }
+                }
+            },
+
+
             getPlatList(){
                 const orgId = this.user.orgId;
                 $API.platform.getPlatFormList({orgId,start:0,limit:50},resp => {
                     this.platList = resp.list;
                 })
             },
-            getUnionList(){
+            getUnionList(parentId){
                 const orgId = this.user.orgId;
-                $API.group.getGroupList({orgId,start:0,limit:50},resp => {
+                parentId = parentId ||  this.user.orgId;
+                $API.group.getGroupList({orgId,parentId,start:0,limit:50},resp => {
                     this.unionList = resp.list;
                 })
             },
@@ -273,6 +410,30 @@
 
             this.getPlatList();
             this.getUnionList();
+
+            if(this.account){
+                this.account.password = '';
+                if(this.account.authorityGroup){
+                    this.account.authorityGroupOrgType = this.account.authorityGroup.orgType;
+                }
+
+                if(this.account.managerOrgs && this.account.managerOrgs.length > 0){
+                    this.selectUnionList = JSON.parse(JSON.stringify(this.account.managerOrgs));
+                }
+
+
+            }
+
+
+            if(this.user && !this.account.uuid){
+                if(this.user.platId){
+                    this.disabledPlat = true;
+                    this.account.platId = this.user.platId;
+                }
+            }
+
+
+
 
 
         }
@@ -297,6 +458,15 @@
                     margin-right: 8px;
                     display: inline-block;
                     margin-top: 2px;
+                }
+            }
+            .other_group{
+                padding: 10px;
+                border-top: 1px solid #f4f4f4;
+                .items{
+                    .name{
+                        margin-bottom: 10px;
+                    }
                 }
             }
             .warpper{

@@ -70,6 +70,39 @@ export const modifyActor = (actor,successCb,erroCb) => {
     httpAgent(url, 'PUT', param, successCb,erroCb);
 }
 
+export const modifyCashAccount = ({uuid,account},successCb,erroCb) => {
+    const url = api + '/user/cash/account/'+uuid+'.json';
+    let param = {
+        
+    }
+    if(account.bcName){
+        param.bcName = account.bcName
+    }
+    if(account.bcCity){
+        param.bcCity = account.bcCity
+    }
+    if(account.bcBranch){
+        param.bcBranch = account.bcBranch
+    }
+    if(account.accountNum){
+        param.accountNum = account.accountNum
+    }
+
+
+
+
+    httpAgent(url, 'PUT', param, successCb,erroCb);
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

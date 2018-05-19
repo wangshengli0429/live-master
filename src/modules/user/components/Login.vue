@@ -58,10 +58,10 @@
 					},5000)
 					this.login({identify:this.loginInfo.identify,password:this.loginInfo.password}).then((resp) => {
 						if(resp.result == 0){
-							Link('/home')
+							Link('/information')
 						}else{
 							this.$message({
-					          message: resp.msg,
+					          message: resp.msg || '登录失败，请检查网络连接',
 					          type: 'error'
 					        });
 						}

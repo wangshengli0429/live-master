@@ -45,7 +45,7 @@ const actions = {
 	// },
 	deleteGroup ({commit, state,dispatch},{uuid}){
 		return new Promise((resolve,reject)=>{
-			$API.limit.deleteGroup({uuid},resp => {
+			$API.group.deleteGroup({uuid},resp => {
 				resolve(resp);
 			})
 	    })

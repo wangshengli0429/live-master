@@ -22,7 +22,7 @@
 					公会：
 				</div>
 				<div class="content">
-					<el-select :disabled="user.unionId?true:false" v-model="filter.unionId" @change="" placeholder="请选择公会">
+					<el-select v-model="filter.unionId" @change="" placeholder="请选择公会">
 					    <el-option
 							v-for="item in unionList"
 							:key="item.uuid"
@@ -113,7 +113,7 @@
 			</div>
 		</div>
 		<div ref="operate" class="operate">
-			<el-button v-if="edit" @click="batchDelete" type="danger">删除</el-button>
+			<el-button v-if="isSuperAdmin" @click="batchDelete" type="danger">删除</el-button>
 		</div>
 
 		<div class="filter_list">
@@ -203,6 +203,7 @@
 			          size="mini"
 			          @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
 			        <el-button
+			        	v-if="isSuperAdmin"
 			          size="mini"
 			          type="danger"
 			          @click="handleDelete(scope.$index, scope.row)">删除</el-button>
@@ -293,6 +294,13 @@
 			edit(){
 				let path = this.$route.path;
 				return Operate(this.user,path,this.nav,this.authorities_nav);
+			},
+			isSuperAdmin(){//超级管理员
+				var result = false;
+				if(this.user  && this.user.userType == 'SUPER_ADMIN'){
+					result = true;
+				}
+				return result;
 			}
 	    },
 
@@ -418,7 +426,7 @@
 		    },
 		    getUnionList(parentId){
 		    	let orgId = this.user.orgId;
-		    	parentId = parentId ||  this.user.platId;
+		    	parentId = parentId ||  this.user.orgId;
 		    	this.$store.dispatch('groupStore/group/getGroupList',{orgId,parentId,currentPage:1,limit:50}).then((resp) => {
 		    		this.unionList = resp.list;
 				})
@@ -438,6 +446,9 @@
 		    	if(this.user){
 		    		this.filter.platId = this.user.platId;
 		    		this.filter.unionId = this.user.unionId;
+		    		if(!this.user.unionId && this.user.managerOrgs && this.user.managerOrgs.length > 0){
+		    			this.filter.unionId = this.user.managerOrgs[0].uuid;
+		    		}
 		    	}
 		    }
 	    },
