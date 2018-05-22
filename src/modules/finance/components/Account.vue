@@ -88,6 +88,7 @@
 		</div>
 		<div ref="operate" class="operate">
 			<el-button v-if="edit" @click="batchCalculate">批量入账</el-button>
+			<el-button v-if="batchDelete" @click="goBatchDelete">批量删除</el-button>
 			<div v-if="!user.unionId && edit" class="opt_right" style="float:right;">
 				<el-button @click="goAutoCalculate">自动入账</el-button>
 				<el-button @click="goImportFlow">账单导入</el-button>
@@ -347,6 +348,13 @@
 			edit(){
 				let path = this.$route.path;
 				return Operate(this.user,path,this.nav,this.authorities_nav);
+			},
+			batchDelete(){
+				var result = false;
+				if(this.edit && !this.user.unionId){
+					result = true;
+				}
+				return result;
 			}
 	    },
 		methods:{
@@ -419,6 +427,28 @@
 			        		list.push(items.uuid);
 			        	}
 			        	this.$store.dispatch('financeStore/account/calculateAccount',{list}).then(() => {
+			          		this.getAccountList();
+						})
+			        }).catch(() => {
+			                   
+			        });
+	    			
+	    		}
+	    	},
+	    	goBatchDelete(){
+	    		let account = this.multipleSelection;
+	    		if(account.length > 0){
+	    			let msg = "确定要批量删除这些数据吗？"
+					this.$confirm(msg, '提示', {
+			          	confirmButtonText: '确定',
+			          	cancelButtonText: '取消',
+			          	type: 'warning'
+			        }).then(() => {
+			        	let list = [];
+			        	for(var items of account){
+			        		list.push(items.uuid);
+			        	}
+			        	this.$store.dispatch('financeStore/account/deleteAccount',{list}).then(() => {
 			          		this.getAccountList();
 						})
 			        }).catch(() => {

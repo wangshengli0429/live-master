@@ -9,7 +9,9 @@ export const CLEAR_ANALYZE_INFO = 'CLEAR_ANALYZE_INFO'
 
 
 
+export const CHANGE_MOBILE = 'CHANGE_MOBILE'
 
+export const GET_USER_SETTING_INFO = 'GET_USER_SETTING_INFO'
 
 
 

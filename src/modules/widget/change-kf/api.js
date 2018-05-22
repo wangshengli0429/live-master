@@ -8,7 +8,7 @@ export const changeKfInfo = ({key,value},successCb,erroCb) => {
     const url = api + '/plat/setting.json';
     let param = {
         key:key,
-        value:JSON.stringify(value),
+        value:value,
     }
     httpAgent(url, 'POST', param, successCb,erroCb);
 }

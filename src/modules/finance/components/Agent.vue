@@ -106,7 +106,7 @@
 			      label="月份"
 			      width="120"
 			      show-overflow-tooltip>
-				    <template slot-scope="scope">{{ scope.row.createDate | timesToDate('yyyy-MM') }}</template>
+				    <template slot-scope="scope">{{ scope.row.day | timesToDate('yyyy-MM') }}</template>
 			    </el-table-column>
 			    <el-table-column
 			      prop="trackNum"
@@ -135,11 +135,11 @@
 			      show-overflow-tooltip>
 				   <template slot-scope="scope">{{ scope.row.creator.nickname }}</template>
 			    </el-table-column>
-			    <el-table-column
+	<!-- 		    <el-table-column
 			      label="待遇"
 			      show-overflow-tooltip>
 				   <template slot-scope="scope">{{ scope.row.creator.payFloor }}</template>
-			    </el-table-column>
+			    </el-table-column> -->
 			    <el-table-column
 			      prop="actorThirdFlow"
 			      label="所辖艺人流水/元"

@@ -1,6 +1,6 @@
 <template>
 	<li v-if="showNav" :class="{'expand':isExpand}">
-		<div @click="goSwtich" class="title" :class="{'active':(scope == items.uuid)}">{{items.name}}<i v-if="items.children && items.children.length > 0" class="el-icon" :class="{'el-icon-arrow-right':!isExpand,'el-icon-arrow-down':isExpand}"></i></div>
+		<div @click="goSwtich" class="title" :class="{'active':(scope == items.uuid)}" :style="filterStyle">{{items.name}}<i v-if="items.children && items.children.length > 0" class="el-icon" :class="{'el-icon-arrow-right':!isExpand,'el-icon-arrow-down':isExpand}"></i></div>
 		<ul v-if="items.children && items.children.length > 0">
 			<nav-items v-for="item in items.children" :key="item.uuid" :items="item"></nav-items>
 		</ul>
@@ -19,7 +19,20 @@
         		scope: 'homeStore/home/scope',
 				user: 'userStore/user/user',
 				authorities: 'userStore/user/authorities',
+				color:'userStore/user/color',
 			}),
+			filterStyle(){
+				var background = this.color.active_background || '#ffffff';
+				var font = this.color.active_font || '#333333';
+				var style = {};
+				if(this.scope == this.items.uuid){
+					style = {
+						background:background,
+						color:font
+					}
+				}
+				return style;
+			},
 			isExpand(){
 				var result = this.openKeys.indexOf(this.items.uuid) >=0?true:false
 				return result;

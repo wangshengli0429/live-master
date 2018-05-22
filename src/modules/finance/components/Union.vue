@@ -92,7 +92,7 @@
 			      label="月份"
 			      width="120"
 			      show-overflow-tooltip>
-				    <template slot-scope="scope">{{ scope.row.createDate | timesToDate('yyyy-MM') }}</template>
+				    <template slot-scope="scope">{{ scope.row.day | timesToDate('yyyy-MM') }}</template>
 			    </el-table-column>
 			    <el-table-column
 			      prop="trackNum"

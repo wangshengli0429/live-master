@@ -6,7 +6,9 @@ const state = {
 	authorities:[],
 	system:null,
 	platInfo:null,
-	unionInfo:null
+	unionInfo:null,
+	banner:"",
+	color:""
 }
 
 // getters
@@ -16,6 +18,8 @@ const getters = {
 	system: state => state.system,
 	platInfo: state => state.platInfo,
 	unionInfo: state => state.unionInfo,
+	banner: state => state.banner,
+	color: state => state.color,
 }
 
 // actions
@@ -30,6 +34,8 @@ const actions = {
 
         		commit(types.CLEAR_ANALYZE_INFO)
 				dispatch('getSystemInfo');
+				dispatch('getSettingInfo');
+
 				if(resp.user.platId){
 					dispatch('getPlatInfo',{uuid:resp.user.platId});
 				}
@@ -52,6 +58,8 @@ const actions = {
 				}
         		commit(types.CLEAR_ANALYZE_INFO)
 				dispatch('getSystemInfo');
+				dispatch('getSettingInfo');
+
 				if(resp.user.platId){
 					dispatch('getPlatInfo',{uuid:resp.user.platId});
 				}
@@ -126,8 +134,32 @@ const actions = {
 	    })
 	},
 
+	changeMobile({ commit, state, dispatch },{uuid,mobile}){
+		return new Promise((resolve, reject) => {
+			$API.user.changeMobile({uuid,mobile},resp => {
+        		commit(types.CHANGE_MOBILE, mobile)
+				resolve(resp);
+			},resp => {
+				resolve(resp);
+			})
+	    })
+	},
 
-
+	getSettingInfo({ commit, state, dispatch },){
+		return new Promise((resolve, reject) => {
+			var list = ['banner','color'];
+				$API.user.getSettingInfo({key:'banner'},resp => {
+	        		commit(types.GET_USER_SETTING_INFO, {key:'banner',value:resp.value})
+				},resp => {
+				})
+				$API.user.getSettingInfo({key:'color'},resp => {
+	        		commit(types.GET_USER_SETTING_INFO, {key:'color',value:resp.value})
+				},resp => {
+				})
+			
+	    })
+	},
+	
 
 }
 
@@ -164,8 +196,24 @@ const mutations = {
 	    state.platInfo = null;
 	    state.unionInfo = null;
 	},
+	[types.CHANGE_MOBILE](state,mobile) {
+	    state.user.mobile = mobile;
+	},
+	[types.GET_USER_SETTING_INFO](state,{key,value}) {
+		console.log(key);
+		if(key == 'color'){
 
-
+			console.log(value);
+			if(value){
+				state[key] = JSON.parse(value);
+			}
+		}else{
+			if(state[key] || state[key] == ''){
+		    	state[key] = value;
+		    }
+		}
+	    
+	},
 
 
 }

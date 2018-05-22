@@ -10,7 +10,7 @@
             <div class="items clearfix">
                 <div class="name">新密码</div>
                 <div class="content">
-                    <el-input placeholder="旧密码" type="password" v-model="password.new"></el-input>
+                    <el-input placeholder="新密码" type="password" v-model="password.new"></el-input>
                 </div>
             </div>
             <div class="items clearfix">
@@ -82,9 +82,9 @@
                 
             },
             setHeight(){
-                var pageHeight = document.body.clientHeight;
-                var height = pageHeight - 150 - 40;
-                this.height = height;
+                // var pageHeight = document.body.clientHeight;
+                // var height = pageHeight - 150 - 40;
+                this.height = 200;
             }
 
         },

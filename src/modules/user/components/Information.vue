@@ -42,10 +42,15 @@
 					<el-input :value="user.nickname" placeholder="" :readonly="true"></el-input>
 				</div>
 			</div>
-			<div class="items">
+			<div class="items mobile">
 				<div class="name">联系电话</div>
 				<div class="content">
-					<el-input :value="user.mobile" placeholder="" :readonly="true"></el-input>
+					<el-input @change="changeMobile" @keyup.native.enter="goChangeMobile" type="number" :value="user.mobile" placeholder="" :readonly="isEdit?false:true"></el-input>
+					<span v-if="!isEdit" @click="goModify" class="modify">修改</span>
+					<template v-if="isEdit">
+						<span @click="cancelModify" class="modify">取消</span>
+						<span @click="goChangeMobile" class="submit">提交</span>
+					</template>
 				</div>
 			</div>
 		</div>
@@ -184,6 +189,12 @@
 
 
 	export default{
+		data(){
+			return {
+				isEdit:false,
+				mobile:""
+			}
+		},
 		computed: {
 			...mapGetters({
 				user: 'userStore/user/user',
@@ -219,6 +230,25 @@
 	    	getUserAnalyzeInfo(){
 	    		if(this.user){
 	    			this.$store.dispatch('userStore/user/getUserAnalyzeInfo',{user:this.user})
+	    		}
+	    	},
+	    	goModify(e){
+	    		$(e.target).parent().find('input').focus();
+	    		this.isEdit = true;
+	    	},
+	    	cancelModify(e){
+	    		this.isEdit = false;
+	    		this.mobile = '';
+	    	},
+	    	changeMobile(mobile){
+	    		this.mobile = mobile;
+	    	},
+	    	goChangeMobile(){
+	    		if(this.mobile && this.mobile != this.user.mobile){
+	    			this.$store.dispatch('userStore/user/changeMobile',{uuid:this.user.uuid,mobile:this.mobile}).then(() => {
+	    				this.isEdit = false;
+	    				this.mobile = ''
+	    			})
 	    		}
 	    	}
 	    },
@@ -276,6 +306,53 @@
 	  					right:-30px;
 	  					top:2px;
 	  					cursor:pointer;
+	  				}
+	  			}
+
+	  			&.mobile{
+	  				.modify{
+	  					position:absolute;
+	  					font-size:12px;
+	  					color:@COMMON_BLUE;
+	  					right:-30px;
+	  					top:2px;
+	  					cursor:pointer;
+	  				}
+	  				.submit{
+	  					position: absolute;
+	  					right: -94px;
+	  					top: 2px;
+	  					cursor: pointer;
+  					    display: inline-block;
+					    line-height: 1;
+					    white-space: nowrap;
+					    cursor: pointer;
+					    background: #fff;
+					    border: 1px solid #dcdfe6;
+					    color: #606266;
+
+
+
+					    -webkit-appearance: none;
+					    text-align: center;
+					    -webkit-box-sizing: border-box;
+					    box-sizing: border-box;
+					    outline: 0;
+					    margin: 0;
+					    -webkit-transition: .1s;
+					    transition: .1s;
+					    font-weight: 500;
+					    padding: 7px 12px;
+					    font-size: 12px;
+					    border-radius: 4px;
+					     color: #fff;
+					    background-color: #409EFF;
+					    border-color: #409EFF;
+					    &:hover{
+				    	    background: #66b1ff;
+						    border-color: #66b1ff;
+						    color: #fff;
+					    }
 	  				}
 	  			}
 

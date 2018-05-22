@@ -2,7 +2,12 @@
 	<div class="app_wrapper">
 		<div class="header">
 			<div class="logo">
-				艺人管理系统
+				<template v-if="banner">
+					<img :src="banner" />
+				</template>
+				<template v-else>
+					<img src="../images/banner.jpeg">
+				</template>
 			</div>
 			<div class="user">
 				<el-dropdown trigger="click" @command="handleCommand">
@@ -17,13 +22,13 @@
 				  </span>
 				  <el-dropdown-menu slot="dropdown">
 				    <el-dropdown-item command="signout">退出登录</el-dropdown-item>
-				    <el-dropdown-item v-if="!user.platId && !user.unionId" command="kf">修改客服信息</el-dropdown-item>
+				    <el-dropdown-item v-if="!user.platId && !user.unionId" command="kf">修改配置信息</el-dropdown-item>
 				  </el-dropdown-menu>
 				</el-dropdown>
 			</div>
 		</div>
 		<div class="container">
-			<div class="aside">
+			<div class="aside" :style="filterStyle">
 				<ul class="root">
 					<nav-items v-for="items in nav" :key="items.uuid" :items="items"></nav-items>
 				</ul>
@@ -56,7 +61,18 @@
 			...mapGetters({
 				user: 'userStore/user/user',
 				nav: 'homeStore/home/nav',
-			})
+				banner:'userStore/user/banner',
+				color:'userStore/user/color',
+			}),
+			filterStyle(){
+				var background = this.color.background || '#f4f4f4';
+				var font = this.color.font || '#333333';
+				var style = {
+					background:background,
+					color:font
+				}
+				return style;
+			}
 	    },
 		data(){
 			return {
@@ -64,6 +80,7 @@
 		},
 		methods:{
 			...mapActions({
+		        setOpenKeys: 'homeStore/home/setOpenKeys',
 		    }),
 		    switchNav(){
 		    },
@@ -81,11 +98,18 @@
 
 		    		})
 		    	}
+	      	},
+	      	setAllNavOpen(){
+	      		for(var items of this.nav){
+	      			if(items.children && items.children.length > 0){
+	      				this.setOpenKeys(items.uuid);
+	      			}
+	      		}
 	      	}
 		},
 		created(){
 			this.$store.dispatch('homeStore/home/initNav')
-
+			this.setAllNavOpen();
 
 		}
 
@@ -104,7 +128,7 @@
   			height: 48px;
   			line-height: 48px;
   			width: 100%;
-  			padding: 0 20px;
+  			padding: 0 20px 0 0;
   			flex-shrink: 0;
 			min-height: 48px;
 		    background-color: hsla(0,0%,100%,.95);
@@ -115,6 +139,9 @@
 		    .logo{
 		    	float: left;
 		    	font-size: 20px;
+		    	img{
+		    		height: 48px;
+		    	}
 		    }
 		    .user{
 		    	cursor: pointer;
