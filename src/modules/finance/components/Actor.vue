@@ -87,7 +87,7 @@
 		<div ref="operate" class="operate">
 			<!-- <el-button @click="">批量发放</el-button> -->
 			<div v-if="edit" class="opt_right" style="float:right;">
-				<el-button @click="">订单导出</el-button>
+				<el-button @click="goExport">订单导出</el-button>
 			</div>
 		</div>
 		<div class="filter_list">
@@ -354,6 +354,44 @@
 				this.$store.dispatch('financeStore/actor/getActorSalaryList',{currentPage,limit,filter}).then(() => {
 
 				})
+		    },
+		    goExport(){
+		    	let url = `${config_server.server_api}/salary/actor/export.json?`;
+		    	let filter = this.filter;
+		    	if(filter){
+			      if(filter.unionId){
+			        url = url +'&orgId=' + filter.unionId;
+			      }else{
+			        if(filter.platId){
+			        	url = url +'&orgId=' + filter.platId;
+			        }
+			      }
+
+			      if(filter.status || filter.status == 0){
+			        url = url +'&status=' + filter.status;
+			      }
+
+			
+
+			      if(filter.nickname){
+			        url = url +'&nickname=' + filter.nickname;
+			      }
+
+			      if(filter.thirdId){
+			        url = url +'&thirdId=' + filter.thirdId;
+
+			      }
+			      if(filter.date){
+			        url = url +'&startDate=' + new Date(filter.date[0]).getTime();
+			        url = url +'&endDate=' + new Date(filter.date[1]).getTime();
+			      }
+			    }
+			    let requestParam = getRequestParam();
+			    let token = requestParam.token;
+			    if(token){
+			    	url = url + '&token='+token;
+			    	window.open(url);
+			    }
 		    },
 		    getPlatList(){
 		    	const orgId = this.user.orgId;

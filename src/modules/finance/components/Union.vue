@@ -69,10 +69,10 @@
 			</div>
 		</div>
 		<div ref="operate" class="operate">
-			<!-- <div class="opt_right" style="float:right;">
-				<el-button @click="">导出账单</el-button>
-			</div>
 			<div class="opt_right" style="float:right;">
+				<el-button @click="goExport">导出账单</el-button>
+			</div>
+	<!-- 		<div class="opt_right" style="float:right;">
 				<el-button @click="">批量结算</el-button>
 			</div> -->
 		</div>
@@ -315,6 +315,34 @@
 				this.$store.dispatch('financeStore/union/getUnionSalaryList',{currentPage,limit,filter}).then(() => {
 
 				})
+		    },
+		    goExport(){
+		    	let url = `${config_server.server_api}/salary/union/export.json?`;
+		    	let filter = this.filter;
+		    	if(filter){
+			      if(filter.unionId){
+			        url = url +'&orgId=' + filter.unionId;
+			      }else{
+			        if(filter.platId){
+			        	url = url +'&orgId=' + filter.platId;
+			        }
+			      }
+
+			      if(filter.status || filter.status == 0){
+			        url = url +'&status=' + filter.status;
+			      }
+
+			      if(filter.date){
+			        url = url +'&startDate=' + new Date(filter.date[0]).getTime();
+			        url = url +'&endDate=' + new Date(filter.date[1]).getTime();
+			      }
+			    }
+			    let requestParam = getRequestParam();
+			    let token = requestParam.token;
+			    if(token){
+			    	url = url + '&token='+token;
+			    	window.open(url);
+			    }
 		    },
 		    getPlatList(){
 		    	const orgId = this.user.orgId;

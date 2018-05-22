@@ -180,13 +180,13 @@ const actions = {
       }
     }
     if(nav){
-      dispatch('setOpenKeys',nav.uuid);
+      // dispatch('setOpenKeys',nav.uuid);
       dispatch('switchScope',nav.uuid);
       let bread_crumb = [];
       bread_crumb.push(nav);
       if(nav.parent){
         bread_crumb.unshift(nav.parent);
-        dispatch('setOpenKeysDirect',nav.parent.uuid);
+        // dispatch('setOpenKeysDirect',nav.parent.uuid);
       }
       dispatch('setBreadCrumb',bread_crumb)
     }
