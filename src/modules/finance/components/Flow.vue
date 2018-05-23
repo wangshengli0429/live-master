@@ -107,7 +107,7 @@
 			      label="日期"
 			      width="120"
 			      show-overflow-tooltip>
-				    <template slot-scope="scope">{{ scope.row.createDate | timesToDate('yyyy-MM-dd') }}</template>
+				    <template slot-scope="scope">{{ scope.row.day || scope.row.createDate | timesToDate('yyyy-MM-dd') }}</template>
 			    </el-table-column>
 			    <el-table-column
 			      prop="trackNum"

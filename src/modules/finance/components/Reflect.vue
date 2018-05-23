@@ -109,10 +109,10 @@
 			      width="55">
 			    </el-table-column>
 			    <el-table-column
-			      label="申请日期"
+			      label="日期"
 			      width="120"
 			      show-overflow-tooltip>
-				    <template slot-scope="scope">{{ scope.row.createDate | timesToDate('yyyy-MM-dd') }}</template>
+				    <template slot-scope="scope">{{ scope.row.lastUpdate | timesToDate('yyyy-MM-dd') }}</template>
 			    </el-table-column>
 			    <el-table-column
 			      prop="trackNum"

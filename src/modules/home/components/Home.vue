@@ -80,7 +80,7 @@
 		},
 		methods:{
 			...mapActions({
-		        setOpenKeys: 'homeStore/home/setOpenKeys',
+		        setOpenKeysDirect: 'homeStore/home/setOpenKeysDirect',
 		    }),
 		    switchNav(){
 		    },
@@ -100,9 +100,10 @@
 		    	}
 	      	},
 	      	setAllNavOpen(){
+	      		console.log("set all nav open")
 	      		for(var items of this.nav){
 	      			if(items.children && items.children.length > 0){
-	      				this.setOpenKeys(items.uuid);
+	      				this.setOpenKeysDirect(items.uuid);
 	      			}
 	      		}
 	      	}
