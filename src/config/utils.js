@@ -372,3 +372,35 @@ export const filterFilesSize = (size) => {//处理附件名字
   return str;
 }
 
+
+
+
+
+export const getCurrentMonthFirst = (cur_date) => {
+ var date=new Date(cur_date);
+ date.setDate(1);
+ return date.getTime();
+}
+
+
+
+export const getCurrentMonthLast = (cur_date) =>{
+ var date=new Date(cur_date);
+ var currentMonth=date.getMonth();
+ var nextMonth=++currentMonth;
+ var nextMonthFirstDay=new Date(date.getFullYear(),nextMonth,1);
+ var oneDay=1000*60*60*24;
+ return new Date(nextMonthFirstDay-oneDay).getTime();
+}
+
+
+
+
+
+
+
+
+
+
+
+

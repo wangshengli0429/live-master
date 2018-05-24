@@ -22,7 +22,7 @@
 					公会名称：
 				</div>
 				<div class="content">
-					<el-select :clearable="true" v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会">
+					<el-select  v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会">
 					    <el-option
 							v-for="item in unionList"
 							:key="item.uuid"
@@ -38,12 +38,10 @@
 					日期：
 				</div>
 				<div class="content">
-					<el-date-picker
+				    <el-date-picker
 				      v-model="filter.date"
-				      type="daterange"
-				      range-separator="至"
-				      start-placeholder="开始日期"
-				      end-placeholder="结束日期">
+				      type="month"
+				      placeholder="选择月">
 				    </el-date-picker>
 				</div>
 			</div>
@@ -144,29 +142,36 @@
 			    <el-table-column
 			      label="待遇"
 			      show-overflow-tooltip>
-				   <template slot-scope="scope">{{ scope.row.creator.payFloor }}</template>
+				   <template slot-scope="scope">{{ scope.row.creator.payFloor | filterMoney }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="thirdFlow"
 			      label="直播平台流水"
 			      width="120"
 			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.thirdFlow | filterMoney }}</template>
+
 			    </el-table-column>
 			    <el-table-column
 			      prop="platFlow"
 			      label="平台分成收入"
 			      width="120"
 			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.platFlow | filterMoney }}</template>
+
 			    </el-table-column>
 			    <el-table-column
 			      prop="pretaxIncome"
 			      label="税前收入"
 			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.pretaxIncome | filterMoney }}</template>
+
 			    </el-table-column>
 			    <el-table-column
 			      prop="income"
 			      label="税后收入"
 			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.income | filterMoney }}</template>
+
 			    </el-table-column>
 			    <el-table-column
 			      label="保底条件"
@@ -182,6 +187,8 @@
 			      prop="income"
 			      label="应发工资"
 			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.income | filterMoney }}</template>
+			      
 			    </el-table-column>
 			    <el-table-column
 			      label="发放状态"

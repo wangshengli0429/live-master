@@ -225,7 +225,11 @@
                         this.disabledPlat = false;
                         this.disabledUnion = true;
                     }else if(obj[0].orgType == 'UNION'){
-                        this.disabledPlat = true;
+                        if(this.user.platId){
+                            this.disabledPlat = true;
+                        }else{
+                            this.disabledPlat = false;
+                        }
                         this.disabledUnion = false;
                     }
 
@@ -365,9 +369,9 @@
             },
             changePlat(uuid){
                 if(uuid){
-                    this.actor.platId = uuid;
+                    this.account.platId = uuid;
                 }else{
-                    this.actor.platId = "";
+                    this.account.platId = "";
                 }
                 this.getUnionList(uuid);
             },

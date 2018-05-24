@@ -3,7 +3,7 @@
 		<div class="login_wrapper">
 			<div class="login_card">
 				<div class="card_header">
-					登录<span class="name">直播管理平台</span>
+					登录<span class="name">艺人管理平台</span>
 				</div>
 				<div class="card_form">
 					<div class="card_title">输入您的帐号、密码登录</div>

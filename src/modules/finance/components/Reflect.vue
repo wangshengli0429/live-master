@@ -22,7 +22,7 @@
 					公会名称：
 				</div>
 				<div class="content">
-					<el-select :clearable="true" v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会">
+					<el-select  v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会">
 					    <el-option
 							v-for="item in unionList"
 							:key="item.uuid"
@@ -151,21 +151,24 @@
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="validMoney"
 			      label="可提现金额"
 			      width="120"
 			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.validMoney | filterMoney }}</template>
+
 			    </el-table-column>
 			    <el-table-column
-			      prop="money"
 			      label="提现金额"
 			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.money | filterMoney }}</template>
+
 			    </el-table-column>
 			    <el-table-column
-			      prop="remainMoney"
 			      label="提现后金额"
 			      width="120"
 			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.remainMoney | filterMoney }}</template>
+			      
 			    </el-table-column>
 			    <el-table-column
 			      label="提现状态"

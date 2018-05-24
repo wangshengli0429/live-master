@@ -1,4 +1,4 @@
-import { httpAgent } from '@/config/utils'
+import { httpAgent,getCurrentMonthFirst,getCurrentMonthLast } from '@/config/utils'
 import qs from 'qs'
 
 export default {
@@ -23,8 +23,8 @@ export default {
 
 
       if(filter.date){
-        params.startDate = new Date(filter.date[0]).getTime();
-        params.endDate = new Date(filter.date[1]).getTime();
+        params.startDate = getCurrentMonthFirst(filter.date);
+        params.endDate = getCurrentMonthLast(filter.date);
       }
       
     }

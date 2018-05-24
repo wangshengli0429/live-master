@@ -22,7 +22,7 @@
 					公会名称：
 				</div>
 				<div class="content">
-					<el-select  :clearable="true" v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会">
+					<el-select   v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会">
 					    <el-option
 							v-for="item in unionList"
 							:key="item.uuid"
@@ -171,6 +171,8 @@
 			      width="120"
 			      sortable="custom"
 			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.shareNum | filterMoney}}</template>
+
 			    </el-table-column>
 			    <el-table-column
 			      label="账单状态"
@@ -209,6 +211,7 @@
 			        
 
 			        <el-button
+			        	v-if="isSuperAdmin"
 			          size="mini"
 			          type="danger"
 			          @click="handleDelete(scope.$index, scope.row)">删除</el-button>
@@ -352,6 +355,13 @@
 			batchDelete(){
 				var result = false;
 				if(this.edit && !this.user.unionId){
+					result = true;
+				}
+				return result;
+			},
+			isSuperAdmin(){//超级管理员
+				var result = false;
+				if(this.user  && this.user.userType == 'SUPER_ADMIN'){
 					result = true;
 				}
 				return result;

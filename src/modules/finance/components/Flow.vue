@@ -22,7 +22,7 @@
 					公会名称：
 				</div>
 				<div class="content">
-					<el-select :clearable="true" v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会">
+					<el-select v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会">
 					    <el-option
 							v-for="item in unionList"
 							:key="item.uuid"
@@ -153,28 +153,30 @@
 				    <template slot-scope="scope">{{ scope.row.type == 0?"入账":"提现" }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      prop="moneyBase"
 			      label="动账基数"
 			      show-overflow-tooltip>
-			    </el-table-column>
-			    <el-table-column
-			      prop="moneyBefore"
-			      label="动账前余额/元"
-			      width="120"
-			      show-overflow-tooltip>
-			    </el-table-column>
-			    <el-table-column
-			      prop="moneyNum"
-			      label="动账/元"
-			      show-overflow-tooltip>
-				    <template slot-scope="scope">{{ scope.row.type == 0?scope.row.moneyNum:"-"+scope.row.moneyNum }}</template>
+				    <template slot-scope="scope">{{ scope.row.moneyBase | filterMoney }}</template>
 
 			    </el-table-column>
 			    <el-table-column
-			      prop="moneyAfter"
+			      label="动账前余额/元"
+			      width="120"
+			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.moneyBefore | filterMoney }}</template>
+
+			    </el-table-column>
+			    <el-table-column
+			      label="动账/元"
+			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.type == 0?"" :"-" }} {{scope.row.moneyNum | filterMoney}}</template>
+
+			    </el-table-column>
+			    <el-table-column
 			      label="动账后余额/元"
 			      width="120"
 			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.moneyAfter | filterMoney }}</template>
+
 			    </el-table-column>
 			  </el-table>
 			</div>

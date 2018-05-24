@@ -22,7 +22,7 @@
 					公会名称：
 				</div>
 				<div class="content">
-					<el-select :clearable="true" v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会">
+					<el-select  v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会">
 					    <el-option
 							v-for="item in unionList"
 							:key="item.uuid"
@@ -40,10 +40,8 @@
 				<div class="content">
 					<el-date-picker
 				      v-model="filter.date"
-				      type="daterange"
-				      range-separator="至"
-				      start-placeholder="开始日期"
-				      end-placeholder="结束日期">
+				      type="month"
+				      placeholder="选择月">
 				    </el-date-picker>
 				</div>
 			</div>
@@ -145,18 +143,41 @@
 			      label="所辖艺人流水/元"
 			      width="140"
 			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.actorThirdFlow | filterMoney }}</template>
+
 			    </el-table-column>
 			    <el-table-column
 			      prop="totalSalary"
 			      label="分成/元"
 			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.totalSalary | filterMoney }}</template>
+
 			    </el-table-column>
 			    <el-table-column
 			      prop="income"
 			      label="应发工资/元"
 			      width="120"
 			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.income | filterMoney }}</template>
+			      
 			    </el-table-column>
+
+
+			    <el-table-column
+			    	width="120"
+			      label="分成比例 %"
+			      show-overflow-tooltip>
+				   <template slot-scope="scope">{{ scope.row.creator.shareRatio }}</template>
+			    </el-table-column>
+
+			    <el-table-column
+			      label="税率 %"
+			      show-overflow-tooltip>
+				   <template slot-scope="scope">{{ scope.row.creator.taxRatio }}</template>
+			    </el-table-column>
+
+
+
 
 			    <el-table-column
 			      label="发放状态"

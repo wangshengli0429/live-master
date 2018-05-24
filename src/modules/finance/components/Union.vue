@@ -22,7 +22,7 @@
 					公会名称：
 				</div>
 				<div class="content">
-					<el-select :clearable="true" v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会">
+					<el-select  v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会">
 					    <el-option
 							v-for="item in unionList"
 							:key="item.uuid"
@@ -40,10 +40,8 @@
 				<div class="content">
 					<el-date-picker
 				      v-model="filter.date"
-				      type="daterange"
-				      range-separator="至"
-				      start-placeholder="开始日期"
-				      end-placeholder="结束日期">
+				      type="month"
+				      placeholder="选择月">
 				    </el-date-picker>
 				</div>
 			</div>
@@ -120,12 +118,16 @@
 			      label="月流水/元"
 			      width="120"
 			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.unionThirdFlow | filterMoney }}</template>
+
 			    </el-table-column>
 			    <el-table-column
 			      prop="unionPlatFlow"
 			      label="平台入账/元"
 			      width="120"
 			      show-overflow-tooltip>
+				    <template slot-scope="scope">{{ scope.row.unionPlatFlow | filterMoney }}</template>
+
 			    </el-table-column>
 			    <el-table-column
 			      label="分成%"
@@ -147,6 +149,8 @@
 			      prop="income"
 			      label="公会应结算"
 			      show-overflow-tooltip>
+				  <template slot-scope="scope">{{ scope.row.income | filterMoney}}</template>
+			      
 			    </el-table-column>
 			    <el-table-column
 			      label="结算状态"

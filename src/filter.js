@@ -71,7 +71,9 @@ export const filter = (Vue) => {
     }
     return result;
   })
-
+  Vue.filter('filterMoney', (money) => {//
+    return money.toFixed(2);
+  })
   
 
 
