@@ -234,13 +234,13 @@
                     <div class="items">
                         <div class="name">月有效天数</div>
                         <div class="content">
-                            <el-input v-model="actor.validDay"  type="number" placeholder="请输入有效天"></el-input>小时
+                            <el-input v-model="actor.validDay"  type="number" placeholder="请输入月有效天数"></el-input>小时
                         </div>
                     </div>
                     <div class="items">
                         <div class="name">日有效小时</div>
                         <div class="content">
-                            <el-input v-model="actor.validDayHour"  type="number" placeholder="请输入有效天数"></el-input>
+                            <el-input v-model="actor.validDayHour"  type="number" placeholder="请输入日有效小时"></el-input>
                             <div v-if="actor.validDay" class="info">当日直播时长超过{{actor.validDay}}小时记为有效天</div>
                         </div>
                     </div>

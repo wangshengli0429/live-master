@@ -89,7 +89,7 @@
 		<div ref="operate" class="operate">
 			<el-button v-if="edit" @click="batchCalculate">批量入账</el-button>
 			<el-button v-if="batchDelete" @click="goBatchDelete">批量删除</el-button>
-			<div v-if="!user.unionId && edit" class="opt_right" style="float:right;">
+			<div v-if="(!user.unionId && (!user.managerOrgs || user.managerOrgs.length == 0) ) && edit" class="opt_right" style="float:right;">
 				<el-button @click="goAutoCalculate">自动入账</el-button>
 				<el-button @click="goImportFlow">账单导入</el-button>
 			</div>
@@ -149,16 +149,17 @@
 			    </el-table-column>
 			    <el-table-column
 			      width="120"
-			      prop="yesterdayFansCount"
-			      label="昨日粉丝量"
-			      show-overflow-tooltip>
-			    </el-table-column>
-			    <el-table-column
-			      width="120"
 			      prop="todayFansCount"
 			      label="今日粉丝量"
 			      show-overflow-tooltip>
 			    </el-table-column>
+			    <el-table-column
+			      width="120"
+			      prop="yesterdayFansCount"
+			      label="昨日粉丝量"
+			      show-overflow-tooltip>
+			    </el-table-column>
+			    
 
 <!-- 			    <el-table-column
 			      label="真实姓名"
@@ -354,7 +355,7 @@
 			},
 			batchDelete(){
 				var result = false;
-				if(this.edit && !this.user.unionId){
+				if(this.edit && (!this.user.unionId && (!this.user.managerOrgs || this.user.managerOrgs.length == 0))){
 					result = true;
 				}
 				return result;

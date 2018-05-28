@@ -136,16 +136,7 @@
 			    	label="ID">
 			    </el-table-column>
 			    <el-table-column
-			      label="入驻时间"
-			      width="122">
-			      <template slot-scope="scope">{{ scope.row.createDate | timesToDate('yyyy-MM-dd') }}</template>
-			    </el-table-column>
-			    <el-table-column
-			      prop="platName"
-			      label="平台"
-			      show-overflow-tooltip>
-			    </el-table-column>
-			    <el-table-column
+			    	width="150"
 			      prop="nickname"
 			      label="昵称"
 			      show-overflow-tooltip>
@@ -157,32 +148,13 @@
 			      show-overflow-tooltip>
 			    </el-table-column>
 			    <el-table-column
-			      prop="unionName"
-			      label="工会"
-			      show-overflow-tooltip>
-			    </el-table-column>
-			    <el-table-column
-			      label="经纪人"
-			      show-overflow-tooltip>
-			      <template slot-scope="scope">{{ scope.row.broker && scope.row.broker.nickname }}</template>
-			    </el-table-column>
-			    <el-table-column
-			      prop="identityName"
-			      label="真实姓名"
-			      show-overflow-tooltip>
-			    </el-table-column>
-			    <el-table-column
-			      prop="mobile"
-			      label="联系方式"
-			      show-overflow-tooltip>
-			    </el-table-column>
-			    <el-table-column
 			      label="结算方式"
 			      show-overflow-tooltip>
 			      <template slot-scope="scope">{{ scope.row.autoPay | filterAutoPay }}</template>
 			    </el-table-column>
 			    <el-table-column
-			      label="待遇"
+			    	width="130"
+			      label="待遇（比/底/税）"
 			      show-overflow-tooltip>
 			      <template slot-scope="scope">
 			      	<template v-if="scope.row.shareType == 0">{{scope.row.shareRatio}}</template>
@@ -190,6 +162,53 @@
 			      	/{{scope.row.payFloor}}/{{scope.row.taxRatio}}
 			  	  </template>
 			    </el-table-column>
+
+			    <el-table-column
+			    	width="160"
+			      label="保底政策（日/月/总）"
+			      show-overflow-tooltip>
+			      <template slot-scope="scope">
+			      	{{scope.row.validDayHour}}/{{scope.row.validDay}}/{{scope.row.validHour}}
+			  	  </template>
+			    </el-table-column>
+
+			    <el-table-column
+			    	width="120"
+			      prop="mobile"
+			      label="联系方式"
+			      show-overflow-tooltip>
+			    </el-table-column>
+			    <el-table-column
+			      prop="unionName"
+			      label="公会"
+			      show-overflow-tooltip>
+			    </el-table-column>
+			    <el-table-column
+			      label="经纪人"
+			      show-overflow-tooltip>
+			      <template slot-scope="scope">{{ scope.row.broker && scope.row.broker.nickname }}</template>
+			    </el-table-column>
+
+
+
+			    <el-table-column
+			      label="入驻时间"
+			      width="122">
+			      <template slot-scope="scope">{{ scope.row.createDate | timesToDate('yyyy-MM-dd') }}</template>
+			    </el-table-column>
+<!-- 			    <el-table-column
+			      prop="platName"
+			      label="平台"
+			      show-overflow-tooltip>
+			    </el-table-column>
+			    
+			    <el-table-column
+			      prop="identityName"
+			      label="真实姓名"
+			      show-overflow-tooltip>
+			    </el-table-column> -->
+			    
+			    
 			    <el-table-column
 			      prop="status"
 			      label="状态"
