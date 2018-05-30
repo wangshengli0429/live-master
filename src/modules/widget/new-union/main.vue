@@ -26,7 +26,7 @@
                     <div class="items">
                         <div class="name">平台</div>
                         <div class="content">
-                            <el-select :disabled="user.platId?true:false" v-model="union.parentId" placeholder="请选择平台">
+                            <el-select :disabled="user.platId?true:false" v-model="union.parentId" @change="changePlat" placeholder="请选择平台">
                                 <el-option
                                     v-for="item in platList"
                                     :key="item.uuid"
@@ -52,7 +52,7 @@
                     <div class="items">
                         <div class="name">管理员</div>
                         <div class="content">
-                            <el-select :disabled="union.uuid?true:false" v-model="union.adminName" @change="changeAdmin" placeholder="请选择管理员">
+                            <el-select :disabled="disabledAdmins" v-model="union.adminName" @change="changeAdmin" placeholder="请选择管理员">
                                 <el-option
                                     v-for="item in accountList"
                                     :key="item.uuid"
@@ -148,6 +148,18 @@
                     title = "修改公会";
                 }
                 return title;
+            },
+            disabledAdmins(){
+                var result = false;
+                if(this.union.uuid){
+                    // if(!this.union.majorAdmin){
+                    //     result = false;
+                    // }else{
+                    //     result = true;
+                    // }
+                    result = true;
+                }
+                return result;
             }
         },
         methods:{
@@ -228,10 +240,29 @@
                     this.platList = resp.list;
                 })
             },
+            changePlat(){
+                setTimeout(() => {
+                    this.getAccountList();
+                },500)
+            },
             getAccountList(){
-                $API.limit.getAccountList({start:0,limit:50,scope:"OrgIdNull"},resp => {
-                    this.accountList = resp.list;
-                })
+                let orgType = 'UNION';
+                let orgId = '';
+                if(this.user.platId){
+                    orgId = this.user.platId;
+                }
+                if(this.union.parentId){
+                    orgId = this.union.parentId;
+                }
+                if(this.union.uuid){
+                    orgId = this.union.uuid;
+                }
+                if(orgId){
+                    $API.limit.getAdminsList({orgType,orgId},resp => {
+                        this.accountList = resp.list;
+                    })
+                }
+                
             },
             setHeight(){
                 var pageHeight = document.body.clientHeight;

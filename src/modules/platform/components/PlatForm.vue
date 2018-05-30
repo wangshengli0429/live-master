@@ -81,7 +81,12 @@
 			      show-overflow-tooltip>
 			    </el-table-column>
 
-
+			    <el-table-column
+			      width="140"
+			      prop="handleDayMax"
+			      label="大额提现上限／天"
+			      show-overflow-tooltip>
+			    </el-table-column>
 
 
 			    <el-table-column v-if="edit" label="操作" width="180" fixed="right">

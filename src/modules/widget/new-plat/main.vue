@@ -80,7 +80,12 @@
                             <el-input  :clearable="true" type="number" v-model="plat.handleTimeMin" placeholder="请输入大额提现下限／次"></el-input>
                         </div>
                     </div>
-
+                    <div class="items">
+                        <div class="name">大额提现上限／天</div>
+                        <div class="content">
+                            <el-input  :clearable="true" type="number" v-model="plat.handleDayMax" placeholder="大额提现上限／天"></el-input>
+                        </div>
+                    </div>
 
 
 
@@ -129,7 +134,8 @@
                     autoTimeMax:0,
                     autoDayMax:0,
                     handleTimeMax:0,
-                    handleTimeMin:0
+                    handleTimeMin:0,
+                    handleDayMax:0
                 }
             }
         },
@@ -210,7 +216,12 @@
                 
             },
             getAccountList(){
-                $API.limit.getAccountList({start:0,limit:50,scope:"OrgIdNull"},resp => {
+                let orgType = 'PLAT';
+                let orgId = '';
+                if(this.plat.uuid){
+                    orgId = this.plat.uuid;
+                }
+                $API.limit.getAdminsList({orgType,orgId},resp => {
                     this.accountList = resp.list;
                 })
             },

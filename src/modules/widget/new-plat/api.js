@@ -17,7 +17,8 @@ export const createPlat = (plat,successCb,erroCb) => {
         autoTimeMax:plat.autoTimeMax,
         autoDayMax:plat.autoDayMax,
         handleTimeMax:plat.handleTimeMax,
-        handleTimeMin:plat.handleTimeMin
+        handleTimeMin:plat.handleTimeMin,
+        handleDayMax:plat.handleDayMax
     }
     if(plat.admin){
         var list = [];
@@ -42,7 +43,8 @@ export const modifyPlat = (plat,successCb,erroCb) => {
         autoTimeMax:plat.autoTimeMax,
         autoDayMax:plat.autoDayMax,
         handleTimeMax:plat.handleTimeMax,
-        handleTimeMin:plat.handleTimeMin
+        handleTimeMin:plat.handleTimeMin,
+        handleDayMax:plat.handleDayMax
     }
 
     httpAgent(url, 'PUT', param, successCb,erroCb);

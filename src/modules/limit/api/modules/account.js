@@ -46,6 +46,13 @@ export default {
     }
     httpAgent(url,'DELETE', params,successCb,erroCb)
   },
-
+  getAdminsList({orgType,orgId},successCb, erroCb){
+    let url = `${config_server.server_api}/users/admins/major/select.json`;
+    let params = {
+      orgType,
+      orgId
+    }
+    httpAgent(url,'GET', params,successCb,erroCb)
+  },
 
 }
