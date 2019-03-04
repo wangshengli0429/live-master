@@ -32,7 +32,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/api/**': { //设置webpack代理
-          target: 'http://xinghuo.vnest.net',
+          target: 'http://zhubo.中国',
           changeOrigin: true,
           secure: false
       },
