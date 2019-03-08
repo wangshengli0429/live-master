@@ -64,7 +64,7 @@
                             公会名称
                         </div>
                         <div class="content">
-                            <el-select :disabled="disabledUnion" :clearable="true" v-model="account.unionId" @change="changeUnion" placeholder="请选择公会">
+                            <el-select :disabled="disabledUnion" :clearable="true" v-model="account.unionId" @change="changeUnion" placeholder="请选择公会"  filterable :filter-method="filterUnion">
                                 <el-option
                                     v-for="item in unionList"
                                     :key="item.uuid"
@@ -393,6 +393,13 @@
                 $API.platform.getPlatFormList({orgId,start:0,limit:50},resp => {
                     this.platList = resp.list;
                 })
+            },
+            filterUnion(key){
+              let orgId = this.user.orgId;
+              let parentId = this.user.orgId;
+              $API.group.getGroupList({orgId,parentId,currentPage:1,limit:50,searchKey:key},(resp) => {
+                this.unionList = resp.list;
+              })
             },
             getUnionList(parentId){
                 const orgId = this.user.orgId;

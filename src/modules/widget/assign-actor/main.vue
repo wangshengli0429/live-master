@@ -25,7 +25,7 @@
             <div class="items">
                 <div class="name">分配公会</div>
                 <div class="content">
-                    <el-select v-model="actor.unionName" @change="changeUnion" placeholder="请选择">
+                    <el-select v-model="actor.unionName" @change="changeUnion" placeholder="请选择"   filterable :filter-method="filterUnion">
                         <el-option
                           v-for="item in unionList"
                           :key="item.uuid"
@@ -105,6 +105,14 @@
                     this.platList = resp.list;
                 })
             },
+          filterUnion(key){
+            this.actor.unionId = '';
+            let orgId = this.user.orgId;
+            let parentId = this.user.orgId;
+            $API.group.getGroupList({orgId,parentId,currentPage:1,limit:50,searchKey:key},(resp) => {
+              this.unionList = resp.list;
+            })
+          },
             getUnionList(parentId){
                 let orgId = this.user.orgId;
                 parentId = parentId ||  this.user.orgId;
