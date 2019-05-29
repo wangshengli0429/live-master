@@ -63,16 +63,20 @@
                         <div class="name">
                             公会名称
                         </div>
-                        <div class="content">
-                            <el-select :disabled="disabledUnion" :clearable="true" v-model="account.unionId" @change="changeUnion" placeholder="请选择公会"  filterable :filter-method="filterUnion">
-                                <el-option
-                                    v-for="item in unionList"
-                                    :key="item.uuid"
-                                    :label="item.name"
-                                    :value="item.uuid"
-                                    >
-                                </el-option>
-                            </el-select>
+                      <div class="content" @click="goSelectUnion" style="cursor: pointer">
+                            <!--<el-select :disabled="disabledUnion" :clearable="true" v-model="account.unionId" @change="changeUnion" placeholder="请选择公会"  filterable :filter-method="filterUnion">-->
+                                <!--<el-option-->
+                                    <!--v-for="item in unionList"-->
+                                    <!--:key="item.uuid"-->
+                                    <!--:label="item.name"-->
+                                    <!--:value="item.uuid"-->
+                                    <!--&gt;-->
+                                <!--</el-option>-->
+                            <!--</el-select>-->
+                        <el-input :value="account.unionName" readonly="" placeholder="请选择公会" ></el-input>
+                        <i v-if="account.unionName" class="el-icon-error" @click.stop="clearSelectUnion"></i>
+
+
                         </div>
                     </div>
                     <div class="items">
@@ -127,6 +131,7 @@
     import Modal from '@/modules/widget/common/Modal.vue';
     import SelectUnion from '@/modules/widget/select-union'
 
+    import selectUnionV2 from '@/modules/widget/select-union-v2'
 
 
     export default{
@@ -167,11 +172,13 @@
                     password:"",
                     status:0,
                     platId:"",
-                    unionId:"",
+                  unionId:"",
+                  unionName:"",
                     managerOrgs:[]
                 },
                 locked:false,
-                selectUnionList:[]
+                selectUnionList:[],
+              parentId:""
             }
         },
         computed:{
@@ -373,7 +380,8 @@
                 }else{
                     this.account.platId = "";
                 }
-                this.getUnionList(uuid);
+                // this.getUnionList(uuid);
+              this.parentId = uuid;
             },
 
             changeUnion(uuid){
@@ -408,6 +416,36 @@
                     this.unionList = resp.list;
                 })
             },
+          goSelectUnion(){
+            selectUnionV2({
+              user:this.user,
+              orgId:this.user.orgId,
+              parentId:this.parentId ||  this.user.orgId,
+              callback:(list) => {
+                if(list.length){
+                  this.account.unionId = list[0].uuid;
+                  this.account.unionName = list[0].name;
+                  var uuid = list[0].uuid;
+                  if(uuid && this.selectUnionList && this.selectUnionList.length > 0){
+                    var index = this.selectUnionList.findIndex((items) => {
+                      return items.uuid == uuid;
+                    })
+                    if(index || index == 0){
+                      this.selectUnionList.splice(index,1);
+                    }
+                  }
+
+                }else{
+                  this.account.unionId = '';
+                  this.account.unionName = '';
+                }
+              }
+            })
+          },
+          clearSelectUnion(){
+            this.account.unionId = '';
+            this.account.unionName = '';
+          },
             setHeight(){
                 var pageHeight = document.body.clientHeight;
                 var height = pageHeight - 150 - 40;
@@ -528,6 +566,20 @@
                     }
                     .content{
                         margin-left: 80px;
+                      position: relative;
+                      .el-icon-error{
+                        position: absolute;
+                        right: 11px;
+                        top: 10px;
+                        font-size: 12px;
+                        color: #c0c4cb;
+                        display: none;
+                      }
+                      &:hover{
+                        .el-icon-error{
+                          display: block !important;
+                        }
+                      }
                         .info{
                             margin-top: 2px;
                             font-size: 12px;

@@ -39,15 +39,19 @@
                     </div>
                     <div class="items">
                         <div class="name">公会</div>
-                        <div class="content">
-                            <el-select v-model="actor.unionName" @change="changeUnion" placeholder="请选择公会" filterable :filter-method="filterUnion">
-                                <el-option
-                                  v-for="item in unionList"
-                                  :key="item.uuid"
-                                  :label="item.name"
-                                  :value="item.uuid">
-                                </el-option>
-                            </el-select>
+                      <div class="content" @click="goSelectUnion" style="cursor: pointer">
+                            <!--<el-select v-model="actor.unionName" @change="changeUnion" placeholder="请选择公会" filterable :filter-method="filterUnion">-->
+                                <!--<el-option-->
+                                  <!--v-for="item in unionList"-->
+                                  <!--:key="item.uuid"-->
+                                  <!--:label="item.name"-->
+                                  <!--:value="item.uuid">-->
+                                <!--</el-option>-->
+                            <!--</el-select>-->
+
+                        <el-input :value="actor.unionName" readonly="" placeholder="请选择公会" ></el-input>
+                        <i v-if="actor.unionName" class="el-icon-error" @click.stop="clearSelectUnion"></i>
+
                         </div>
                     </div>
                     <div class="items">
@@ -275,6 +279,7 @@
     import * as api from './api';
     import Modal from '@/modules/widget/common/Modal.vue';
     import ShareItems from './ShareItems'
+    import selectUnion from '@/modules/widget/select-union-v2'
 
     export default{
         components:{
@@ -339,6 +344,7 @@
                 autoAccount:null,//小额提现账户
                 handleAccount:null,//大额支付宝提现账户
                 bankAccount:null,//大额银行卡提现账户
+              parentId:""
 
             }
         },
@@ -394,7 +400,8 @@
                 }
                 this.actor.unionId = "";
                 this.actor.unionName = "";
-                this.getUnionList(uuid);
+                // this.getUnionList(uuid);
+              this.parentId = uuid;
 
                 if(this.actor.broker){
                     if(this.actor.broker.platId != uuid){
@@ -460,6 +467,62 @@
                     this.unionList = resp.list;
                 })
             },
+          goSelectUnion(){
+            selectUnion({
+              user:this.user,
+              orgId:this.user.orgId,
+              parentId:this.parentId ||  this.user.orgId,
+              callback:(list) => {
+                if(list.length){
+                  this.actor.unionId = list[0].uuid;
+                  this.actor.unionName = list[0].name;
+                  if(this.actor.broker){
+                    if(this.actor.broker.union != list[0].uuid){
+                      this.actor.brokerId = '';
+                      this.actor.brokerName = '';
+                      this.actor.broker = null;
+                    }
+                  }
+
+                  let filter = {
+                    unionId:list[0].uuid
+                  }
+                  this.getAgentList(filter);
+
+
+                }else{
+                  this.actor.unionId = '';
+                  this.actor.unionName = '';
+
+                  if(this.actor.broker){
+                    this.actor.brokerId = '';
+                    this.actor.brokerName = '';
+                    this.actor.broker = null;
+                  }
+
+                  let filter = {
+                    unionId:''
+                  }
+                  this.getAgentList(filter);
+
+                }
+              }
+            })
+          },
+          clearSelectUnion(){
+            this.actor.unionId = '';
+            this.actor.unionName = '';
+            if(this.actor.broker){
+              this.actor.brokerId = '';
+              this.actor.brokerName = '';
+              this.actor.broker = null;
+            }
+
+            let filter = {
+              unionId:''
+            }
+            this.getAgentList(filter);
+          },
             setHeight(){
                 var pageHeight = document.body.clientHeight;
                 var height = pageHeight - 150;
@@ -743,6 +806,20 @@
                     }
                     .content{
                         margin-left: 70px;
+                      position: relative;
+                      .el-icon-error{
+                        position: absolute;
+                        right: 11px;
+                        top: 10px;
+                        font-size: 12px;
+                        color: #c0c4cb;
+                        display: none;
+                      }
+                      &:hover{
+                        .el-icon-error{
+                          display: block !important;
+                        }
+                      }
                         .info{
                             margin-top: 2px;
                             font-size: 12px;
@@ -765,6 +842,7 @@
                 }
                 .content{
                     margin-left: 90px !important;
+
                     .info{
                         margin-top: 2px;
                         font-size: 12px;

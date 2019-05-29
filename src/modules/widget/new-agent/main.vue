@@ -24,15 +24,17 @@
                     </div>
                     <div class="items">
                         <div class="name">公会</div>
-                        <div class="content">
-                            <el-select v-model="agent.unionName" @change="changeUnion" placeholder="请选择公会"   filterable :filter-method="filterUnion">
-                                <el-option
-                                  v-for="item in unionList"
-                                  :key="item.uuid"
-                                  :label="item.name"
-                                  :value="item.uuid">
-                                </el-option>
-                            </el-select>
+                      <div class="content" @click="goSelectUnion" style="cursor: pointer">
+                            <!--<el-select v-model="agent.unionName" @change="changeUnion" placeholder="请选择公会"   filterable :filter-method="filterUnion">-->
+                                <!--<el-option-->
+                                  <!--v-for="item in unionList"-->
+                                  <!--:key="item.uuid"-->
+                                  <!--:label="item.name"-->
+                                  <!--:value="item.uuid">-->
+                                <!--</el-option>-->
+                            <!--</el-select>-->
+                        <el-input :value="agent.unionName" readonly="" placeholder="请选择公会" ></el-input>
+                        <i v-if="agent.unionName" class="el-icon-error" @click.stop="clearSelectUnion"></i>
                         </div>
                     </div>
                     <div class="items">
@@ -71,6 +73,8 @@
 <script>
     import * as api from './api';
     import Modal from '@/modules/widget/common/Modal.vue';
+    import selectUnion from '@/modules/widget/select-union-v2'
+
     export default{
         components:{
             Modal
@@ -98,7 +102,8 @@
                     unionId:"",
                     unionName:""
                 },
-                locked:false
+                locked:false,
+              parentId:""
             }
         },
         computed:{
@@ -177,7 +182,8 @@
                 }
                 this.agent.unionId = "";
                 this.agent.unionName = "";
-                this.getUnionList(uuid);
+                // this.getUnionList(uuid);
+              this.parentId = uuid;
             },
             changeUnion(uuid){
                 if(uuid){
@@ -216,6 +222,29 @@
                     this.unionList = resp.list;
                 })
             },
+          goSelectUnion(){
+            selectUnion({
+              user:this.user,
+              orgId:this.user.orgId,
+              parentId:this.parentId ||  this.user.orgId,
+              callback:(list) => {
+                if(list.length){
+                  this.agent.unionId = list[0].uuid;
+                  this.agent.unionName = list[0].name;
+                  this.agent.autoPay = list[0].autoPay;
+                }else{
+                  this.agent.unionId = '';
+                  this.agent.unionName = '';
+                  this.agent.autoPay = 0;
+                }
+              }
+            })
+          },
+          clearSelectUnion(){
+            this.agent.unionId = '';
+            this.agent.unionName = '';
+            this.agent.autoPay = 0;
+          },
             getAccountList(){
                 // $API.limit.getAccountList({start:0,limit:50,scope:"OrgIdNull"},resp => {
                 //     this.accountList = resp.list;
@@ -319,6 +348,20 @@
                     .content{
                         margin-left: 80px;
                         box-sizing: border-box;
+                      position: relative;
+                      .el-icon-error{
+                        position: absolute;
+                        right: 11px;
+                        top: 10px;
+                        font-size: 12px;
+                        color: #c0c4cb;
+                        display: none;
+                      }
+                      &:hover{
+                        .el-icon-error{
+                          display: block !important;
+                        }
+                      }
                         .info{
                             margin-top: 2px;
                             font-size: 12px;

@@ -9,8 +9,15 @@ export default {
       limit
     }
     if(filter){
-      if(filter.orgId){
-        params.orgId = filter.orgId;
+      // if(filter.orgId){
+      //   params.orgId = filter.orgId;
+      // }
+      if(filter.unionId){
+        params.orgId = filter.unionId;
+      }else{
+        if(filter.platId){
+          params.orgId = filter.platId
+        }
       }
 
       if(filter.date){

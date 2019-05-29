@@ -21,16 +21,18 @@
 				<div class="name">
 					公会名称：
 				</div>
-				<div class="content">
-					<el-select v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会"  filterable :filter-method="filterUnion">
-					    <el-option
-							v-for="item in unionList"
-							:key="item.uuid"
-							:label="item.name"
-							:value="item.uuid"
-							>
-					    </el-option>
-					</el-select>
+        <div class="content" @click="goSelectUnion" style="cursor: pointer">
+					<!--<el-select v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会"  filterable :filter-method="filterUnion">-->
+					    <!--<el-option-->
+							<!--v-for="item in unionList"-->
+							<!--:key="item.uuid"-->
+							<!--:label="item.name"-->
+							<!--:value="item.uuid"-->
+							<!--&gt;-->
+					    <!--</el-option>-->
+					<!--</el-select>-->
+          <el-input :value="filter.unionName" readonly="" placeholder="请选择公会" ></el-input>
+          <i v-if="filter.unionName" class="el-icon-error" @click.stop="clearSelectUnion"></i>
 				</div>
 			</div>
 			<div class="filter_items">
@@ -198,6 +200,7 @@
 <script>
 	import {mapGetters,mapActions} from 'vuex';
 	import {Operate} from '@/config/operate'
+  import selectUnion from '@/modules/widget/select-union-v2'
 
 
 	export default{
@@ -227,12 +230,14 @@
 					orgId:"",
 					platId:"",
 					unionId:"",
+          unionName:"",
 					date:"",
 					nickname:"",
 					thirdId:"",
 					type:"",
 				},
-				limit:10
+				limit:10,
+        parentId:"",
 			}
 		},
 		computed: {
@@ -275,6 +280,7 @@
 					orgId:"",
 					platId:"",
 					unionId:"",
+            unionName:"",
 					date:"",
 					nickname:"",
 					thirdId:"",
@@ -291,7 +297,8 @@
 		    		this.filter.orgId = "";
 		    	}
 		    	this.filter.unionId = "";
-		    	this.getUnionList(uuid);
+		    	// this.getUnionList(uuid);
+          this.parentId = uuid;
 		    },
 		    changeUnion(uuid){
 		    	if(uuid){
@@ -377,6 +384,26 @@
 		    		this.unionList = resp.list;
 				})
 		    },
+      goSelectUnion(){
+        selectUnion({
+          user:this.user,
+          orgId:this.user.orgId,
+          parentId:this.parentId ||  this.user.orgId,
+          callback:(list) => {
+            if(list.length){
+              this.filter.unionId = list[0].uuid;
+              this.filter.unionName = list[0].name;
+            }else{
+              this.filter.unionId = '';
+              this.filter.unionName = '';
+            }
+          }
+        })
+      },
+      clearSelectUnion(){
+        this.filter.unionId = '';
+        this.filter.unionName = '';
+      },
 			setDefaultOrg(){
 		    	if(this.user){
 		    		this.filter.platId = this.user.platId;
@@ -430,6 +457,20 @@
   				}
   				.content{
   					float: left;
+            position: relative;
+            .el-icon-error{
+              position: absolute;
+              right: 11px;
+              top: 10px;
+              font-size: 12px;
+              color: #c0c4cb;
+              display: none;
+            }
+            &:hover{
+              .el-icon-error{
+                display: block !important;
+              }
+            }
   					/deep/ .el-select{
 			  			width: 150px;
 			  		}
