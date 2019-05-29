@@ -189,7 +189,7 @@
 	import {mapGetters,mapActions} from 'vuex';
 	import {Operate} from '@/config/operate'
   import selectUnion from '@/modules/widget/select-union-v2'
-
+  import { getCurrentMonthFirst,getCurrentMonthLast } from '@/config/utils'
 	export default{
 		data(){
 			return {
@@ -344,8 +344,8 @@
 			      }
 
 			      if(filter.date){
-			        url = url +'&startDate=' + new Date(filter.date[0]).getTime();
-			        url = url +'&endDate=' + new Date(filter.date[1]).getTime();
+			        url = url +'&startDate=' + getCurrentMonthFirst(filter.date);
+			        url = url +'&endDate=' + getCurrentMonthLast(filter.date);
 			      }
 			    }
 			    let requestParam = getRequestParam();

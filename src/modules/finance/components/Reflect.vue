@@ -142,6 +142,12 @@
 			      show-overflow-tooltip>
 				   <template slot-scope="scope">{{ scope.row.creator.nickname }}</template>
 			    </el-table-column>
+          <el-table-column
+            width="120"
+            label="直播ID"
+            show-overflow-tooltip>
+            <template slot-scope="scope">{{ scope.row.creator.thirdId }}</template>
+          </el-table-column>
 			    <el-table-column
 			      label="真实姓名"
 			      show-overflow-tooltip>
