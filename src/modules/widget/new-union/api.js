@@ -43,6 +43,10 @@ export const modifyUnion = (union,successCb,erroCb) => {
     if(union.autoPayDate){
         param.autoPayDate = new Date(union.autoPayDate).getTime();
     }
+  if(union.admin){
+    param.majorAdmin = union.admin;
+  }
+
     httpAgent(url, 'PUT', param, successCb,erroCb);
 }
 

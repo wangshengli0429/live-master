@@ -151,14 +151,14 @@
             },
             disabledAdmins(){
                 var result = false;
-                if(this.union.uuid){
-                    // if(!this.union.majorAdmin){
-                    //     result = false;
-                    // }else{
-                    //     result = true;
-                    // }
-                    result = true;
-                }
+                // if(this.union.uuid){//客户要求可以修改
+                //     // if(!this.union.majorAdmin){
+                //     //     result = false;
+                //     // }else{
+                //     //     result = true;
+                //     // }
+                //     result = true;
+                // }
                 return result;
             }
         },
