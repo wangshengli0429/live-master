@@ -81,6 +81,7 @@
                         <div class="name">自动日期</div>
                         <div class="content">
                             {{union.autoPayDate | timesToDate('yyyy-MM-dd HH:mm:ss')}}
+                            &nbsp;&nbsp;
                         </div>
                     </div>
                     <div v-if="union.uuid" class="items">
@@ -89,6 +90,37 @@
                             {{union.preSetAutoPay == 0?'代发工资':'自动代发工资'}}
                         </div>
                     </div>
+                  <div class="items">
+                    <div class="name">负责人</div>
+                    <div class="content">
+                      <el-select v-model="union.managerId" placeholder="请选择负责人">
+                        <el-option
+                          v-for="item in accountList"
+                          :key="item.uuid"
+                          :label="item.loginName"
+                          :value="item.uuid"
+                        >
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+
+                  <div class="items">
+                    <div class="name">发薪方式</div>
+                    <div class="content">
+                      <el-select v-model="union.salaryType" placeholder="请选择发薪方式">
+                        <el-option
+                          v-for="item in salaryTypeList"
+                          :key="item.uuid"
+                          :label="item.name"
+                          :value="item.uuid"
+                        >
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
+
+
 
                 </div>
             </div>
@@ -122,6 +154,13 @@
                     uuid:0,
                     name:"已启用",
                 }],
+                salaryTypeList:[{
+                  uuid:0,
+                  name:"日结",
+                },{
+                  uuid:1,
+                  name:"月结",
+                }],
                 platList:[],
                 accountList:[],
                 disabledPlat:false,
@@ -135,7 +174,9 @@
                     orgType:"UNION",
                     autoPayDate:"",
                     admin:"",
-                    adminName:""
+                    adminName:"",
+                    managerId:"",
+                    salaryType:"",
 
                 },
                 locked:false
@@ -215,6 +256,8 @@
                     setTimeout(() => {
                         this.locked = false;
                     },5000)
+
+
                     if(this.union.uuid){
                         api.modifyUnion(this.union,() => {
                             this.locked = false;
@@ -323,6 +366,7 @@
                 padding-left: 30px;
                 .items{
                     margin: 10px 60px 10px 0;
+                  width: 45%;
                     float: left;
                     &.stage{
                         float: none;

@@ -24,6 +24,12 @@ export const createUnion = (union,successCb,erroCb) => {
         list.push({uuid:union.admin})
         param.admins = list;
     }
+    if(union.managerId){
+      param.managerId = union.managerId;
+    }
+    if(union.salaryType){
+      param.salaryType = union.salaryType;
+    }
     
     httpAgent(url, 'POST', param, successCb,erroCb);
 
@@ -45,6 +51,13 @@ export const modifyUnion = (union,successCb,erroCb) => {
     }
   if(union.admin){
     param.majorAdmin = union.admin;
+  }
+
+  if(union.managerId){
+    param.managerId = union.managerId;
+  }
+  if(union.salaryType){
+    param.salaryType = union.salaryType;
   }
 
     httpAgent(url, 'PUT', param, successCb,erroCb);

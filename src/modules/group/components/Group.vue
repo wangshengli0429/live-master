@@ -89,6 +89,12 @@
 			      width="120"
 			      show-overflow-tooltip>
 			    </el-table-column>
+          <el-table-column
+            label="负责人"
+            width="120"
+            show-overflow-tooltip>
+            <template slot-scope="scope">{{ scope.row.manager && scope.row.manager.loginName}}</template>
+          </el-table-column>
 			    <el-table-column
 			      label="创建时间"
 			      width="120"

@@ -218,6 +218,21 @@
 			      <template slot-scope="scope">{{ scope.row.status | actorStatus }}</template>
 			    </el-table-column>
 
+        <el-table-column
+          prop="info"
+          width="122"
+          label="身份证照片"
+          show-overflow-tooltip>
+          <template slot-scope="scope">
+            <template v-if="scope.row.info">
+              <div class="img_box">
+                <img @click="viewImg(filterCard(scope.row.info,0))" :src="filterCard(scope.row.info,0)" />
+                <img @click="viewImg(filterCard(scope.row.info,1))" :src="filterCard(scope.row.info,1)" />
+              </div>
+            </template>
+          </template>
+        </el-table-column>
+
 			    <el-table-column v-if="edit" label="操作" width="180" fixed="right">
 			      <template slot-scope="scope">
 			        <el-button
@@ -347,6 +362,19 @@
 	    		this.getUnionList();
 
 		    },
+        filterCard(data,index){
+		      var result = '';
+		      if(data){
+		        let card = JSON.parse(data);
+		        result = card[index];
+          }
+		      return result;
+        },
+        viewImg(url){
+          if(url){
+            window.open(url);
+          }
+        },
 	    	goFilter(){
 	    		// console.log(this.filter)
 	    		this.getActorList();
@@ -429,6 +457,11 @@
 		    	limit = limit || this.limit;
 		    	let filter = this.filter;
 		    	this.$store.dispatch('actorStore/actor/getActorList',{currentPage,limit,filter}).then((resp) => {
+
+		    	  // resp.list.forEach(item => {//测试数据
+		    	  //   item.info = '["https://zhubo.vnest.net/api/files/down/1139474299841810432.png","https://zhubo.vnest.net/api/files/down/1139474438320951296.png"]'
+            // })
+
 		    		this.currentPage = currentPage;
 					this.limit = limit;
 				    this.actorList = resp.list;
@@ -586,7 +619,15 @@
   			padding: 10px 0;
   		}
 
-  		
+      .img_box{
+        img{
+          width:20px;
+          height:20px;
+          cursor:pointer;
+          margin-right:6px;
+          margin-top:10px;
+        }
+      }
 
   	}
 </style>

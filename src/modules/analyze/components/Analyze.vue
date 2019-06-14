@@ -35,6 +35,22 @@
           <i v-if="filter.unionName" class="el-icon-error" @click.stop="clearSelectUnion"></i>
 				</div>
 			</div>
+      <div class="filter_items">
+        <div class="name">
+          管理员：
+        </div>
+        <div class="content">
+          <el-select :clearable="true" v-model="filter.adminId" @change="changeAdmin" placeholder="请选择管理员">
+            <el-option
+              v-for="item in adminList"
+              :key="item.uuid"
+              :label="item.nickname"
+              :value="item.uuid"
+            >
+            </el-option>
+          </el-select>
+        </div>
+      </div>
 			<div class="filter_items">
 				<div class="name">
 					日期：
@@ -140,12 +156,15 @@
 				total:0,
 				currentPage:1,
 				limit:10,
+        adminList:[],
 				filter:{
 					orgId:"",
 					platId:"",
 					unionId:"",
           unionName:"",
 					date:"",
+          adminId:"",
+          salaryType:undefined,
 				},
         parentId:"",
 			}
@@ -332,16 +351,34 @@
               if(list.length){
                 this.filter.unionId = list[0].uuid;
                 this.filter.unionName = list[0].name;
+                this.filter.salaryType = list[0].salaryType;
               }else{
                 this.filter.unionId = '';
                 this.filter.unionName = '';
+                this.filter.salaryType = undefined;
+                this.filter.adminId = '';
               }
+              this.getAdminsList();
             }
           })
         },
         clearSelectUnion(){
           this.filter.unionId = '';
           this.filter.unionName = '';
+        },
+        getAdminsList(){
+          let orgType = 'UNION';
+          let orgId = this.filter.unionId;
+          if(orgId){
+            $API.limit.getAdminsList({orgType,orgId},resp => {
+              this.adminList = resp.list;
+            })
+          }else{
+            this.adminList = [];
+          }
+        },
+        changeAdmin(){
+
         },
 	    	setDefaultOrg(){
 		    	if(this.user){

@@ -24,6 +24,13 @@ export default {
         params.startDate = new Date(filter.date[0]).getTime();
         params.endDate = new Date(filter.date[1]).getTime();
       }
+
+      if(filter.adminId){
+        params.adminId = filter.adminId;
+      }
+      if(filter.salaryType != undefined){
+        params.salaryType = filter.salaryType;
+      }
       
     }
 
