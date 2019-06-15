@@ -22,7 +22,8 @@
 				  </span>
 				  <el-dropdown-menu slot="dropdown">
 				    <el-dropdown-item command="signout">退出登录</el-dropdown-item>
-				    <el-dropdown-item v-if="!user.platId && !user.unionId" command="kf">修改配置信息</el-dropdown-item>
+            <el-dropdown-item v-if="!user.platId && !user.unionId" command="kf">修改配置信息</el-dropdown-item>
+            <!--<el-dropdown-item  command="kf">修改配置信息</el-dropdown-item>-->
 				  </el-dropdown-menu>
 				</el-dropdown>
 			</div>

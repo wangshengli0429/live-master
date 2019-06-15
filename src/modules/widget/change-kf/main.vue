@@ -59,6 +59,15 @@
                 </div>
             </div>
 
+          <div class="group">
+            <div class="title">用户提现协议</div>
+            <div class="items" v-html="protocol">
+            </div>
+            <div style="margin-top: 10px;">
+              <el-button @click="modifyProtocol" size="mini" type="primary">修改协议内容</el-button>
+            </div>
+          </div>
+
         </div>
     </modal>
 </template>
@@ -67,6 +76,10 @@
     import * as api from './api';
     import Modal from '@/modules/widget/common/Modal.vue';
     import Upload from '@/modules/widget/upload'
+
+    import Editor from '@/modules/widget/editor'
+
+
     export default{
         components:{
             Modal
@@ -85,7 +98,8 @@
                     font:"#333333",
                     active_background:"#ffffff",
                     active_font:"#333333"
-                }
+                },
+                protocol:"",
             }
         },
         computed:{
@@ -169,6 +183,34 @@
                     }
                 })
             },
+            getProtocol(){
+              api.getKfInfo({key:'protocol'},(resp) => {
+                console.log(resp.value)
+                if(resp.value){
+                  this.protocol = resp.value;
+                }
+              })
+            },
+
+          modifyProtocol(){
+            Editor({
+              title:"修改用户协议内容",
+              content:this.protocol,
+              callback:(content) => {
+                console.log(content);
+                this.protocol = content;
+                api.changeKfInfo({key:"protocol",value:content},() => {
+                  this.$message({
+                    message: '保存成功',
+                    type: 'success'
+                  });
+                })
+
+              }
+            })
+          },
+
+
             setHeight(){
                 var pageHeight = document.body.clientHeight;
                 var height = pageHeight - 150 - 40;
@@ -191,6 +233,7 @@
             this.getBannerInfo();
             this.getKfInfo();
             this.getColorInfo();
+            this.getProtocol();
             
         }
     }
