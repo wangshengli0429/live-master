@@ -38,6 +38,9 @@ export default {
         params.startDate = new Date(filter.date[0]).getTime();
         params.endDate = new Date(filter.date[1]).getTime();
       }
+      if(filter.salaryType){
+        params.salaryType = filter.salaryType
+      }
       
     }
     

@@ -51,6 +51,22 @@
           </el-select>
         </div>
       </div>
+      <div class="filter_items">
+        <div class="name">
+          负责人：
+        </div>
+        <div class="content">
+          <el-select :clearable="true" v-model="filter.managerId" @change="changeAdmin" placeholder="请选择负责人">
+            <el-option
+              v-for="item in managerList"
+              :key="item.uuid"
+              :label="item.nickname"
+              :value="item.uuid"
+            >
+            </el-option>
+          </el-select>
+        </div>
+      </div>
 			<div class="filter_items">
 				<div class="name">
 					日期：
@@ -65,6 +81,24 @@
 				    </el-date-picker>
 				</div>
 			</div>
+
+
+      <div class="filter_items">
+        <div class="name">
+          结算方式：
+        </div>
+        <div class="content">
+          <el-select :clearable="true" v-model="filter.salaryType"  placeholder="请选择结算方式">
+            <el-option
+              v-for="item in salaryTypes"
+              :key="item.uuid"
+              :label="item.name"
+              :value="item.uuid"
+            >
+            </el-option>
+          </el-select>
+        </div>
+      </div>
 
 			<div class="opt_btn">
 				<el-button @click="goFilter" type="primary">查询</el-button>
@@ -157,6 +191,7 @@
 				currentPage:1,
 				limit:10,
         adminList:[],
+        managerList:[],
 				filter:{
 					orgId:"",
 					platId:"",
@@ -164,9 +199,20 @@
           unionName:"",
 					date:"",
           adminId:"",
-          salaryType:undefined,
+          salaryType:'',
+          managerId:"",
 				},
         parentId:"",
+        salaryTypes:[{
+				  name:"全部",
+          uuid:""
+        },{
+          name:"日结",
+          uuid:"0"
+        },{
+          name:"月结",
+          uuid:"1"
+        }]
 			}
 		},
 		computed: {
@@ -309,6 +355,7 @@
 		    	this.filter.unionId = "";
 		    	// this.getUnionList(uuid);
           this.parentId = uuid;
+          this.getManagerList(uuid);
 		    },
 		    changeUnion(uuid){
 		    	if(uuid){
@@ -377,6 +424,23 @@
             this.adminList = [];
           }
         },
+        getManagerList(platid){
+          let orgType = 'PLAT';
+          let orgId = '';
+          if(this.user.platId){
+            orgId = this.user.platId;
+          }
+          if(platid){
+            orgId = platid;
+          }
+          if(orgId){
+            $API.limit.getAdminsList({orgType,orgId},resp => {
+              this.managerList = resp.list;
+            })
+          }else{
+            this.managerList = [];
+          }
+        },
         changeAdmin(){
 
         },
@@ -400,6 +464,7 @@
 	    		this.setHeight();
 	    		this.setDefaultOrg();
 	    		this.getAnalyzeList();
+	    		this.getManagerList();
 	    	})
 	    },
 	    created(){

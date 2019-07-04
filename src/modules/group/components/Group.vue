@@ -57,6 +57,30 @@
 					<el-input v-model="filter.adminName" placeholder="请输入管理员名称"></el-input>
 				</div>
 			</div>
+      <div class="filter_items">
+        <div class="name">
+          负责人：
+        </div>
+        <div class="content">
+          <el-input v-model="filter.managerName" placeholder="请输入负责人名称"></el-input>
+        </div>
+      </div>
+      <div class="filter_items">
+        <div class="name">
+          结算方式：
+        </div>
+        <div class="content">
+          <el-select :clearable="true" v-model="filter.salaryType"  placeholder="请选择结算方式">
+            <el-option
+              v-for="item in salaryTypes"
+              :key="item.uuid"
+              :label="item.name"
+              :value="item.uuid"
+            >
+            </el-option>
+          </el-select>
+        </div>
+      </div>
 
 			<div class="opt_btn">
 				<el-button @click="getUnionList(1)" type="primary">查询</el-button>
@@ -132,6 +156,12 @@
 			      show-overflow-tooltip>
 				    <template slot-scope="scope">{{ scope.row.majorAdmin && scope.row.majorAdmin.loginName}}</template>
 			    </el-table-column>
+        <el-table-column
+          label="结算方式"
+          width="120"
+          show-overflow-tooltip>
+          <template slot-scope="scope">{{ scope.row.salaryType == 0?'日结':'月结'}}</template>
+        </el-table-column>
 
 			    <el-table-column v-if="edit" label="操作" width="180" fixed="right">
 			      <template slot-scope="scope">
@@ -189,11 +219,23 @@
 					id:"",
 					orgId:"",
 					status:0,
-					adminName:""
+					adminName:"",
+          managerName:"",
+          salaryType:"",
 				},
 				disablePlat:false,
 				disableUnion:false,
-				limit:10
+				limit:10,
+        salaryTypes:[{
+          name:"全部",
+          uuid:""
+        },{
+          name:"日结",
+          uuid:"0"
+        },{
+          name:"月结",
+          uuid:"1"
+        }]
 			}
 		},
 		computed:{

@@ -289,7 +289,7 @@
                 },500)
             },
             getAccountList(){
-                let orgType = 'UNION';
+                let orgType = 'PLAT';
                 let orgId = '';
                 if(this.user.platId){
                     orgId = this.user.platId;
@@ -297,9 +297,9 @@
                 if(this.union.parentId){
                     orgId = this.union.parentId;
                 }
-                if(this.union.uuid){
-                    orgId = this.union.uuid;
-                }
+                // if(this.union.uuid){
+                //     orgId = this.union.uuid;
+                // }
                 if(orgId){
                     $API.limit.getAdminsList({orgType,orgId},resp => {
                         this.accountList = resp.list;

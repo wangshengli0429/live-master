@@ -28,7 +28,10 @@ export default {
       if(filter.adminId){
         params.adminId = filter.adminId;
       }
-      if(filter.salaryType != undefined){
+      if(filter.managerId){
+        params.managerId = filter.managerId;
+      }
+      if(filter.salaryType){
         params.salaryType = filter.salaryType;
       }
       

@@ -82,6 +82,22 @@
 					</el-select>
 				</div>
 			</div>
+      <div class="filter_items">
+        <div class="name">
+          结算方式：
+        </div>
+        <div class="content">
+          <el-select :clearable="true" v-model="filter.salaryType"  placeholder="请选择结算方式">
+            <el-option
+              v-for="item in salaryTypes"
+              :key="item.uuid"
+              :label="item.name"
+              :value="item.uuid"
+            >
+            </el-option>
+          </el-select>
+        </div>
+      </div>
 			
 
 			<div class="opt_btn">
@@ -186,6 +202,12 @@
 			      show-overflow-tooltip>
 				    <template slot-scope="scope">{{ scope.row.status == 0?"待入账":"已入账" }}</template>
 			    </el-table-column>
+        <el-table-column
+          label="结算方式"
+          width="120"
+          show-overflow-tooltip>
+          <template slot-scope="scope">{{ scope.row.creator.salaryType == 0?'日结':'月结'}}</template>
+        </el-table-column>
 	<!-- 		    <el-table-column
 			      prop="month_money"
 			      label="本月已入账/元"
@@ -338,12 +360,23 @@
 					date:"",
 					nickname:"",
 					thirdId:"",
-					status:0
+					status:0,
+          salaryType:"",
 				},
 				multipleSelection:[],
 				limit:10,
 				sorters:[],
-        parentId:""
+        parentId:"",
+        salaryTypes:[{
+          name:"全部",
+          uuid:""
+        },{
+          name:"日结",
+          uuid:"0"
+        },{
+          name:"月结",
+          uuid:"1"
+        }]
 
 			}
 		},
@@ -602,6 +635,10 @@
               url = url +'&startDate=' + new Date(filter.date[0]).getTime();
               url = url +'&endDate=' + new Date(filter.date[1]).getTime();
             }
+            if(filter.salaryType){
+              url = url +'&salaryType=' + filter.salaryType;
+            }
+
 
           }
           let requestParam = getRequestParam();

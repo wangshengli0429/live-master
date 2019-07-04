@@ -26,6 +26,9 @@ export default {
         params.startDate = getCurrentMonthFirst(filter.date);
         params.endDate = getCurrentMonthLast(filter.date);
       }
+      if(filter.salaryType){
+        params.salaryType = filter.salaryType
+      }
       
     }
     

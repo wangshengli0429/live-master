@@ -63,6 +63,22 @@
 					</el-select>
 				</div>
 			</div>
+      <div class="filter_items">
+        <div class="name">
+          结算方式：
+        </div>
+        <div class="content">
+          <el-select :clearable="true" v-model="filter.salaryType"  placeholder="请选择结算方式">
+            <el-option
+              v-for="item in salaryTypes"
+              :key="item.uuid"
+              :label="item.name"
+              :value="item.uuid"
+            >
+            </el-option>
+          </el-select>
+        </div>
+      </div>
 			<div class="opt_btn">
 				<el-button @click="getUnionSalaryList(1)" type="primary">查询</el-button>
 				<el-button @click="resetFilter">重置</el-button>
@@ -159,6 +175,12 @@
 			      show-overflow-tooltip>
 				    <template slot-scope="scope">{{ scope.row.status == 0?'未结算':'已结算'}}</template>
 			    </el-table-column>
+          <el-table-column
+            label="结算方式"
+            width="120"
+            show-overflow-tooltip>
+            <template slot-scope="scope">{{ scope.row.salaryType == 0?'日结':'月结'}}</template>
+          </el-table-column>
 			    <el-table-column v-if="edit" label="操作" width="180" fixed="right">
 			      <template slot-scope="scope">
 			      	<template v-if="scope.row.status == 0">
@@ -215,9 +237,20 @@
 					nickname:"",
 					thirdId:"",
 					status:"",
+          salaryType:"",
 				},
 				limit:10,
         parentId:"",
+        salaryTypes:[{
+          name:"全部",
+          uuid:""
+        },{
+          name:"日结",
+          uuid:"0"
+        },{
+          name:"月结",
+          uuid:"1"
+        }]
 			}
 		},
 		computed: {
@@ -347,6 +380,9 @@
 			        url = url +'&startDate=' + getCurrentMonthFirst(filter.date);
 			        url = url +'&endDate=' + getCurrentMonthLast(filter.date);
 			      }
+            if(filter.salaryType){
+              url = url +'&salaryType=' + filter.salaryType;
+            }
 			    }
 			    let requestParam = getRequestParam();
 			    let token = requestParam.token;

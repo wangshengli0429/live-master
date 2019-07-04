@@ -43,6 +43,12 @@ export default {
       if(filter.adminName){
         params.adminName = filter.adminName
       }
+      if(filter.managerName){
+        params.managerName = filter.managerName
+      }
+      if(filter.salaryType){
+        params.salaryType = filter.salaryType
+      }
 
 
       

@@ -81,7 +81,22 @@
 					</el-select>
 				</div>
 			</div>
-			
+      <div class="filter_items">
+        <div class="name">
+          结算方式：
+        </div>
+        <div class="content">
+          <el-select :clearable="true" v-model="filter.salaryType"  placeholder="请选择结算方式">
+            <el-option
+              v-for="item in salaryTypes"
+              :key="item.uuid"
+              :label="item.name"
+              :value="item.uuid"
+            >
+            </el-option>
+          </el-select>
+        </div>
+      </div>
 
 			<div class="opt_btn">
 				<el-button @click="getFlowList(1)" type="primary">查询</el-button>
@@ -186,6 +201,12 @@
 				    <template slot-scope="scope">{{ scope.row.moneyAfter | filterMoney }}</template>
 
 			    </el-table-column>
+        <el-table-column
+          label="结算方式"
+          width="120"
+          show-overflow-tooltip>
+          <template slot-scope="scope">{{ scope.row.creator.salaryType == 0?'日结':'月结'}}</template>
+        </el-table-column>
 			  </el-table>
 			</div>
 			<div ref="page" class="page">
@@ -241,9 +262,20 @@
 					nickname:"",
 					thirdId:"",
 					type:"",
+          salaryType:"",
 				},
 				limit:10,
         parentId:"",
+        salaryTypes:[{
+          name:"全部",
+          uuid:""
+        },{
+          name:"日结",
+          uuid:"0"
+        },{
+          name:"月结",
+          uuid:"1"
+        }]
 			}
 		},
 		computed: {
@@ -356,6 +388,9 @@
 			        url = url +'&startDate=' + new Date(filter.date[0]).getTime();
 			        url = url +'&endDate=' + new Date(filter.date[1]).getTime();
 			      }
+			      if(filter.salaryType){
+              url = url +'&salaryType=' + filter.salaryType;
+            }
 			    }
 			    let requestParam = getRequestParam();
 			    let token = requestParam.token;
