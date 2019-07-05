@@ -448,9 +448,11 @@
 		    	if(this.user){
 		    		this.filter.platId = this.user.platId;
 		    		this.filter.unionId = this.user.unionId;
-		    		if(!this.user.unionId && this.user.managerOrgs && this.user.managerOrgs.length > 0){
-		    			this.filter.unionId = this.user.managerOrgs[0].uuid;
-		    		}
+            this.filter.unionName = this.user.unionName;
+            if(!this.user.unionId && this.user.managerOrgs && this.user.managerOrgs.length > 0){
+              this.filter.unionId = this.user.managerOrgs[0].uuid;
+              this.filter.unionName = this.user.managerOrgs[0].name;
+            }
 		    	}
 		    }
 	    },
