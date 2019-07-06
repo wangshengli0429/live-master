@@ -31,8 +31,8 @@
 							<!--&gt;-->
 					    <!--</el-option>-->
 					<!--</el-select>-->
-          <el-input :value="filter.unionName" readonly="" placeholder="请选择公会" ></el-input>
-          <i v-if="filter.unionName" class="el-icon-error" @click.stop="clearSelectUnion"></i>
+          <el-input :value="filter.unionName" :disabled="user.unionId?true:false" placeholder="请选择公会" ></el-input>
+          <i v-if="filter.unionName && !user.unionId && (!user.managerOrgs || user.managerOrgs.length == 0)" class="el-icon-error" @click.stop="clearSelectUnion"></i>
 				</div>
 			</div>
 			<div class="filter_items">
@@ -429,6 +429,9 @@
 				})
 		    },
       goSelectUnion(){
+        if(this.user.unionId){
+          return false;
+        }
         selectUnion({
           user:this.user,
           orgId:this.user.orgId,

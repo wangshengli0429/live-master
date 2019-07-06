@@ -95,7 +95,7 @@
                     <div class="content">
                       <el-select v-model="union.managerId" placeholder="请选择负责人">
                         <el-option
-                          v-for="item in accountList"
+                          v-for="item in managersList"
                           :key="item.uuid"
                           :label="item.loginName"
                           :value="item.uuid"
@@ -163,6 +163,7 @@
                 }],
                 platList:[],
                 accountList:[],
+                managersList:[],
                 disabledPlat:false,
                 union:{
                     name:"",
@@ -289,7 +290,7 @@
                 },500)
             },
             getAccountList(){
-                let orgType = 'PLAT';
+                let orgType = 'UNION';
                 let orgId = '';
                 if(this.user.platId){
                     orgId = this.user.platId;
@@ -297,15 +298,34 @@
                 if(this.union.parentId){
                     orgId = this.union.parentId;
                 }
-                // if(this.union.uuid){
-                //     orgId = this.union.uuid;
-                // }
+                if(this.union.uuid){
+                    orgId = this.union.uuid;
+                }
                 if(orgId){
                     $API.limit.getAdminsList({orgType,orgId},resp => {
                         this.accountList = resp.list;
                     })
                 }
                 
+            },
+            getManagersList(){
+              let orgType = 'PLAT';
+              let orgId = '';
+              if(this.user.platId){
+                orgId = this.user.platId;
+              }
+              if(this.union.parentId){
+                orgId = this.union.parentId;
+              }
+              let filter = {
+                authorityGroupOrgType:orgType,
+                orgId:orgId
+              }
+              if(orgId){
+                $API.limit.getAccountList({start:0,limit:50,filter},resp => {
+                  this.managersList = resp.list;
+                })
+              }
             },
             setHeight(){
                 var pageHeight = document.body.clientHeight;
@@ -330,6 +350,7 @@
 
             this.setHeight();
             this.getAccountList();
+            this.getManagersList();
             this.getPlatList();
             if(this.user.platId){
                 this.union.parentId = this.user.platId;
