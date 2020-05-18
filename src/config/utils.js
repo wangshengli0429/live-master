@@ -7,7 +7,7 @@ export const Link = (url, query) => {
     path: url,
     query:{}
   }
- 
+
   // /*获取平台，初始化时，添加参数*/
   // let app_plat = localStorage.getItem("app_plat");
   // if(app_plat && (app_plat.toLowerCase() == 'mac' || app_plat.toLowerCase() == 'windows')){
@@ -56,12 +56,12 @@ if (document.cookie.length>0)
   var c_start=document.cookie.indexOf(c_name + "=");
   var c_end;
   if (c_start!=-1)
-    { 
-    c_start=c_start + c_name.length+1 
+    {
+    c_start=c_start + c_name.length+1
     c_end=document.cookie.indexOf(";",c_start)
     if (c_end==-1) c_end=document.cookie.length
     return unescape(document.cookie.substring(c_start,c_end))
-    } 
+    }
   }
 return ""
 }
@@ -146,6 +146,7 @@ export const httpAgent = function(url, requestType, param, successCb,erroCb){
   }else{
     config.data = param;
   }
+  console.log("url:"+config);
   $axios(config)
   .then(function (resp) {
     const data = resp.data;

@@ -26,7 +26,7 @@
                   <div class="items">
                     <div class="name">平台</div>
                     <div class="content">
-                      <el-select :disabled="user.platId?true:false" v-model="proxy.platId" @change="changePlat" placeholder="请选择平台">
+                      <el-select :disabled="user.platId?true:false" v-model="proxy.parentId" @change="changePlat" placeholder="请选择平台">
                         <el-option
                           v-for="item in platList"
                           :key="item.uuid"
@@ -40,20 +40,9 @@
                     <div class="items">
                         <div class="name">公会</div>
                       <div class="content" @click="goSelectUnion" style="cursor: pointer">
-                        <el-input :value="proxy.unionName" :disabled="proxy.parentId?true:false" placeholder="请选择公会" ></el-input>
-                        <i v-if="proxy.unionName && !proxy.parentId " class="el-icon-error" @click.stop="clearSelectUnion"></i>
+                        <el-input :value="proxy.unionName" :disabled="proxy.unionId?true:false" placeholder="请选择公会" ></el-input>
+                        <i v-if="proxy.unionName && !proxy.unionId " class="el-icon-error" @click.stop="clearSelectUnion"></i>
                       </div>
-                        <!--<div class="content">-->
-                            <!--<el-select :disabled="user.platId?true:false" v-model="proxy.parentId" @change="changePlat" placeholder="请选择公会">-->
-                                <!--<el-option-->
-                                    <!--v-for="item in platList"-->
-                                    <!--:key="item.uuid"-->
-                                    <!--:label="item.name"-->
-                                    <!--:value="item.uuid"-->
-                                    <!--&gt;-->
-                                <!--</el-option>-->
-                            <!--</el-select>-->
-                        <!--</div>-->
                     </div>
                   <div class="items">
                         <div class="name">分成比例</div>
@@ -199,6 +188,7 @@
                     admin:"",
                     adminName:"",
                     managerId:"",
+                    unionId:"",
                     unionName:"",
                     salaryType:""
                 },
@@ -233,8 +223,8 @@
                 this.$el.parentNode.removeChild(this.$el);
                 this.$destroy();
             },
-            changeAdmin(platId){
-                this.proxy.admin = platId;
+            changeAdmin(uuid){
+                this.proxy.admin = uuid;
             },
             submit(close){
                 console.log(this.proxy)
@@ -314,7 +304,7 @@
               parentId:this.parentId ||  this.user.orgId,
               callback:(list) => {
                 if(list.length){
-                  this.proxy.parentId = list[0].uuid;
+                  this.proxy.unionId = list[0].uuid;
                   this.proxy.unionName = list[0].name;
                   var uuid = list[0].uuid;
                   if(uuid && this.selectUnionList && this.selectUnionList.length > 0){
@@ -327,7 +317,7 @@
                   }
 
                 }else{
-                  this.proxy.parentId = '';
+                  this.proxy.unionId = '';
                   this.proxy.unionName = '';
                 }
               }
@@ -335,7 +325,7 @@
           },
 
           clearSelectUnion(){
-            this.proxy.parentId = '';
+            this.proxy.unionId = '';
             this.proxy.unionName = '';
           },
 
@@ -350,9 +340,7 @@
                 if(this.user.platId){
                     orgId = this.user.platId;
                 }
-                if(this.proxy.platId){
-                  orgId = this.proxy.platId;
-                }
+
                 if(this.proxy.parentId){
                     orgId = this.proxy.parentId;
                 }

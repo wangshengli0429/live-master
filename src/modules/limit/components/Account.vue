@@ -231,7 +231,10 @@
 				},{
 					uuid:"UNION",
 					name:"公会",
-				}],
+				},{
+          uuid:"PROXY",
+          name:"代理",
+        }],
 				statusList:[{
 					uuid:1,
 					name:"已停用",
@@ -301,7 +304,7 @@
 		          		this.getAccountList();
 					})
 		        }).catch(() => {
-		                   
+
 		        });
 			},
 			handleSizeChange(limit){
@@ -432,8 +435,8 @@
         },
 		    changeAuthorityGroup(data){
 		    	console.log(data)
-		    	var obj = this.authorityGroup.filter(function(item) { 
-				    return item.uuid == data; 
+		    	var obj = this.authorityGroup.filter(function(item) {
+				    return item.uuid == data;
 				});
 				console.log(obj);
 				if(obj.length > 0){
@@ -443,7 +446,7 @@
 					this.disabledOrgType = false;
 					this.filter.authorityGroupOrgType = "";
 				}
-				
+
 		    },
 			setDefaultOrg(){
 		    	if(this.user){

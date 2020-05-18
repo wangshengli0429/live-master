@@ -151,6 +151,9 @@
                 },{
                     uuid:"UNION",
                     name:"公会",
+                },{
+                  uuid:"PROXY",
+                  name:"代理",
                 }],
                 statusList:[{
                     uuid:1,
@@ -238,6 +241,13 @@
                             this.disabledPlat = false;
                         }
                         this.disabledUnion = false;
+                    }else if(obj[0].orgType == 'PROXY'){
+                      if(this.user.platId){
+                        this.disabledPlat = true;
+                      }else{
+                        this.disabledPlat = false;
+                      }
+                      this.disabledUnion = false;
                     }
 
 

@@ -263,7 +263,7 @@
       handleEdit(index,data){
         newProxy({
           user:this.user,
-          union:data,
+          proxy:data,
           callback:() => {
             this.getProxyList();
           }
