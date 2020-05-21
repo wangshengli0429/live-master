@@ -98,7 +98,7 @@
           </el-select>
         </div>
       </div>
-			
+
 
 			<div class="opt_btn">
 				<el-button @click="getAccountList(1)" type="primary">查询</el-button>
@@ -147,7 +147,7 @@
 			      show-overflow-tooltip>
 				   <template slot-scope="scope">{{ scope.row.creator.platName }}</template>
 			    </el-table-column> -->
-			    
+
 			    <el-table-column
 			      label="公会"
 			      show-overflow-tooltip>
@@ -181,7 +181,7 @@
 			      label="昨日粉丝量"
 			      show-overflow-tooltip>
 			    </el-table-column>
-			    
+
 
 <!-- 			    <el-table-column
 			      label="真实姓名"
@@ -237,7 +237,7 @@
 			      			<el-button size="mini" disabled>入账</el-button>
 					    </el-tooltip>
 			      	</template>
-			        
+
 
 			        <el-button
 			        	v-if="isSuperAdmin"
@@ -324,7 +324,6 @@
 </template>
 <script>
 	import {mapGetters,mapActions} from 'vuex';
-	import ImportFlow from '@/modules/widget/import-flow';
 	import {Operate} from '@/config/operate'
   import selectUnion from '@/modules/widget/select-union-v2'
 
@@ -344,7 +343,10 @@
 				},{
 					uuid:"UNION",
 					name:"公会",
-				}],
+				},{
+          uuid:"PROXY",
+          name:"代理",
+        }],
 				statusList:[{
 					uuid:1,
 					name:"已入账",
@@ -429,7 +431,7 @@
 				}else{
 					this.sorters = [];
 				}
-				
+
 				this.getAccountList();
 
 			},
@@ -447,7 +449,7 @@
 		          		this.getAccountList();
 					})
 		        }).catch(() => {
-		                   
+
 		        });
 		    },
 			handleDelete(index,data){
@@ -463,7 +465,7 @@
 		          		this.getAccountList();
 					})
 		        }).catch(() => {
-		                   
+
 		        });
 			},
 			batchCalculate(){
@@ -483,9 +485,9 @@
 			          		this.getAccountList();
 						})
 			        }).catch(() => {
-			                   
+
 			        });
-	    			
+
 	    		}
 	    	},
 	    	goBatchDelete(){
@@ -505,9 +507,9 @@
 			          		this.getAccountList();
 						})
 			        }).catch(() => {
-			                   
+
 			        });
-	    			
+
 	    		}
 	    	},
 			handleEdit(index,data){
@@ -523,7 +525,7 @@
 		          		this.getAccountList();
 					})
 		        }).catch(() => {
-		                   
+
 		        });
 			},
 			goImportFlow(){
@@ -537,7 +539,7 @@
 					orgId:this.user.orgId,
 					user:this.user,
 					callback:() => {
-						
+
 					}
 				})
 			},

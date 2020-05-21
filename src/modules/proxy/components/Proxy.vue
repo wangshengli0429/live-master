@@ -6,7 +6,7 @@
           归属公会：
         </div>
         <div class="content" @click="goSelectUnion" style="cursor: pointer">
-          <el-input :value="filter.unionName" :disabled="user.unionId?true:false" placeholder="请选择公会" ></el-input>
+          <el-input :value="filter.parentName" :disabled="user.parentId?true:false" placeholder="请选择公会" ></el-input>
           <i v-if="filter.unionName && !user.unionId " class="el-icon-error" @click.stop="clearSelectUnion"></i>
         </div>
         <!--<div class="content">-->
@@ -134,6 +134,11 @@
           label="归属公会"
           show-overflow-tooltip>
         </el-table-column>
+        <!--<el-table-column-->
+          <!--prop="parentName"-->
+          <!--label="归属平台"-->
+          <!--show-overflow-tooltip>-->
+        <!--</el-table-column>-->
         <el-table-column
           label="状态"
           show-overflow-tooltip>
@@ -222,6 +227,8 @@
           name:"",
           id:"",
           orgId:"",
+          parentId:"",
+          parentName:"",
           status:0,
           adminName:"",
           managerName:"",

@@ -4,6 +4,7 @@ import reflect from './modules/reflect'
 import actor from './modules/actor'
 import agent from './modules/agent'
 import union from './modules/union'
+import proxy from './modules/proxy'
 
 export default {
 	namespaced: true,
@@ -13,6 +14,7 @@ export default {
 		reflect,
 		actor,
 		agent,
-		union
+		union,
+    proxy
 	}
 }

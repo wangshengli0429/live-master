@@ -4,6 +4,7 @@ import Reflect from './modules/reflect.js'
 import Agent from './modules/agent.js'
 import Actor from './modules/actor.js'
 import Union from './modules/union.js'
+import Proxy from './modules/proxy.js'
 
 
 
@@ -14,6 +15,7 @@ export default{
   ...Reflect,
   ...Agent,
   ...Actor,
-  ...Union
+  ...Union,
+  ...Proxy
 }
 

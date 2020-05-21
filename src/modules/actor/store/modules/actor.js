@@ -6,12 +6,14 @@ const state = {
 	groupList:[],//工会列表
 	agentList:[],//经纪人列表
 	actorList:[],//艺人列表
+  proxyList:[],//代理列表
 }
 
 // getters
 const getters = {
 	platFromList: state => state.platFromList,
 	groupList: state => state.groupList,
+  proxyList: state => state.proxyList,
 	agentList: state => state.agentList,
 	actorList: state => state.actorList,
 
@@ -78,13 +80,16 @@ const mutations = {
 	[types.INIT_GROUP_LIST] (state,list) {
 	    state.groupList = list;
 	},
+  [types.INIT_PROXY_LIST] (state,list) {
+    state.proxyList = list;
+  },
 	[types.INIT_AGENT_LIST] (state,list) {
 	    state.agentList = list;
 	},
 	[types.INIT_ACTOR_LIST] (state,list) {
 	    state.actorList = list;
 	},
-	
+
 
 
 }

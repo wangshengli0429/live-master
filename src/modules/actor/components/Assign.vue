@@ -22,19 +22,19 @@
 					公会：
 				</div>
 				<div class="content" @click="goSelectUnion" style="cursor: pointer">
-					<!--<el-select v-model="filter.unionId" @change="changeUnion" placeholder="请选择公会"  filterable :filter-method="filterUnion">-->
-					    <!--<el-option-->
-							<!--v-for="item in unionList"-->
-							<!--:key="item.uuid"-->
-							<!--:label="item.name"-->
-							<!--:value="item.uuid"-->
-							<!--&gt;-->
-					    <!--</el-option>-->
-					<!--</el-select>-->
           <el-input :value="filter.unionName" :disabled="user.unionId?true:false" placeholder="请选择公会" ></el-input>
           <i v-if="filter.unionName && !user.unionId && (!user.managerOrgs || user.managerOrgs.length == 0)" class="el-icon-error" @click.stop="clearSelectUnion"></i>
 				</div>
 			</div>
+      <div class="filter_items">
+        <div class="name">
+          代理：
+        </div>
+        <div class="content" @click="goSelectProxy" style="cursor: pointer">
+          <el-input :value="filter.proxyName" :disabled="user.proxyId?true:false" placeholder="请选择代理" ></el-input>
+          <i v-if="filter.proxyName && !user.proxyId" class="el-icon-error" @click.stop="clearSelectProxy"></i>
+        </div>
+      </div>
 			<div class="filter_items">
 				<div class="name">
 					经纪人：
@@ -161,9 +161,14 @@
 			    </el-table-column>
 			    <el-table-column
 			      prop="unionName"
-			      label="工会"
+			      label="公会"
 			      show-overflow-tooltip>
 			    </el-table-column>
+          <el-table-column
+            prop="proxyName"
+            label="代理"
+            show-overflow-tooltip>
+          </el-table-column>
 			    <el-table-column
 			      label="经纪人"
 			      show-overflow-tooltip>
@@ -228,7 +233,7 @@
 		      :total="total">
 		    </el-pagination>
 		</div>
-	
+
 	</div>
 </template>
 <script>
@@ -236,6 +241,7 @@
 	import AssignActor from '@/modules/widget/assign-actor'
 	import {Operate} from '@/config/operate'
   import selectUnion from '@/modules/widget/select-union-v2'
+  import selectProxy from '@/modules/widget/select-proxy'
 
 
 	export default{
@@ -270,6 +276,7 @@
 				agentList:[],
 				platList:[],
 				unionList:[],
+        proxyList:[],
 				actorList:[],
 				total:0,
 				currentPage:1,
@@ -279,6 +286,8 @@
 					platName:"",
 					unionId:"",
           unionName:"",
+          proxyId:"",
+          proxyName:"",
           status:'',
 					distributeStatus:"",
 					brokerId:"",//经纪人id
@@ -307,6 +316,8 @@
 					platName:"",
           unionId:"",
           unionName:"",
+          proxyId:"",
+          proxyName:"",
 					status:'',
 					distributeStatus:"",
 					brokerId:"",//经纪人id
@@ -316,6 +327,7 @@
 				this.setDefaultOrg();
 				this.getActorList(1);
 	    		this.getUnionList();
+	    		this.getProxyList();
 
 		    },
 	    	goFilter(){
@@ -334,7 +346,9 @@
 	    					platId:this.filter.platId || "",
 	    					platName:this.filter.platName || "",
 	    					unionId:this.filter.unionId || "",
-	    					unionName:this.filter.unionName || ""
+	    					unionName:this.filter.unionName || "",
+                proxyId:this.filter.proxyId || "",
+                proxyName:this.filter.proxyName || ""
 	    				},
 	    				user:this.user,
 	    				callback:(uuid) => {
@@ -360,7 +374,7 @@
 		          		this.getActorList(1);
 					})
 		        }).catch(() => {
-		                   
+
 		        });
 	    	},
 	    	handleEdit(index,data){
@@ -420,6 +434,7 @@
 		    		this.filter.orgId = "";
 		    	}
 		    	this.filter.unionId = "";
+          this.filter.proxyId = "";
 		    	// this.getUnionList(uuid);
           this.parentId = uuid;
 		    	for(var items of this.platList){
@@ -443,6 +458,18 @@
 		    		}
 		    	}
 		    },
+        changeProxy(uuid){
+          this.filter.proxyId = uuid;
+          for(var items of this.proxyList){
+            if(items.uuid == uuid){
+              this.filter.proxyName = items.name
+              if(items.parentOrg){
+                this.filter.unionId = items.parentOrg.uuid;
+                this.filter.unionName = items.parentOrg.name;
+              }
+            }
+          }
+        },
 		    getPlatList(){
 		    	const orgId = this.user.orgId;
 		    	this.$store.dispatch('platStore/platform/getPlatFormList',{orgId,currentPage:1,limit:50}).then((resp) => {
@@ -464,6 +491,13 @@
 		    		this.unionList = resp.list;
 				})
 		    },
+        getProxyList(parentId){
+          let orgId = this.user.orgId;
+          parentId = parentId ||  this.user.unionId;
+          this.$store.dispatch('proxyStore/proxy/getProxyList',{orgId,parentId,currentPage:1,limit:50}).then((resp) => {
+            this.proxyList = resp.list;
+          })
+        },
         goSelectUnion(){
           if(this.user.unionId){
             return false;
@@ -487,6 +521,29 @@
           this.filter.unionId = '';
           this.filter.unionName = '';
         },
+        goSelectProxy(){
+          if(this.user.proxyId){
+            return false;
+          }
+          selectProxy({
+            user:this.user,
+            orgId:this.user.orgId,
+            parentId:this.parentId ||  this.filter.unionId,
+            callback:(list) => {
+              if(list.length){
+                this.filter.proxyId = list[0].uuid;
+                this.filter.proxyName = list[0].name;
+              }else{
+                this.filter.proxyId = '';
+                this.filter.proxyName = '';
+              }
+            }
+          })
+        },
+        clearSelectProxy(){
+          this.filter.proxyId = '';
+          this.filter.proxyName = '';
+        },
 		    getAgentList(){
 		    	this.$store.dispatch('agentStore/agent/getAgentList',{currentPage:1,limit:50}).then((resp) => {
 		    		let list = resp.list;
@@ -503,10 +560,16 @@
 		    		this.filter.platId = this.user.platId;
 		    		this.filter.unionId = this.user.unionId;
             this.filter.unionName = this.user.unionName;
+            // this.files.proxyId = this.user.proxyId;
+            // this.filter.proxyName = this.user.proxyName;
             if(!this.user.unionId && this.user.managerOrgs && this.user.managerOrgs.length > 0){
               this.filter.unionId = this.user.managerOrgs[0].uuid;
               this.filter.unionName = this.user.managerOrgs[0].name;
             }
+            // if(!this.user.proxyId && this.user.managerOrgs && this.user.managerOrgs.length > 0){
+            //   this.filter.proxyId = this.user.managerOrgs[0].uuid;
+            //   this.filter.proxyName = this.user.managerOrgs[0].name;
+            // }
 
 
 		    	}
@@ -527,6 +590,7 @@
 	    created(){
 	    	this.getPlatList();
 	    	this.getUnionList();
+	    	this.getProxyList();
 	    	this.getAgentList();
 	    },
 	}
@@ -591,7 +655,7 @@
   			padding: 10px 0;
   		}
 
-  		
+
 
   	}
 </style>

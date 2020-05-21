@@ -25,17 +25,16 @@
             <div class="items">
                 <div class="name">分配公会</div>
               <div class="content" @click="goSelectUnion" style="cursor: pointer">
-                    <!--<el-select v-model="actor.unionName" @change="changeUnion" placeholder="请选择"   filterable :filter-method="filterUnion">-->
-                        <!--<el-option-->
-                          <!--v-for="item in unionList"-->
-                          <!--:key="item.uuid"-->
-                          <!--:label="item.name"-->
-                          <!--:value="item.uuid">-->
-                        <!--</el-option>-->
-                    <!--</el-select>-->
                 <el-input :value="actor.unionName" readonly="" placeholder="请选择公会" ></el-input>
                 <i v-if="actor.unionName" class="el-icon-error" @click.stop="clearSelectUnion"></i>
                 </div>
+            </div>
+            <div class="items">
+              <div class="name">分配代理</div>
+              <div class="content" @click="goSelectProxy" style="cursor: pointer">
+                <el-input :value="actor.proxyName" readonly="" placeholder="请选择代理" ></el-input>
+                <i v-if="actor.proxyName" class="el-icon-error" @click.stop="clearSelectProxy"></i>
+              </div>
             </div>
 
         </div>
@@ -46,6 +45,7 @@
     import * as api from './api';
     import Modal from '@/modules/widget/common/Modal.vue';
     import selectUnion from '@/modules/widget/select-union-v2'
+    import selectProxy from '@/modules/widget/select-proxy'
 
 
     export default{
@@ -58,6 +58,7 @@
                group:"",
                platList:[],
                unionList:[],
+               proxyList:[],
                disabledPlat:false,
                 parentId:""
             }
@@ -88,6 +89,8 @@
                 }
                 this.actor.unionId = "";
                 this.actor.unionName = "";
+              this.actor.proxyId = "";
+              this.actor.proxyName = "";
                 // this.getUnionList(uuid);
               this.parentId = uuid;
             },
@@ -106,6 +109,21 @@
                 }
 
             },
+          changeProxy(uuid){
+            if(uuid){
+              this.actor.proxyId = uuid;
+            }
+            var proxy = null;
+            for(var items of this.proxyList){
+              if(items.uuid == uuid){
+                union = items;
+              }
+            }
+            if(proxy){
+              this.actor.proxyName = proxy.name;
+            }
+
+          },
             getPlatList(){
                 const orgId = this.user.orgId;
                 $API.platform.getPlatFormList({orgId,currentPage:1,limit:50},(resp) => {
@@ -120,6 +138,14 @@
               this.unionList = resp.list;
             })
           },
+          filterUnion(key){
+            this.actor.proxyId = '';
+            let orgId = this.user.orgId;
+            let parentId = this.actor.unionId;
+            $API.proxy.getProxyList({orgId,parentId,currentPage:1,limit:50,searchKey:key},(resp) => {
+              this.proxyList = resp.list;
+            })
+          },
             getUnionList(parentId){
                 let orgId = this.user.orgId;
                 parentId = parentId ||  this.user.orgId;
@@ -127,6 +153,13 @@
                     this.unionList = resp.list;
                 })
             },
+          getProxyList(parentId){
+            let orgId = this.user.orgId;
+            parentId = parentId ||  this.actor.unionId;
+            $API.proxy.getProxyList({orgId,parentId,currentPage:1,limit:50},(resp) => {
+              this.proxyList = resp.list;
+            })
+          },
           goSelectUnion(){
             selectUnion({
               user:this.user,
@@ -147,12 +180,34 @@
             this.actor.unionId = '';
             this.actor.unionName = '';
           },
+          goSelectProxy(){
+            selectProxy({
+              user:this.user,
+              orgId:this.user.orgId,
+              parentId:this.parentId ||  this.actor.unionId ,
+              callback:(list) => {
+                if(list.length){
+                  this.actor.proxyId = list[0].uuid;
+                  this.actor.proxyName = list[0].name;
+                }else{
+                  this.actor.proxyId = '';
+                  this.actor.proxyName = '';
+                }
+              }
+            })
+          },
+          clearSelectProxy(){
+            this.actor.proxyId = '';
+            this.actor.proxyName = '';
+          },
 
         },
         mounted(){
             this.getPlatList();
             const parentId = this.actor.platId || "";
             this.getUnionList(parentId);
+            const unionId = parentId || this.actor.unionId || "";
+            this.getProxyList(unionId);
 
             if(this.actor.platId){
                 this.disabledPlat = true;

@@ -18,7 +18,7 @@
 			    <el-table-column
 			      prop="id"
 			      label="平台ID"
-			      width="100">
+			      width="80">
 			    </el-table-column>
 			    <el-table-column
 			      prop="name"
@@ -89,11 +89,14 @@
 			    </el-table-column>
 
 
-			    <el-table-column v-if="edit" label="操作" width="180" fixed="right">
+			    <el-table-column v-if="edit" label="操作" width="280" fixed="right">
 			      <template slot-scope="scope">
 			        <el-button
 			          size="mini"
 			          @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+              <el-button
+                size="mini"
+                @click="handlePlatFromEntry(scope.$index, scope.row)">表单录入</el-button>
 			        <el-button
 			          size="mini"
 			          type="danger"
@@ -108,8 +111,9 @@
 </template>
 <script>
 	import {mapGetters,mapActions} from 'vuex';
-	import newPlat from '@/modules/widget/new-plat'
-	import {Operate} from '@/config/operate'
+	import newPlat from '@/modules/widget/new-plat';
+	import {Operate} from '@/config/operate';
+  import platFormEntry from '@/modules/widget/new-plat-from-entry';
 
 	export default{
 		data(){
@@ -152,6 +156,15 @@
 					}
 				})
 			},
+      handlePlatFromEntry(index,data){
+        platFormEntry({
+          user:this.user,
+          plat:data,
+          callback:() => {
+            this.getPlatList();
+          }
+        })
+      },
 			handleDelete(index,data){
 				let msg = "确定要删除账号”"+data.name+"“吗？"
 				this.$confirm(msg, '提示', {
@@ -163,7 +176,7 @@
 		          		this.getPlatList();
 					})
 		        }).catch(() => {
-		                   
+
 		        });
 
 			},

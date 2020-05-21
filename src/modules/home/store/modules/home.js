@@ -133,6 +133,16 @@ const state = {
             uuid:"finance_manage",
           }
         }
+      //   ,{
+      //
+      //   name:"代理结算",
+      //   path:"/finance/proxy",
+      //   uuid:"finance_proxy",
+      //   parent:{
+      //     name:"财务管理",
+      //     uuid:"finance_manage",
+      //   }
+      // }
       ]
     },{
       name:"统计分析",

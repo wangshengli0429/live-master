@@ -23,7 +23,7 @@
                             </el-select>
                         </div>
                     </div>
-                  <div class="items">
+                  <!--<div class="items">
                     <div class="name">平台</div>
                     <div class="content">
                       <el-select :disabled="user.platId?true:false" v-model="proxy.parentId" @change="changePlat" placeholder="请选择平台">
@@ -36,12 +36,12 @@
                         </el-option>
                       </el-select>
                     </div>
-                  </div>
+                  </div>-->
                     <div class="items">
                         <div class="name">公会</div>
                       <div class="content" @click="goSelectUnion" style="cursor: pointer">
-                        <el-input :value="proxy.unionName" :disabled="proxy.unionId?true:false" placeholder="请选择公会" ></el-input>
-                        <i v-if="proxy.unionName && !proxy.unionId " class="el-icon-error" @click.stop="clearSelectUnion"></i>
+                        <el-input :value="proxy.parentName" :disabled="proxy.parentId?true:false" placeholder="请选择公会" ></el-input>
+                        <i v-if="proxy.parentName && !proxy.parentId " class="el-icon-error" @click.stop="clearSelectUnion"></i>
                       </div>
                     </div>
                   <div class="items">
@@ -56,7 +56,7 @@
                             <el-input  :clearable="true" type="number" v-model="proxy.taxRatio" placeholder="请输入承担税点"></el-input>
                         </div>
                     </div>
-                    <div class="items">
+                   <!-- <div class="items">
                         <div class="name">管理员</div>
                         <div class="content">
                             <el-select :disabled="disabledAdmins" v-model="proxy.adminName" @change="changeAdmin" placeholder="请选择管理员">
@@ -69,7 +69,7 @@
                                 </el-option>
                             </el-select>
                         </div>
-                    </div>
+                    </div>-->
                     <div class="items">
                         <div class="name">代发工资</div>
                         <div class="content">
@@ -180,6 +180,7 @@
                     status:0,
                     platId:"",
                     parentId:"",
+                    parentName:"",
                     shareRatio:"",
                     taxRatio:"",
                     autoPay:0,
@@ -257,13 +258,13 @@
                     });
                     return false;
                 }
-                if(!this.proxy.admin){
+              /*  if(!this.proxy.admin){
                     this.$message({
                       message: '请选择管理员',
                       type: 'error'
                     });
                     return false;
-                }
+                }*/
                 if(!this.locked){
                     this.locked = true;
                     setTimeout(() => {
@@ -304,8 +305,8 @@
               parentId:this.parentId ||  this.user.orgId,
               callback:(list) => {
                 if(list.length){
-                  this.proxy.unionId = list[0].uuid;
-                  this.proxy.unionName = list[0].name;
+                  this.proxy.parentId = list[0].uuid;
+                  this.proxy.parentName = list[0].name;
                   var uuid = list[0].uuid;
                   if(uuid && this.selectUnionList && this.selectUnionList.length > 0){
                     var index = this.selectUnionList.findIndex((items) => {
@@ -317,16 +318,16 @@
                   }
 
                 }else{
-                  this.proxy.unionId = '';
-                  this.proxy.unionName = '';
+                  this.proxy.parentId = '';
+                  this.proxy.parentName = '';
                 }
               }
             })
           },
 
           clearSelectUnion(){
-            this.proxy.unionId = '';
-            this.proxy.unionName = '';
+            this.proxy.parentId = '';
+            this.proxy.parentName = '';
           },
 
           changePlat(){
