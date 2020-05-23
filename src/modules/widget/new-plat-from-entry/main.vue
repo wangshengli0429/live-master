@@ -2,71 +2,48 @@
     <modal :title="filterTitle" @destroy="destroy" @submit="submit">
         <div class="modify_actor" :style="{height:height+'px'}">
             <div class="group">
-              <el-button type="success" @click="addRow(tableData)">新增</el-button>
               <template>
-                <el-table
-                  :data="tableData"
-                  style="width: 100%"
-                  max-height="350">
-                  <!--@cell-dblclick="tableDbEdit"-->
+                  <Button @click="add()">
+                    添加
+                  </Button>
+                  <Table :columns="columns" :data="data">
+
+                    <template slot-scope="{ row, index }" slot="name">
+                      <Input type="text" v-model="editName" v-if="editIndex === index" />
+                      <span v-else>{{ row.name }}</span>
+                    </template>
 
 
-                  <el-table-column label="序号" type="index" align="center" show-overflow-tooltip width="80px">
-                  </el-table-column>
-                  <el-table-column
-                    prop="desc"
-                    label="名称"
-                    width="160">
-                    <template inline-template slot-scope="scope">
-                      <el-input
-                        id="'desc'+ + scope.$index "
-                        @change="changeed(scope.$index,scope.row,scope.$cell,$event)"
-                        placeholder="请输入名称">
-                      </el-input>
+                    <template slot-scope="{ row, index }" slot="address">
+                      <Input type="text" v-model="editAddress" v-if="editIndex === index" />
+                      <span v-else>{{ row.address }}</span>
                     </template>
-                  </el-table-column>
-                  <el-table-column
-                    prop="value"
-                    label="公式名称"
-                    width="160">
-                    <template inline-template slot-scope="scope">
-                      <el-input
-                        id="'value_'+ + scope.$index"
-                        @change="changeed(scope.$index,scope.row,scope.$cell,$event)"
-                        placeholder="请输入名称">
-                      </el-input>
+
+                    <template slot-scope="{ row, index }" slot="action">
+                      <div v-if="editIndex === index">
+                        <Button @click="handleSave(index)">保存</Button>
+                        <Button @click="editIndex = -1">取消</Button>
+                      </div>
+                      <div v-else>
+                        <Button @click="handleEdit(row, index)">操作</Button>
+                        <Button type="error"  @click="remove(index)">Delete</Button>
+                      </div>
                     </template>
-                  </el-table-column>
-                  <el-table-column
-                    fixed="right"
-                    label="操作"
-                    width="120">
-                    <template slot-scope="scope">
-                      <el-button
-                        @click.native.prevent="deleteRow(scope.$index, tableData)"
-                        type="text"
-                        size="small">
-                        移除
-                      </el-button>
-                    </template>
-                  </el-table-column>
-                </el-table>
+                  </Table>
               </template>
             </div>
 
           <div class="group">
             <div class="warpper clearfix">
-              <div class="items">
                 <div class="name">流水设置</div>
 
-                <template inline-template slot-scope="scope">
-                  <el-input
-                    placeholder="请输入流水设置">
-                  </el-input>
-                </template>
+                <div class="items">
+                  <div class="name">代理名称</div>
+                  <div class="content">
+                    <el-input  :clearable="true" :minlength="1" :maxlength="20" v-model="name" placeholder="请设置公式"></el-input>
+                  </div>
+                </div>
               </div>
-
-            </div>
           </div>
 
         </div>
@@ -82,19 +59,26 @@
         },
         data(){
             return {
-              rules: {
-                value:{ type:"string",required:true,message:"必填字段",trigger:"change"},
-                desc:{ type:"string",required:true,message:"必填字段",trigger:"change"}
-              },
-              tableData: [
-              //   {
-              //   desc: 'cc',
-              //   value: 'ee'
-              // }, {
-              //   desc: 'cc1',
-              //   value: 'ee1'
-              // }
+              name:'',
+              address:'',
+              columns: [
+                {
+                  title: '姓名',
+                  slot: 'name'
+                },
+                {
+                  title: '地址',
+                  slot: 'address'
+                },
+                {
+                  title: '操作',
+                  slot: 'action'
+                }
               ],
+              data:[],
+              editIndex: -1,  // 当前聚焦的输入框的行数
+              editName: '',  // 第一列输入框，当然聚焦的输入框的输入内容，与 data 分离避免重构的闪烁
+              editAddress: '',  // 第四列输入框
                 height:200,
                 locked:false,
                 statusList:[{
@@ -134,56 +118,37 @@
             }
         },
         methods:{
-          //获取输入框的值
-          changeed(index,row,cell,even){
-            console.log('-------------');
-            console.log(index);
-            console.log(event.target.value);
-            console.log(row);
-            console.log(even);
-            // console.log(even.currentTarget.nextElementSibling);
-            this.PI_SalePrice = event.target.value;
-           var value =  document.getElementById("value_"+index).value;
-
-            var desc =  document.getElementById("desc_"+index).value;
-            console.log("----------------")
-            this.tableData[index].push({
-              desc: desc,
-              value: value
-            })
-          },
-          deleteRow(index, rows) {//移除一行
-            rows.splice(index, 1);//删掉该行
-          },
-          addRow(tableData,event){//新增一行
-                                  //之前一直想不到怎么新增一行空数据，最后幸亏一位朋友提示：表格新增一行，其实就是源数据的新增，从源数据入手就可以实现了，于是 恍然大悟啊！
-            if(tableData.length>=5){
+          add(){
+            if(this.data.length >=5){
               this.$message({
-                message: '录入标题条目不能超过5条',
+                message: '表单录入最多可扩展5条数据！',
                 type: 'error'
               });
               return false;
             }
-            this.tableData.push({
-              desc: '',
-              value: '',
-            })
 
+
+            var _this=this
+            _this.data.push({
+              name:_this.name,
+              address:_this.address
+
+            })
+            console.log(this.data)
+          },
+          handleEdit (row, index) {
+            this.editName = row.name;
+            this.editAddress = row.address;
+            this.editIndex = index;
+          },
+          handleSave (index) {
+            this.data[index].name = this.editName;
+            this.data[index].address = this.editAddress;
+            this.editIndex = -1;
           },
 
-          tableDbEdit(row, column, cell, event) {//编辑单元格数据
-          //当鼠标双击单元格里面具体单元格的时候，即可对数据进行编辑操作，其实就是添加了一个输入框，最终将输入框中的数据保存下来就行了。
-            event.target.innerHTML = "";
-            let cellInput = document.createElement("input");
-            cellInput.value = "";
-            cellInput.setAttribute("type", "text");
-            cellInput.style.width = "80%";
-            cellInput.style.height = "80%";
-            cell.appendChild(cellInput);
-            cellInput.onblur = function() {
-              cell.removeChild(cellInput);
-              event.target.innerHTML = cellInput.value;
-            };
+          remove(index) {
+            this.data.splice(index, 1);
           },
             destroy(){
                 this.$el &&

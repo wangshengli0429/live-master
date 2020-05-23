@@ -6,8 +6,12 @@ import router from './router'
 import store from './store/index';
 import "babel-polyfill";
 import ElementUI from 'element-ui'
+import ViewUI from 'view-design';
+import 'view-design/dist/styles/iview.css';
+
 import 'element-ui/lib/theme-chalk/index.css'
 Vue.use(ElementUI)
+Vue.use(ViewUI);
 import {filter} from './filter'
 filter(Vue);
 import './api'
